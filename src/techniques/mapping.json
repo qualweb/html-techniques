@@ -3,6 +3,7 @@
 
   },
   "post": {
+    "abbrev": ["H28"],
     "img + map > area": ["H24"],
     "head > title": ["H25"],
     "a": ["H30", "H33"],
