@@ -17,7 +17,7 @@ import {
 const technique: HTMLTechnique = {
     name: 'Providing text alternatives for the area elements of image maps',
     code: 'QW-HTML-T1',
-    mapping: 'H24',
+    mapping: 'G141',
     description: 'This technique checks the text alternative of area elements of images maps',
     metadata: {
         target: {
@@ -53,7 +53,7 @@ const technique: HTMLTechnique = {
         outcome: '',
         description: ''
     },
-    results: new Array<HTMLTechniqueResult>()
+    results: new Array<HTMLTechniqueResult> ()
 };
 
 function getTechniqueMapping(): string {
@@ -70,9 +70,9 @@ function hasPrincipleAndLevels(principles: string[], levels: string[]): boolean 
     return has;
 }
 
-async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
 
-    if (element === undefined || element.children === undefined) {
+    if (element === undefined) {
         return;
     }
 
@@ -80,44 +80,23 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
         verdict: '',
         description: ''
     };
-    let regexp = new RegExp('^H[1-6]$');
-    let name;
-    let list: number[] = [];
 
-    for (let child of element.children) {
-        name = child["name"];
-        if (name !== undefined && regexp.test(name)) {
-            list.push();
-        }
-
-    }
-    if (list.length === 0) {
-        return;//no H elements
-    }
-    let sortedArray: number[] = list.sort((n1, n2) => n1 - n2);
-    let equal = true;
-    let complete = true;
-
-    for (let i = 0; i < list.length; i++) {
-        if (list[i] !== sortedArray[i])
-            equal = false;
-        if (i > 0 && i - 1 < list.length && sortedArray[i] - sortedArray[i - 1] > 1)
-            complete = false;
-    }
-
-
-    if (!equal) { // fails if the headers arent in the correct order
+    if (element.attribs === undefined) { // fails if the element doesn't contain an alt attribute
         evaluation.verdict = 'failed';
         evaluation.description = `The element doesn't contain an alt attribute`;
         technique.metadata.failed++;
-    } else if (!complete) { // fails if a header number is missing
+    } else if (element.attribs['alt'] === undefined) { // fails if the element doesn't contain an alt attribute
         evaluation.verdict = 'failed';
         evaluation.description = `The element doesn't contain an alt attribute`;
         technique.metadata.failed++;
-    } else { // the H elements are correctly used
-        evaluation.verdict = 'passed';
+    } else if (element.attribs['alt'] === '') { // fails if the element's alt attribute value is empty
+        evaluation.verdict = 'failed';
+        evaluation.description = `The element's alt attribute value is empty`;
+        technique.metadata.failed++;
+    } else { // the element contains an non-empty alt attribute, and it's value needs to be verified
+        evaluation.verdict = 'warning';
         evaluation.description = 'Please verify the alt attribute value describes correctly the correspondent area of the image';
-        technique.metadata.passed++;
+        technique.metadata.warning++;
     }
 
     evaluation.code = transform_element_into_html(element);
@@ -136,7 +115,7 @@ function reset(): void {
     technique.metadata.warning = 0;
     technique.metadata.failed = 0;
     technique.metadata.inapplicable = 0;
-    technique.results = new Array<HTMLTechniqueResult>();
+    technique.results = new Array < HTMLTechniqueResult > ();
 }
 
 function outcomeTechnique(): void {
