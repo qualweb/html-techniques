@@ -8,6 +8,7 @@
     "a": ["H30", "H33"],
     "form": ["H32"],
     "applet": ["H35"],
+    "*[type=\"image\"]": ["H28"],
     "input[type=\"image\"]": ["H36"],
     "input": [],
     "img": ["H37", "H45"],
