@@ -115,7 +115,7 @@ function reset(): void {
   technique.metadata.warning = 0;
   technique.metadata.failed = 0;
   technique.metadata.inapplicable = 0;
-  technique.results = new Array < HTMLTechniqueResult > ();
+  technique.results = new Array<HTMLTechniqueResult>();
 }
 
 function outcomeTechnique(): void {
