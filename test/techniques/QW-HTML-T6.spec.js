@@ -33,13 +33,12 @@ describe('Technique QW-HTML-T6', function() {
       it(`should have outcome="${test.outcome}"`, async function () {
         this.timeout(10 * 1000);
         const { source, processed } = await getDom(test.url);
-        configure({
-          rules: ['QW-HTML-T1']
-        });
+
+
         const report = await executeHTMLT(source.html.parsed, processed.html.parsed);
         console.log(report);
         console.log(Object.keys(report));
-        expect(report.techniques['QW-HTML-T1'].metadata.outcome).to.be.equal(test.outcome);
+        expect(report.techniques['QW-HTML-T6'].metadata.outcome).to.be.equal(test.outcome);
       });
     });
   }
