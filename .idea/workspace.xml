@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a8e05569-8519-4f98-b883-982b15a4becd" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/techniques/QW-HTML-T10.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/techniques/QW-HTML-T10.spec.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -21,6 +21,7 @@
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
     <property name="ts.external.directory.path" value="C:\Users\bruno\Downloads\Investig\html-techniques\node_modules\typescript\lib" />
   </component>
   <component name="RunDashboard">
@@ -45,7 +46,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1567697475554</updated>
-      <workItem from="1567697476789" duration="719000" />
+      <workItem from="1567697476789" duration="1562000" />
     </task>
     <servers />
   </component>
