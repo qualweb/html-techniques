@@ -71,7 +71,6 @@ function hasPrincipleAndLevels(principles: string[], levels: string[]): boolean 
 }
 
 async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
-    console.log(element);
 
     if (element === undefined || element.attribs === undefined) {
         return;
@@ -110,7 +109,6 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
 
     }
 
-    console.log(evaluation);
 
     evaluation.code = transform_element_into_html(element);
     evaluation.pointer = getElementSelector(element);

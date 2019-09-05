@@ -18,6 +18,22 @@ describe('Technique QW-HTML-T6', function() {
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/QW6/QW6_2.html',
       outcome: 'failed'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/QW6/QW6_3.html',
+      outcome: 'failed'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/QW6/QW6_4.html',
+      outcome: 'failed'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/QW6/QW6_5.html',
+      outcome: 'failed'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/QW6/QW6_6.html',
+      outcome: 'failed'
     }
   ];
 
@@ -36,8 +52,6 @@ describe('Technique QW-HTML-T6', function() {
 
 
         const report = await executeHTMLT(source.html.parsed, processed.html.parsed);
-        console.log(report);
-        console.log(Object.keys(report));
         expect(report.techniques['QW-HTML-T6'].metadata.outcome).to.be.equal(test.outcome);
       });
     });
