@@ -12,27 +12,19 @@ describe('Technique QW-HTML-T10', function() {
 
   const tests = [
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/QW6/QW6_1.html',
-      outcome: 'passed'
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h64/warning1.html',
+      outcome: 'warning'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/QW6/QW6_2.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h64/warning2.html',
+      outcome: 'warning'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h64/failed1.html',
       outcome: 'failed'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/QW6/QW6_3.html',
-      outcome: 'failed'
-    },
-    {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/QW6/QW6_4.html',
-      outcome: 'failed'
-    },
-    {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/QW6/QW6_5.html',
-      outcome: 'failed'
-    },
-    {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/QW6/QW6_6.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h64/failed2.html',
       outcome: 'failed'
     }
   ];
