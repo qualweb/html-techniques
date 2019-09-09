@@ -18,7 +18,7 @@ const technique: HTMLTechnique = {
   name: 'Providing a title using the title element',
   code: 'QW-HTML-T13',
   mapping: 'H25',
-  description: 'This technique checks the text alternative of area elements of images maps',
+  description: 'All HTML and XHTML documents, including those in individual frames in a frameset, have a title element in the head section that defines in a simple phrase the purpose of the document. This helps users to orient themselves within the site quickly without having to search for orientation information in the body of the page.',
   metadata: {
     target: {
       element: 'title'
