@@ -3,6 +3,8 @@
 import {DomElement} from 'htmlparser2';
 import html from 'htmlparser-to-html';
 import _ from 'lodash';
+const stew = new(require('stew-select')).Stew();
+
 
 function getSelfLocationInParent(element: DomElement): string {
     let selector = '';
@@ -88,29 +90,34 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 
     return html(codeElement);
 }
-
+//Falta E,F
 function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean): string {
 
 
     let noAttributes = element.attribs === undefined;
-    let isHidden = elementIsHidden(element, noAttributes);
+    let isHidden;
     let id, ariaLabelBy, ariaLabel;
     let isReferenced = elementIsReferenced(id, processedHTML);
     let isEmbededControl = isEmbededControl(element);
     let textAlternative;
+    let textElement = getText(element);
+    let title;
     let hasRolePresentOrNone = false;
+    let toolTip;
 
     if (!noAttributes) {
+        isHidden = elementIsHidden(element, noAttributes);
         id = element.attribs["id"];
         ariaLabelBy = getElementById(element.attribs["ariaLabelBy"], processedHTML) === [] ? undefined : element.attribs["ariaLabelBy"];
         ariaLabel = element.attribs["ariaLabel"];
         textAlternative = getTextAlternative(element);
         hasRolePresentOrNone = hasRolePresentationOrNone();
+        title = element.attribs.title;
 
     }
 
     if (isHidden && !reference && !isReferenced) {//A
-        return ""
+        return "";
     } else if (ariaLabelBy !== undefined && !reference) {//B
         return getAccessibleName(getElementById(ariaLabelBy, processedHTML), processedHTML, true);
     } else if (_.trim(ariaLabel) !== "" && !(isEmbededControl && reference)) {//C
@@ -121,24 +128,43 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         return getValueFromEmbededControl(element);
     }else if (false){//F todo
 
-    }else if (element.name === "text"){//G
-        return element.data;
-    }else {//I toolTip
-        return "todo";
+    }else if (textElement !== ""){//G
+        return textElement;
+    }else if (title!== undefined){//I toolTip
+        return title;
     }
 
-    return "";
 }
 
-function elementIsHidden(element: DomElement, noAttributes: boolean): boolean {
+function elementIsHidden(element: DomElement): boolean {
+   // let styles = element.styles;
+
+
+    let aria_hidden = Boolean(element.attribs["aria-hidden"]=;
+    let hidden = Boolean(element.attribs["hidden"]);
+    let displayNone = false;
+    if(element.attribs['computed-style']!== undefined)
+        displayNone = element.attribs['computed-style']['display']==='none';
+
+    let hasRolePresentOrNone = hasRolePresentationOrNone(element);
+    return hasRolePresentOrNone||displayNone||hidden||aria_hidden;
+}
+
+function elementIsReferenced(id: string, processedHTML: DomElement[]): boolean {
+
+    let refrencedByAriaLabel = stew.select(processedHTML, `[aria-labelledby="${id}"]`);
+    let refrencedByDecribeAriaLabel = stew.select(processedHTML, `[aria-describedby="${id}"]`);
+    let refrencedByLabel = stew.select(processedHTML, `label[for="${id}"]`);
+    let refrencedByheader = stew.select(processedHTML, `object[id="${id}"]>param`);
+
+    return refrencedByAriaLabel.length !== 0 || refrencedByDecribeAriaLabel.length !== 0 || refrencedByLabel.length !== 0 || refrencedByheader.length !== 0;
 
 }
 
-function elementIsReferenced(id: string, processedHTML: DomElement[]): boolean {//stew
+function getElementById(id: string, processedHTML: DomElement[]): DomElement {
 
-}
-
-function getElementById(id: string, processedHTML: DomElement[]): DomElement {//stew
+    let element = stew.select(processedHTML, id);
+    return element;
 
 }
 
@@ -146,10 +172,28 @@ function isEmbededControl(element: DomElement): boolean {//stew
 
 }
 
-function getTextAlternative(element: DomElement): string {//stew
+function getTextAlternative(element: DomElement,processedHTML: DomElement[]): string {//alt , title,label, fig capition  se for object procurar params
+
+    let id =  element.attribs.id;
+    let alt = element.attribs.alt;,
+    let title = element.attribs.title;
+
+    let labelContent = stew.select(processedHTML,`label[for=${id}"]`);
+
+    if(alt !== undefined && _.trim(alt)!== "")
+        return alt;
+    else if (title !== undefined && _.trim(title)!== "")
+        return title;
+    else if (labelContent !== undefined && _.trim(labelContent)!== "")
+        return labelContent;
+    else
+        return "";
 
 }
+
+
 function hasRolePresentationOrNone(element: DomElement): boolean {//stew
+    return element.attribs.role === "none"|| element.attribs.role === "presentation";
 
 }
 function isControlWithinLabel (element: DomElement, processedHTML: DomElement[]): boolean {
@@ -157,6 +201,18 @@ function isControlWithinLabel (element: DomElement, processedHTML: DomElement[])
 }
 function getValueFromEmbededControl(element: DomElement): string {//stew
 
+}
+
+function getText(element: DomElement): string {
+    let result = "";
+    if(element.children=== undefined)
+        return result;
+    for(let text of element.children){
+        if(text.name==="text")
+            result = text.data;
+    }
+
+    return result;
 }
 
 
