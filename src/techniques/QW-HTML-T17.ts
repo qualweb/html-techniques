@@ -76,14 +76,16 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
     //TODO verificar se ids sao unique ou nao?
     //TODO e se houver tds sem headers?
     let headersElements = stew.select(element.children, "[headers]");
-    if (checkHeadersMatchId(element, headersElements)){
-      evaluation.verdict = 'passed';
-      evaluation.description = 'id and headers attributes are correctly used to correlate data cells to data headers';
-      technique.metadata.passed++;
-    } else {
-      evaluation.verdict = 'failed';
-      evaluation.description = 'id and headers attributes are not correctly used';
-      technique.metadata.failed++;
+    for (let headerElem of headersElements) {
+      if (checkHeadersMatchId(element, headerElem.attribs.headers)) {
+        evaluation.verdict = 'passed';
+        evaluation.description = 'id and headers attributes are correctly used';
+        technique.metadata.passed++;
+      } else {
+        evaluation.verdict = 'failed';
+        evaluation.description = 'id and headers attributes are not correctly used';
+        technique.metadata.failed++;
+      }
     }
   }
 
@@ -156,7 +158,7 @@ function checkHeadersMatchId(table, headers) {
   let outcome = false;
   let result;
   for (let header of headers) {
-    let headersOf = stew.select(table, "[id/=/$header]");
+    let headersOf = stew.select(table, `[id/=/"${header}"]`);
     if (headersOf !== undefined) {
       if (headers.length === 1 && headersOf.attribs.headers === undefined) {
         outcome = true;
