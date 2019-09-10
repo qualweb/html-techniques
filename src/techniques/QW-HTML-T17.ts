@@ -58,7 +58,6 @@ function hasPrincipleAndLevels(principles: string[], levels: string[]): boolean 
 }
 
 async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
-
   if (element === undefined) {
     return;
   }
@@ -143,7 +142,7 @@ export {
 function isDataTable(children) {
   let hasTh = false;
   for (let child of children) {
-    console.log(child["name"]);
+    console.log(child);
     if (child["name"] === "th")
       hasTh = true;
     if (child["children"] !== undefined && !hasTh) {
@@ -159,7 +158,6 @@ function checkHeadersMatchId(table, headers) {
   for (let header of headers) {
     let headersOf = stew.select(table, "[id/=/$header]");
     if (headersOf !== undefined) {
-      console.log(headersOf);
       if (headers.length === 1 && headersOf.attribs.headers === undefined) {
         outcome = true;
       } else {
