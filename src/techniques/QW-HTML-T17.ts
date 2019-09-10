@@ -144,7 +144,6 @@ export {
 function isDataTable(children) {
   let hasTh = false;
   for (let child of children) {
-    console.log(child);
     if (child["name"] === "th")
       hasTh = true;
     if (child["children"] !== undefined && !hasTh) {
@@ -158,13 +157,16 @@ function checkHeadersMatchId(table, headers) {
   let outcome = false;
   let result;
   for (let header of headers) {
-    let headersOf = stew.select(table, `[id/=/"${header}"]`);
+    let headersOf = stew.select(table, `[id=\"${header}\"]`);
+    console.log(headersOf);
+    console.log("------------ OIOIOI -------------");
+    console.log(headersOf.attribs.headers);
     if (headersOf !== undefined) {
       if (headers.length === 1 && headersOf.attribs.headers === undefined) {
         outcome = true;
       } else {
         for (let head of headersOf.attribs.headers.split(" ")) {
-          if (headers.indexOf(head) >= 0 && head != header) {
+          if (headers.indexOf(head) >= 0 && head !== header) {
             result++;
           }
         }
