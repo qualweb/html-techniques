@@ -13,6 +13,7 @@ import {
   getElementSelector,
   transform_element_into_html
 } from '../util';
+const stew = new(require('stew-select')).Stew();
 
 const technique: HTMLTechnique = {
   name: 'Using id and headers attributes to associate data cells with header cells in data tables',
@@ -21,15 +22,14 @@ const technique: HTMLTechnique = {
   description: 'This technique checks if data cells are associated with header cells in data tables',
   metadata: {
     target: {
-      parent: 'table',
-      element: 'td'
+      element: 'table'
     },
     'success-criteria': [{
-        name: '1.3.1',
-        level: 'A',
-        principle: 'Perceivable',
-        url: 'https://www.w3.org/TR/2016/NOTE-UNDERSTANDING-WCAG20-20161007/content-structure-separation-programmatic.html'
-      }
+      name: '1.3.1',
+      level: 'A',
+      principle: 'Perceivable',
+      url: 'https://www.w3.org/TR/2016/NOTE-UNDERSTANDING-WCAG20-20161007/content-structure-separation-programmatic.html'
+    }
     ],
     related: [],
     url: 'https://www.w3.org/TR/WCAG20-TECHS/H43.html',
@@ -40,7 +40,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult> ()
+  results: new Array<HTMLTechniqueResult>()
 };
 
 function getTechniqueMapping(): string {
@@ -57,7 +57,7 @@ function hasPrincipleAndLevels(principles: string[], levels: string[]): boolean 
   return has;
 }
 
-async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
+async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
 
   if (element === undefined) {
     return;
@@ -68,22 +68,24 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
     description: ''
   };
 
-  if (element.attribs === undefined) { // fails if the element doesn't contain an alt attribute
-    evaluation.verdict = 'failed';
-    evaluation.description = `The element doesn't contain an alt attribute`;
-    technique.metadata.failed++;
-  } else if (element.attribs['alt'] === undefined) { // fails if the element doesn't contain an alt attribute
-    evaluation.verdict = 'failed';
-    evaluation.description = `The element doesn't contain an alt attribute`;
-    technique.metadata.failed++;
-  } else if (element.attribs['alt'] === '') { // fails if the element's alt attribute value is empty
-    evaluation.verdict = 'failed';
-    evaluation.description = `The element's alt attribute value is empty`;
-    technique.metadata.failed++;
-  } else { // the element contains an non-empty alt attribute, and it's value needs to be verified
-    evaluation.verdict = 'warning';
-    evaluation.description = 'Please verify the alt attribute value describes correctly the correspondent area of the image';
-    technique.metadata.warning++;
+  // if is layout table = there is not a th
+  if (!isDataTable(element.children)) {
+    evaluation.verdict = 'inapplicable';
+    evaluation.description = 'This table is a layout table';
+    technique.metadata.inapplicable++;
+  } else {
+    //TODO verificar se ids sao unique ou nao?
+    //TODO e se houver tds sem headers?
+    let headersElements = stew.select(element.children, "[headers]");
+    if (checkHeadersMatchId(element, headersElements)){
+      evaluation.verdict = 'passed';
+      evaluation.description = 'id and headers attributes are correctly used to correlate data cells to data headers';
+      technique.metadata.passed++;
+    } else {
+      evaluation.verdict = 'failed';
+      evaluation.description = 'id and headers attributes are not correctly used';
+      technique.metadata.failed++;
+    }
   }
 
   evaluation.code = transform_element_into_html(element);
@@ -137,3 +139,41 @@ export {
   getFinalResults,
   reset
 };
+
+function isDataTable(children) {
+  let hasTh = false;
+  for (let child of children) {
+    console.log(child["name"]);
+    if (child["name"] === "th")
+      hasTh = true;
+    if (child["children"] !== undefined && !hasTh) {
+      hasTh = isDataTable(child["children"]);
+    }
+  }
+  return hasTh;
+}
+
+function checkHeadersMatchId(table, headers) {
+  let outcome = false;
+  let result;
+  for (let header of headers) {
+    let headersOf = stew.select(table, "[id/=/$header]");
+    if (headersOf !== undefined) {
+      console.log(headersOf);
+      if (headers.length === 1 && headersOf.attribs.headers === undefined) {
+        outcome = true;
+      } else {
+        for (let head of headersOf.attribs.headers.split(" ")) {
+          if (headers.indexOf(head) >= 0 && head != header) {
+            result++;
+          }
+        }
+        if (result === headersOf.attribs.headrs.split(" ").length) {
+          outcome = true;
+          break;
+        }
+      }
+    }
+  }
+  return outcome;
+}
