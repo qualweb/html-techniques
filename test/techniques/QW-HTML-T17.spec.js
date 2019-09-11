@@ -18,7 +18,11 @@ describe('Technique QW-HTML-T17', function() {
         {
             url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h43/passed2.html',
             outcome: 'passed'
-        }
+        },
+        {
+            url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h43/passed3.html',
+            outcome: 'passed'
+        },
     ];
 
     let i = 0;

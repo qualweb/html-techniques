@@ -13,7 +13,8 @@ import {
   getElementSelector,
   transform_element_into_html
 } from '../util';
-const stew = new(require('stew-select')).Stew();
+
+const stew = new (require('stew-select')).Stew();
 
 const technique: HTMLTechnique = {
   name: 'Using id and headers attributes to associate data cells with header cells in data tables',
@@ -66,7 +67,6 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
     verdict: '',
     description: ''
   };
-
   // if is layout table = there is not a th
   if (!isDataTable(element.children)) {
     evaluation.verdict = 'inapplicable';
@@ -75,7 +75,7 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
   } else {
     //TODO verificar se ids sao unique ou nao?
     //TODO e se houver tds sem headers?
-    let headersElements = stew.select(element.children, "[headers]");
+    let headersElements = stew.select(processedHTML, "[headers]");
     for (let headerElem of headersElements) {
       if (checkHeadersMatchId(element, headerElem.attribs.headers)) {
         evaluation.verdict = 'passed';
@@ -155,27 +155,37 @@ function isDataTable(children) {
 
 function checkHeadersMatchId(table, headers) {
   let outcome = false;
-  let result;
-  for (let header of headers) {
-    let headersOf = stew.select(table, `[id=\"${header}\"]`);
-    console.log(headersOf);
-    console.log("------------ OIOIOI -------------");
-    console.log(headersOf.attribs.headers);
-    if (headersOf !== undefined) {
-      if (headers.length === 1 && headersOf.attribs.headers === undefined) {
+  let result = 0;
+  let splitHeaders = headers.split(" ");
+  for (let header of splitHeaders) {
+    let matchingIdElem = stew.select(table, '[id="' + header + '"]')[0];
+    //console.log(header + " | " + matchingIdElem.name + " - " + matchingIdElem.attribs.id);
+    if (matchingIdElem !== undefined) {
+      let matchingIdElemHeaders = matchingIdElem.attribs.headers;
+      /*console.log("- " + matchingIdElemHeaders);
+      if(!matchingIdElemHeaders){
+        console.log(headers.split().length);
+      }*/
+      if (headers.split(" ").length === 1 && matchingIdElemHeaders === undefined) {
         outcome = true;
-      } else {
-        for (let head of headersOf.attribs.headers.split(" ")) {
-          if (headers.indexOf(head) >= 0 && head !== header) {
+      } else if (matchingIdElemHeaders !== undefined) {
+        for (let headerIdElem of matchingIdElemHeaders.split(" ")) {
+          /*console.log("-- " + headerIdElem);
+          console.log(headers.split(" ").indexOf(headerIdElem));
+          console.log(splitHeaders);
+          console.log("ohoh " + headerIdElem + " - " + header); */
+          if (splitHeaders.indexOf(headerIdElem) >= 0 && headerIdElem !== header) {
             result++;
           }
         }
-        if (result === headersOf.attribs.headrs.split(" ").length) {
+        if (result === matchingIdElemHeaders.split(" ").length) {
           outcome = true;
           break;
         }
       }
     }
   }
+  /*console.log("> " + outcome);
+  console.log("-------");*/
   return outcome;
 }
