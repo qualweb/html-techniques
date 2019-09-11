@@ -3,7 +3,8 @@
 import {DomElement} from 'htmlparser2';
 import html from 'htmlparser-to-html';
 import _ from 'lodash';
-const stew = new(require('stew-select')).Stew();
+
+const stew = new (require('stew-select')).Stew();
 
 
 function getSelfLocationInParent(element: DomElement): string {
@@ -90,6 +91,7 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 
     return html(codeElement);
 }
+
 //Falta E,F
 function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean): string {
 
@@ -103,7 +105,6 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
     let textElement = getText(element);
     let title;
     let hasRolePresentOrNone = false;
-    let toolTip;
 
     if (!noAttributes) {
         isHidden = elementIsHidden(element, noAttributes);
@@ -122,32 +123,34 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         return getAccessibleName(getElementById(ariaLabelBy, processedHTML), processedHTML, true);
     } else if (_.trim(ariaLabel) !== "" && !(isEmbededControl && reference)) {//C
         return ariaLabel;
-    }else if(textAlternative != undefined && !hasRolePresentOrNone){//D
+    } else if (textAlternative != undefined && !hasRolePresentOrNone) {//D
         return textAlternative;
-    }else if(isControlWithinLabel(element,processedHTML) ){//E o q fazer se nao for nenhum dos roles?
+    } else if (isControl(element) && isEmbededControl(element, processedHTML)) {//E o q fazer se nao for nenhum dos roles?
         return getValueFromEmbededControl(element);
-    }else if (false){//F todo
+    } else if (allowsNameFromContent(element)||isReferenced) {//F todo
+        let textFromCss = getTextFromCss(element);
+        return getAccessibleNameFromChildren(element,textFromCss);
 
-    }else if (textElement !== ""){//G
+    } else if (textElement !== "") {//G
         return textElement;
-    }else if (title!== undefined){//I toolTip
+    } else if (title !== undefined) {//I toolTip
         return title;
     }
 
 }
 
 function elementIsHidden(element: DomElement): boolean {
-   // let styles = element.styles;
+    // let styles = element.styles;
 
 
-    let aria_hidden = Boolean(element.attribs["aria-hidden"]=;
+    let aria_hidden = Boolean(element.attribs["aria-hidden"] =;
     let hidden = Boolean(element.attribs["hidden"]);
     let displayNone = false;
-    if(element.attribs['computed-style']!== undefined)
-        displayNone = element.attribs['computed-style']['display']==='none';
+    if (element.attribs['computed-style'] !== undefined)
+        displayNone = element.attribs['computed-style']['display'] === 'none';
 
     let hasRolePresentOrNone = hasRolePresentationOrNone(element);
-    return hasRolePresentOrNone||displayNone||hidden||aria_hidden;
+    return hasRolePresentOrNone || displayNone || hidden || aria_hidden;
 }
 
 function elementIsReferenced(id: string, processedHTML: DomElement[]): boolean {
@@ -155,9 +158,9 @@ function elementIsReferenced(id: string, processedHTML: DomElement[]): boolean {
     let refrencedByAriaLabel = stew.select(processedHTML, `[aria-labelledby="${id}"]`);
     let refrencedByDecribeAriaLabel = stew.select(processedHTML, `[aria-describedby="${id}"]`);
     let refrencedByLabel = stew.select(processedHTML, `label[for="${id}"]`);
-    let refrencedByheader = stew.select(processedHTML, `object[id="${id}"]>param`);
+    // let refrencedByheader = stew.select(processedHTML, `object[id="${id}"]>param`);
 
-    return refrencedByAriaLabel.length !== 0 || refrencedByDecribeAriaLabel.length !== 0 || refrencedByLabel.length !== 0 || refrencedByheader.length !== 0;
+    return refrencedByAriaLabel.length !== 0 || refrencedByDecribeAriaLabel.length !== 0 || refrencedByLabel.length !== 0;
 
 }
 
@@ -168,23 +171,47 @@ function getElementById(id: string, processedHTML: DomElement[]): DomElement {
 
 }
 
-function isEmbededControl(element: DomElement): boolean {//stew
+function isEmbededControl(element: DomElement, processedHTML: DomElement[], id): boolean {//stew
+
+    let refrencedByAriaLabel = stew.select(processedHTML, `[aria-labelledby="${id}"]`);
+    let refrencedByLabel = stew.select(processedHTML, `label[for="${id}"]`);
+    let withinLabel = withingLabelOfWidget(element);
+
+    let referenced;
+    let result = false;
+
+    if (refrencedByAriaLabel.length !== 0) {
+        referenced = refrencedByAriaLabel[0];
+        result = isWidget(referenced);
+
+    } else if (refrencedByLabel.length !== 0) {
+
+        referenced = refrencedByLabel[0];
+        result = isWidget(referenced);
+
+    }else if(withinLabel!== undefined){
+        result = true;
+    }
+
+    return result;
+
 
 }
 
-function getTextAlternative(element: DomElement,processedHTML: DomElement[]): string {//alt , title,label, fig capition  se for object procurar params
+function getTextAlternative(element: DomElement, processedHTML: DomElement[]): string {//alt , title,label, fig capition  se for object procurar params
 
-    let id =  element.attribs.id;
-    let alt = element.attribs.alt;,
+    let id = element.attribs.id;
+    let alt = element.attribs.alt;
+,
     let title = element.attribs.title;
 
-    let labelContent = stew.select(processedHTML,`label[for=${id}"]`);
+    let labelContent = stew.select(processedHTML, `label[for=${id}"]`);
 
-    if(alt !== undefined && _.trim(alt)!== "")
+    if (alt !== undefined && _.trim(alt) !== "")
         return alt;
-    else if (title !== undefined && _.trim(title)!== "")
+    else if (title !== undefined && _.trim(title) !== "")
         return title;
-    else if (labelContent !== undefined && _.trim(labelContent)!== "")
+    else if (labelContent !== undefined && _.trim(labelContent) !== "")
         return labelContent;
     else
         return "";
@@ -193,31 +220,100 @@ function getTextAlternative(element: DomElement,processedHTML: DomElement[]): st
 
 
 function hasRolePresentationOrNone(element: DomElement): boolean {//stew
-    return element.attribs.role === "none"|| element.attribs.role === "presentation";
+    return element.attribs.role === "none" || element.attribs.role === "presentation";
 
 }
-function isControlWithinLabel (element: DomElement, processedHTML: DomElement[]): boolean {
 
-}
+
 function getValueFromEmbededControl(element: DomElement): string {//stew
+    let role = element.attribs.role;
+    let value = "";
+
+
+    if(role === "textbox"&&element.children!== undefined){
+        value = element.children[0].data;
+    }
+    else if(role === "button"&&element.children!== undefined){
+        value = element.children[0].data;
+    }
+    else if(role === "combobox"){//TODO
+    }
+    else if(role === "listbox"){
+        //TODO
+    }
+    else {//range
+        if(element.attribs["aria-valuetext"]!==undefined)
+            value = element.attribs["aria-valuetext"];
+        else if(element.attribs["aria-valuenow"]!==undefined)
+            value = element.attribs["aria-valuenow"];
+        else {//alt
+            //TODO
+        }
+
+    }
+
 
 }
 
 function getText(element: DomElement): string {
     let result = "";
-    if(element.children=== undefined)
+    if (element.children === undefined)
         return result;
-    for(let text of element.children){
-        if(text.name==="text")
+    for (let text of element.children) {
+        if (text.name === "text")
             result = text.data;
     }
 
     return result;
 }
 
+function isWidget(element: DomElement): boolean {
+
+    let widgetRoles = ["button"];
+
+    if(element.attribs=== undefined)
+        return false;
+
+    let role = element.attribs.role;
+
+    return widgetRoles.indexOf(role)>=0;
+}
+
+function isControl(element: DomElement): boolean {
+
+    let controlRoles = ["textbox"];
+
+    if(element.attribs=== undefined)
+        return false;
+
+    let role = element.attribs.role;
+
+    return controlRoles.indexOf(role)>=0
 
 
+}
+function withingLabelOfWidget(element: DomElement): DomElement {
 
+}
+
+function allowsNameFromContent(element: DomElement): boolean {
+    let nameFromContentRoles = ["button"];
+
+    if(element.attribs=== undefined)
+        return false;
+
+    let role = element.attribs.role;
+
+    return nameFromContentRoles.indexOf(role)>=0;
+}
+
+function getTextFromCss(element: DomElement): string {
+
+}
+
+function getAccessibleNameFromChildren(element: DomElement,acumulatedText:string): string {
+
+}
 export {
     getAccessibleName,
     getElementSelector,
