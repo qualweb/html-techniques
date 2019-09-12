@@ -144,7 +144,7 @@ export {
 function isDataTable(children) {
   let dataTable = false;
   for (let child of children) {
-    if (child["name"] === "th" || (child["attribs"] && child["attribs"]["id"]))
+    if (child["name"] === "th")
       dataTable = true;
     if (child["children"] !== undefined && !dataTable) {
       dataTable = isDataTable(child["children"]);
