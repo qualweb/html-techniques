@@ -10,7 +10,7 @@ import {
 } from 'htmlparser2';
 
 import {
-  getElementSelector,
+  getElementSelector, isDataTable,
   transform_element_into_html
 } from '../util';
 
@@ -67,8 +67,8 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
     verdict: '',
     description: ''
   };
-  // if is layout table = there is not a th
-  if (!isDataTable(element.children)) {
+
+  if (!isDataTable(element)) {
     evaluation.verdict = 'inapplicable';
     evaluation.description = 'This table is a layout table';
     technique.metadata.inapplicable++;
@@ -140,18 +140,6 @@ export {
   getFinalResults,
   reset
 };
-
-function isDataTable(children) {
-  let dataTable = false;
-  for (let child of children) {
-    if (child["name"] === "th")
-      dataTable = true;
-    if (child["children"] !== undefined && !dataTable) {
-      dataTable = isDataTable(child["children"]);
-    }
-  }
-  return dataTable;
-}
 
 function checkHeadersMatchId(table, headers) {
   let outcome = false;

@@ -1,8 +1,10 @@
 'use strict';
 
-import { DomElement } from 'htmlparser2';
+import {DomElement} from 'htmlparser2';
 import html from 'htmlparser-to-html';
 import _ from 'lodash';
+
+const stew = new (require('stew-select')).Stew();
 
 function getSelfLocationInParent(element: DomElement): string {
   let selector = '';
@@ -14,14 +16,14 @@ function getSelfLocationInParent(element: DomElement): string {
   let sameEleCount = 0;
 
   let prev = element.prev;
-  while(prev) {
-    if (prev.type === 'tag'&& prev.name === element.name) {
+  while (prev) {
+    if (prev.type === 'tag' && prev.name === element.name) {
       sameEleCount++;
     }
     prev = prev.prev;
   }
 
-  selector += `${element.name}:nth-of-type(${sameEleCount+1})`;
+  selector += `${element.name}:nth-of-type(${sameEleCount + 1})`;
 
   return selector;
 }
@@ -44,14 +46,14 @@ function getElementSelector(element: DomElement): string {
     parents.unshift(getSelfLocationInParent(parent));
     parent = parent.parent;
   }
-  
+
   selector += _.join(parents, ' > ');
   selector += ' > ' + getSelfLocationInParent(element);
 
   return selector;
 }
 
-function transform_element_into_html(element: DomElement, withText: boolean=true, fullElement: boolean=false): string {
+function transform_element_into_html(element: DomElement, withText: boolean = true, fullElement: boolean = false): string {
 
   if (!element) {
     return '';
@@ -85,11 +87,34 @@ function transform_element_into_html(element: DomElement, withText: boolean=true
       codeElement.children = [];
     }
   }
-  
+
   return html(codeElement);
+}
+
+function isDataTable(table: DomElement): boolean {
+
+  // based on https://www.w3.org/TR/WCAG20-TECHS/H43.html
+  // and https://fae.disability.illinois.edu/rulesets/TABLE_5/
+
+  let result = false;
+
+  //TODO chamar metodo de accessible name
+  let accessibleName = '';
+  let thElem = stew.select(table, 'th');
+  let tdHeaders = stew.select(table, 'td[scope]');
+  let tdWithHeaders = stew.select(table, 'td[headers]');
+  let idElem = stew.select(table, '[id]');
+  let notPresentation, describedBy;
+  if (table["attribs"]) {
+    notPresentation = table.attribs["role"] === undefined || table.attribs["role"] !== "presentation";
+    describedBy = Boolean(table["attribs"]["aria-describedby"]);
+  }
+  result = (!!accessibleName || thElem.length > 0 || tdHeaders.length > 0 || tdWithHeaders.length > 0 || idElem.length > 0 || notPresentation || describedBy);
+  return result;
 }
 
 export {
   getElementSelector,
-  transform_element_into_html
+  transform_element_into_html,
+  isDataTable
 };

@@ -23,6 +23,26 @@ describe('Technique QW-HTML-T17', function() {
             url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h43/passed3.html',
             outcome: 'passed'
         },
+        {
+            url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h43/tabelaData.html',
+            outcome: 'inapplicable'
+        },
+        {
+            url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h43/tabelaData2.html',
+            outcome: 'inapplicable'
+        },
+        {
+            url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h43/tabelaData3.html',
+            outcome: 'inapplicable'
+        },
+        {
+            url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h43/tabelaLayout.html',
+            outcome: 'inapplicable'
+        },
+        {
+            url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h43/tabelaLayout2.html',
+            outcome: 'inapplicable'
+        },
     ];
 
     let i = 0;
