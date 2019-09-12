@@ -1,6 +1,6 @@
 'use strict';
 
-import {DomElement} from 'htmlparser2';
+import {DomElement,DomUtils} from 'htmlparser2';
 import html from 'htmlparser-to-html';
 import _ from 'lodash';
 
@@ -236,10 +236,23 @@ function getValueFromEmbededControl(element: DomElement): string {//stew
     else if(role === "button"&&element.children!== undefined){
         value = element.children[0].data;
     }
-    else if(role === "combobox"){//TODO
+    else if(role === "combobox"){
+        let refrencedByLabel = stew.select(element, `[aria-activedescendant]`);
+        let aria_descendendant = refrencedByLabel.attribs["aria-activedescendant"];
+        let selectedElement = stew.select(element, `[id=/"${aria_descendendant}"/]`);
+        let value = DomUtils.getText(selectedElement);
     }
     else if(role === "listbox"){
-        //TODO
+        let elementsWithId = stew.select(element, `[id]`);
+
+        for(let elementWithId of elementsWithId){
+
+            let id =  elementWithId.attribs.id;
+            let selectedElement = stew.select(element, `[aria-activedescendant=/"${id}"/]`);
+
+            if(selectedElement!== undefined)
+                value = DomUtils.getText(elementsWithId);
+        }
     }
     else {//range
         if(element.attribs["aria-valuetext"]!==undefined)
@@ -269,7 +282,7 @@ function getText(element: DomElement): string {
 
 function isWidget(element: DomElement): boolean {
 
-    let widgetRoles = ["button"];
+    let widgetRoles = ["button","checkbox","gridcell","link","menuitem", "menuitemcheckbox", "menuitemradio","option","progressbar","radio","scrollbar","searchbox","separator","slider","spinbutton", "switch", "tab", "tabpanel","textbox", "treeitem"];
 
     if(element.attribs=== undefined)
         return false;
@@ -281,7 +294,7 @@ function isWidget(element: DomElement): boolean {
 
 function isControl(element: DomElement): boolean {
 
-    let controlRoles = ["textbox"];
+    let controlRoles = ["textbox","button","combobox","listbox","range"];
 
     if(element.attribs=== undefined)
         return false;
@@ -297,10 +310,11 @@ function withingLabelOfWidget(element: DomElement): DomElement {
 }
 
 function allowsNameFromContent(element: DomElement): boolean {
-    let nameFromContentRoles = ["button"];
 
     if(element.attribs=== undefined)
         return false;
+
+    let nameFromContentRoles = ["button","cell","checkbox","columnheader","gridcell","heading","link","menuitem","menuitemcheckbox","menuitemradio","option","radio","row","rowgroup","rowheader","switch","tab","tooltip","tree","treeitem"];
 
     let role = element.attribs.role;
 
@@ -308,7 +322,37 @@ function allowsNameFromContent(element: DomElement): boolean {
 }
 
 function getTextFromCss(element: DomElement): string {
+    let attribs = parseCSS (element);
+    if(!attribs){
+        return "";
+    }
+    let before = new RegExp('::before');
+    let after = new RegExp('::after');
 
+
+    for(let attrib of attribs ){
+        if(before.test(attrib)){
+
+        }else if(after.test(attrib)){
+
+        }
+
+
+    }
+
+    let after = attribs
+
+}
+
+function parseCSS (element: DomElement): string [] {
+    if(!element.attribs||!element.attribs["computed-styles"]){
+        return [];
+    }
+
+    let computedStyle = element.attribs["computed-styles"];
+
+    return computedStyle.split(";");
+    
 }
 
 function getAccessibleNameFromChildren(element: DomElement,acumulatedText:string): string {
