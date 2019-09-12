@@ -142,15 +142,15 @@ export {
 };
 
 function isDataTable(children) {
-  let hasTh = false;
+  let dataTable = false;
   for (let child of children) {
-    if (child["name"] === "th")
-      hasTh = true;
-    if (child["children"] !== undefined && !hasTh) {
-      hasTh = isDataTable(child["children"]);
+    if (child["name"] === "th" || (child["attribs"] && child["attribs"]["id"]))
+      dataTable = true;
+    if (child["children"] !== undefined && !dataTable) {
+      dataTable = isDataTable(child["children"]);
     }
   }
-  return hasTh;
+  return dataTable;
 }
 
 function checkHeadersMatchId(table, headers) {
