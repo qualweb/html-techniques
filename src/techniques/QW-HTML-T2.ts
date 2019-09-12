@@ -1,83 +1,60 @@
 'use strict';
 
-// requires
 import _ from 'lodash';
-const stew = new (require('stew-select')).Stew();
-const API = require('@apis/evaluation');
+import {
+	HTMLTechnique,
+	HTMLTechniqueResult
+} from '@qualweb/html-techniques';
+import {
+	DomElement
+} from 'htmlparser2';
 
-const technique = {
-	'name': 'Using caption elements to associate data table captions with data tables',
-	'code': 'H39',
-	'metadata': {
-		'target': {
-			'element': 'table'
+import {
+	getElementSelector,
+	transform_element_into_html
+} from '../util';
+
+const technique: HTMLTechnique = {
+	name: 'Using caption elements to associate data table captions with data tables',
+	code: 'QW-HTML-T2',
+	mapping: 'H39',
+	description: 'This technique checks the caption element is correcly use on tables',
+	metadata: {
+		target: {
+			element: 'table'
 		},
-		'success-criteria': [
-			{
-				'name': '1.3.1',
-				'level': 'A',
-				'principle': 'Perceivable'
+		'success-criteria': [{
+				name: '1.3.1',
+				level: 'A',
+				principle: 'Perceivable',
+				url: 'https://www.w3.org/TR/2016/NOTE-UNDERSTANDING-WCAG20-20161007/content-structure-separation-programmatic.html'
 			}
 		],
-		'related': ['H51', 'H73', 'F46'],
-		'url': 'https://www.w3.org/WAI/WCAG21/Techniques/html/H39',
-		'success': 0,
-		'warning': 0,
-		'failed': 0,
-		'errorCodes' : []
+		related: ['H51', 'H73', 'F46'],
+		url: 'https://www.w3.org/TR/WCAG20-TECHS/H39.html',
+		passed: 0,
+		warning: 0,
+		failed: 0,
+		inapplicable: 0,
+		outcome: '',
+		description: '',
 	},
-	'data': []
+	results: new Array<HTMLTechniqueResult>()
 };
 
-exports.hasPrincipleAndLevels = (principles, lvls) => {
-  let has = false;
-  for (let sc of technique.metadata['success-criteria']) {
-    if (_.includes(principles, sc.principle) && _.includes(lvls, sc.level)) {
-      has = true;
-    }
-  }
-  return has;
+function getTechniqueMapping(): string {
+	return technique.mapping;
 }
 
-exports.evaluate = async (elem, dom) => {
-
-	const evaluation = {
-		'verdict': '',
-		'description': [],
-		'metadata':[]
-	};
-
-	if (elem !== undefined) {
-		if (!verifyCaptionExistence(elem)){
-			evaluation['verdict'] = 'failed';
-			evaluation['description'].push('The caption does not exist in the table element');
-			technique['metadata']['errorCodes'].push(['0.1','caption']);
-			technique['metadata']['failed']++;
-
+function hasPrincipleAndLevels(principles: string[], levels: string[]): boolean {
+	let has = false;
+	for (const sc of technique.metadata['success-criteria'] || []) {
+		if (principles.includes(sc.principle) && levels.includes(sc.level)) {
+			has = true;
 		}
-		if (verifyCaptionContent(elem)){
-			evaluation['verdict'] = 'failed';
-			evaluation['description'].push('The caption is empty');
-			technique['metadata']['errorCodes'].push(['0.2','caption']);
-			technique['metadata']['failed']++;
-		}
-		if(technique.metadata.failed == 0){
-			evaluation['verdict'] = 'warning';
-			evaluation['description'].push('Please verify that the caption element identifies the table correctly.');
-			technique['metadata']['errorCodes'].push(['39.1','Please check that the content of the caption element identifies the table correctly.']);
-			technique['metadata']['warning']++;
-		}
-
-	} else {
-		return;
 	}
-
-	evaluation['repair'] = {};
-
-	technique['data'].push(evaluation);
-	
+	return has;
 }
-
 
 function verifyCaptionExistence(elem){
 	const childs = elem.children;
@@ -94,24 +71,95 @@ function verifyCaptionContent(elem){
 	if(children !== undefined) {
 		for (let i = 0; i < children.length; i++) {
 			if (children[i] !== undefined && children[i].name === 'caption') {
-				return children[i].children[0].data.replace(/\s+/g, '') === '';
+				return (children[i].children[0] !== undefined) ? children[i].children[0].data.trim() === '' : false;
 			}
 		}
 	}
 	return false;
 }
 
-exports.getFinalResults = () => {
-	return technique;
+
+async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
+
+	if (element === undefined) {
+		return;
+	}
+
+	const evaluation: HTMLTechniqueResult = {
+		verdict: '',
+		description: '',
+		resultCode: ''
+	};
+
+	if (!verifyCaptionExistence(element)){
+		evaluation.verdict = 'failed';
+		evaluation.description = 'The caption does not exist in the table element';
+		evaluation.resultCode = 'RC1';
+		technique.metadata.failed++;
+
+	}
+	if (verifyCaptionContent(element)){
+		evaluation.verdict = 'failed';
+		evaluation.description = 'The caption is empty';
+		evaluation.resultCode = 'RC2';
+		technique.metadata.failed++;
+	}
+	if(technique.metadata.failed == 0){
+		evaluation.verdict = 'warning';
+		evaluation.description = 'Please verify that the caption element identifies the table correctly.';
+		evaluation.resultCode = 'RC3';
+		technique.metadata.warning++;
+	}
+
+
+	evaluation.htmlCode = transform_element_into_html(element);
+	evaluation.pointer = getElementSelector(element);
+
+	technique.results.push(_.clone(evaluation));
 }
 
-/**
- * Resets the technique evaluation
- */
-exports.reset = () => {
-	technique.metadata.success = 0;
-	technique.metadata.failed = 0;
-	technique.metadata.warning = 0;
-	technique.metadata.errorCodes = [];
-	technique.data = [];
+function getFinalResults() {
+	outcomeTechnique();
+	return _.cloneDeep(technique);
 }
+
+function reset(): void {
+	technique.metadata.passed = 0;
+	technique.metadata.warning = 0;
+	technique.metadata.failed = 0;
+	technique.metadata.inapplicable = 0;
+	technique.results = new Array<HTMLTechniqueResult>();
+}
+
+function outcomeTechnique(): void {
+	if (technique.metadata.failed > 0) {
+		technique.metadata.outcome = 'failed';
+	} else if (technique.metadata.warning > 0) {
+		technique.metadata.outcome = 'warning';
+	} else if (technique.metadata.passed > 0) {
+		technique.metadata.outcome = 'passed';
+	} else {
+		technique.metadata.outcome = 'inapplicable';
+	}
+
+	if (technique.results.length > 0) {
+		addDescription();
+	}
+}
+
+function addDescription(): void {
+	for (const result of technique.results || []) {
+		if (result.verdict === technique.metadata.outcome) {
+			technique.metadata.description = <string> result.description;
+			break;
+		}
+	}
+}
+
+export {
+	getTechniqueMapping,
+	hasPrincipleAndLevels,
+	execute,
+	getFinalResults,
+	reset
+};

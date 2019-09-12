@@ -11,12 +11,17 @@ import mapping from './techniques/mapping.json';
 
 import * as QW_HTML_T1 from './techniques/QW-HTML-T1';
 
+import * as QW_HTML_T2 from './techniques/QW-HTML-T2';
+
 const techniques = {
-  'QW-HTML-T1': QW_HTML_T1
+  'QW-HTML-T1': QW_HTML_T1,
+  'QW-HTML-T2': QW_HTML_T2
+
 };
 
 const techniques_to_execute = {
-  'QW-HTML-T1': true
+  'QW-HTML-T1': false,
+  'QW-HTML-T2': true
 };
 
 function configure(options: HTMLTOptions): void {
@@ -89,7 +94,7 @@ async function executeHTMLT(sourceHTML: DomElement[], processedHTML: DomElement[
         } else {
           await techniques[technique].execute(undefined, sourceHTML);
         }
-        report[technique] = techniques[technique].getFinalResults();
+        report.techniques[technique] = techniques[technique].getFinalResults();
         report.metadata[report.techniques[technique].metadata.outcome]++;
         techniques[technique].reset();
       }
@@ -110,7 +115,7 @@ async function executeHTMLT(sourceHTML: DomElement[], processedHTML: DomElement[
         } else {
           await techniques[technique].execute(undefined, processedHTML);
         }
-        report[technique] = techniques[technique].getFinalResults();
+        report.techniques[technique] = techniques[technique].getFinalResults();
         report.metadata[report.techniques[technique].metadata.outcome]++;
         techniques[technique].reset();
       }
