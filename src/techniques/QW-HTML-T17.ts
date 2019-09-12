@@ -73,9 +73,9 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
     evaluation.description = 'This table is a layout table';
     technique.metadata.inapplicable++;
   } else {
-    //TODO verificar se ids sao unique ou nao?
+    //TODO verificar se ids sao unique ou nao? - usar htmlvalidator
     //TODO e se houver tds sem headers?
-    let headersElements = stew.select(processedHTML, "[headers]");
+    let headersElements = stew.select(element, "[headers]");
     for (let headerElem of headersElements) {
       if (checkHeadersMatchId(element, headerElem.attribs.headers)) {
         evaluation.verdict = 'passed';
