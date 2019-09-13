@@ -78,7 +78,7 @@ abstract class Technique {
   private addDescription(): void {
     for (const result of this.technique.results || []) {
       if (result.verdict === this.technique.metadata.outcome) {
-        this.technique.metadata.description = result.description;
+        this.technique.metadata.description = <string> result.description;
         break;
       }
     }

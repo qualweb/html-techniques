@@ -71,7 +71,8 @@ class QW_HTML_T1 extends Technique {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
-      description: ''
+      description: '',
+      resultCode: ''
     };
 
     if (element.attribs === undefined) { // fails if the element doesn't contain an alt attribute
@@ -88,7 +89,7 @@ class QW_HTML_T1 extends Technique {
       evaluation.description = 'Please verify the alt attribute value describes correctly the correspondent area of the image';
     }
 
-    evaluation.code = transform_element_into_html(element);
+    evaluation.htmlCode = transform_element_into_html(element);
     evaluation.pointer = getElementSelector(element);
     
 
