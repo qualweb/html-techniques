@@ -8,10 +8,10 @@ import {
 import {
   DomElement
 } from 'htmlparser2';
-
 import {
   getElementSelector,
-  transform_element_into_html
+  transform_element_into_html,
+  getAccessibleName
 } from '../util';
 
 const technique: HTMLTechnique = {
@@ -72,35 +72,20 @@ function hasPrincipleAndLevels(principles: string[], levels: string[]): boolean 
 
 async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
 
-  console.log(element);
-
+  console.log("teste");
   if (element === undefined) {
     return;
   }
+  console.log(element);
+  try{console.log(getAccessibleName(element,processedHTML,false));}catch(e){console.log("erro");} 
+  
 
   const evaluation: HTMLTechniqueResult = {
     verdict: '',
     description: ''
   };
 
-  if (element.attribs === undefined) { // fails if the element doesn't contain an alt attribute
-    evaluation.verdict = 'failed';
-    evaluation.description = `The element doesn't contain an alt attribute`;
-    technique.metadata.failed++;
-  } else if (element.attribs['alt'] === undefined) { // fails if the element doesn't contain an alt attribute
-    evaluation.verdict = 'failed';
-    evaluation.description = `The element doesn't contain an alt attribute`;
-    technique.metadata.failed++;
-  } else if (element.attribs['alt'] === '') { // fails if the element's alt attribute value is empty
-    evaluation.verdict = 'failed';
-    evaluation.description = `The element's alt attribute value is empty`;
-    technique.metadata.failed++;
-  } else { // the element contains an non-empty alt attribute, and it's value needs to be verified
-    evaluation.verdict = 'warning';
-    evaluation.description = 'Please verify the alt attribute value describes correctly the correspondent area of the image';
-    technique.metadata.warning++;
-  }
-
+  
   evaluation.code = transform_element_into_html(element);
   evaluation.pointer = getElementSelector(element);
 

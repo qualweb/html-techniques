@@ -95,16 +95,18 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 //Falta E,F
 function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean): string {
 
+    if(!element.attribs)
+        return "";
 
-    let noAttributes = element.attribs === undefined;
-    let isHidden,id,ariaLabelBy, ariaLabel, isReferenced,isEmbededControl,isControl,textAlternative,nameFromContent;
+
+    let isHidden,id,ariaLabelBy, ariaLabel, isReferenced,isEmbededControl,isControle,textAlternative,nameFromContent;
     let textElement = getText(element);
     let title;
     let hasRolePresentOrNone = false;
 
-    if (!noAttributes) {
+ 
         nameFromContent = allowsNameFromContent(element);
-        isControl = isControl(element);
+        isControle = isControl(element);
         isEmbededControl = isEmbededinWidget(element, processedHTML,id);
         isHidden = elementIsHidden(element);
         id = element.attribs["id"];
@@ -115,17 +117,17 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         hasRolePresentOrNone = hasRolePresentationOrNone(element);
         title = element.attribs.title;
 
-    }
+    
 
     if (isHidden && !reference && !isReferenced) {//A
         return "";
     } else if (ariaLabelBy !== undefined && !reference) {//B
         return getAccessibleName(getElementById(ariaLabelBy, processedHTML), processedHTML, true);
-    } else if (_.trim(ariaLabel) !== "" && !(isControl && isEmbededControl && reference)) {//C
+    } else if (_.trim(ariaLabel) !== "" && !(isControle && isEmbededControl && reference)) {//C
         return ariaLabel;
     } else if (textAlternative != undefined && !hasRolePresentOrNone) {//D
         return textAlternative;
-    } else if (isControl && isEmbededControl) {//E
+    } else if (isControle && isEmbededControl) {//E
         return getValueFromEmbededControl(element);
     } else if (nameFromContent||isReferenced) {//F todo
        // let textFromCss = getTextFromCss(element);
@@ -135,19 +137,24 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         return textElement;
     } else if (title !== undefined) {//I toolTip
         return title;
+    }else{
+        return "";
     }
 
 }
 
 function elementIsHidden(element: DomElement): boolean {
     // let styles = element.styles;
+    if(!element.attribs)
+        return false;
 
 
-    let aria_hidden = Boolean(element.attribs["aria-hidden"] =;
+    let aria_hidden = Boolean(element.attribs["aria-hidden"]);
     let hidden = Boolean(element.attribs["hidden"]);
     let displayNone = false;
-    if (element.attribs['computed-style'] !== undefined)
-        displayNone = element.attribs['computed-style']['display'] === 'none';
+    //fixme css parser
+    //if (element.attribs['computed-style'] !== undefined)
+        //displayNone = element.attribs['computed-style']['display'] === 'none';
 
     let hasRolePresentOrNone = hasRolePresentationOrNone(element);
     return hasRolePresentOrNone || displayNone || hidden || aria_hidden;
@@ -189,9 +196,9 @@ function isEmbededinWidget(element: DomElement, processedHTML: DomElement[], id)
         referenced = refrencedByLabel[0];
         result = isWidget(referenced);
 
-    }else if(withinLabel!== undefined){
+    }else {
 
-        result = isWidget(withinLabel);
+        result = withinLabel;
     }
 
     return result;
@@ -200,10 +207,12 @@ function isEmbededinWidget(element: DomElement, processedHTML: DomElement[], id)
 }
 
 function getTextAlternative(element: DomElement, processedHTML: DomElement[]): string {//alt , title,label, fig capition  se for object procurar params
+    if(!element.attribs)
+        return "";
 
     let id = element.attribs.id;
     let alt = element.attribs.alt;
-,
+
     let title = element.attribs.title;
 
     let labelContent = stew.select(processedHTML, `label[for=${id}"]`);
@@ -221,12 +230,15 @@ function getTextAlternative(element: DomElement, processedHTML: DomElement[]): s
 
 
 function hasRolePresentationOrNone(element: DomElement): boolean {//stew
-    return element.attribs.role === "none" || element.attribs.role === "presentation";
+    return !!element.attribs && (element.attribs.role === "none" || element.attribs.role === "presentation");
 
 }
 
 
 function getValueFromEmbededControl(element: DomElement): string {//stew
+    if(!element.attribs)
+    return "";
+    
     let role = element.attribs.role;
     let value = "";
 
@@ -241,7 +253,7 @@ function getValueFromEmbededControl(element: DomElement): string {//stew
         let refrencedByLabel = stew.select(element, `[aria-activedescendant]`);
         let aria_descendendant = refrencedByLabel.attribs["aria-activedescendant"];
         let selectedElement = stew.select(element, `[id=/"${aria_descendendant}"/]`);
-        let value = DomUtils.getText(selectedElement);
+        value = DomUtils.getText(selectedElement);
     }
     else if(role === "listbox"){
         let elementsWithId = stew.select(element, `[id]`);
@@ -265,6 +277,8 @@ function getValueFromEmbededControl(element: DomElement): string {//stew
         }
 
     }
+
+    return value;
 
 
 }
@@ -299,15 +313,19 @@ function isControl(element: DomElement): boolean {
 
 
 }
-function withingLabelOfWidget(element: DomElement): DomElement {
+function withingLabelOfWidget(element: DomElement): boolean {
 
       let parent = element.parent;
-      let text = DomUtils.getText(parent);
+      let text = "";
+      let widget = false;
 
-      if(text!== "" )
-        return parent;
-      else
-        return undefined;
+      if(parent!== undefined){
+        text = DomUtils.getText(parent);
+        widget = isWidget(parent);
+    }
+    
+
+      return text!== "" && widget;
 }
 
 
@@ -322,7 +340,7 @@ function allowsNameFromContent(element: DomElement): boolean {
 
     return nameFromContentRoles.indexOf(role)>=0;
 }
-
+/*
 function getTextFromCss(element: DomElement): string {
     let attribs = parseCSS (element);
     if(!attribs){
@@ -342,7 +360,7 @@ function getTextFromCss(element: DomElement): string {
 
     }
 
-    let after = attribs
+    return "";
 
 }
 
@@ -359,7 +377,7 @@ function parseCSS (element: DomElement): string [] {
 
 function getAccessibleNameFromChildren(element: DomElement,acumulatedText:string): string {
 
-}
+}*/
 export {
     getAccessibleName,
     getElementSelector,
