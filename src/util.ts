@@ -97,22 +97,22 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
 
 
     let noAttributes = element.attribs === undefined;
-    let isHidden;
-    let id, ariaLabelBy, ariaLabel;
-    let isReferenced = elementIsReferenced(id, processedHTML);
-    let isEmbededControl = isEmbededControl(element);
-    let textAlternative;
+    let isHidden,id,ariaLabelBy, ariaLabel, isReferenced,isEmbededControl,isControl,textAlternative,nameFromContent;
     let textElement = getText(element);
     let title;
     let hasRolePresentOrNone = false;
 
     if (!noAttributes) {
-        isHidden = elementIsHidden(element, noAttributes);
+        nameFromContent = allowsNameFromContent(element);
+        isControl = isControl(element);
+        isEmbededControl = isEmbededinWidget(element, processedHTML,id);
+        isHidden = elementIsHidden(element);
         id = element.attribs["id"];
+        isReferenced = elementIsReferenced(id, processedHTML);
         ariaLabelBy = getElementById(element.attribs["ariaLabelBy"], processedHTML) === [] ? undefined : element.attribs["ariaLabelBy"];
         ariaLabel = element.attribs["ariaLabel"];
-        textAlternative = getTextAlternative(element);
-        hasRolePresentOrNone = hasRolePresentationOrNone();
+        textAlternative = getTextAlternative(element,processedHTML);
+        hasRolePresentOrNone = hasRolePresentationOrNone(element);
         title = element.attribs.title;
 
     }
@@ -121,16 +121,16 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         return "";
     } else if (ariaLabelBy !== undefined && !reference) {//B
         return getAccessibleName(getElementById(ariaLabelBy, processedHTML), processedHTML, true);
-    } else if (_.trim(ariaLabel) !== "" && !(isEmbededControl && reference)) {//C
+    } else if (_.trim(ariaLabel) !== "" && !(isControl && isEmbededControl && reference)) {//C
         return ariaLabel;
     } else if (textAlternative != undefined && !hasRolePresentOrNone) {//D
         return textAlternative;
-    } else if (isControl(element) && isEmbededControl(element, processedHTML)) {//E o q fazer se nao for nenhum dos roles?
+    } else if (isControl && isEmbededControl) {//E
         return getValueFromEmbededControl(element);
-    } else if (allowsNameFromContent(element)||isReferenced) {//F todo
-        let textFromCss = getTextFromCss(element);
-        return getAccessibleNameFromChildren(element,textFromCss);
-
+    } else if (nameFromContent||isReferenced) {//F todo
+       // let textFromCss = getTextFromCss(element);
+       // return getAccessibleNameFromChildren(element,textFromCss);
+       return  "waiting for fix";
     } else if (textElement !== "") {//G
         return textElement;
     } else if (title !== undefined) {//I toolTip
@@ -171,7 +171,7 @@ function getElementById(id: string, processedHTML: DomElement[]): DomElement {
 
 }
 
-function isEmbededControl(element: DomElement, processedHTML: DomElement[], id): boolean {//stew
+function isEmbededinWidget(element: DomElement, processedHTML: DomElement[], id): boolean {//stew
 
     let refrencedByAriaLabel = stew.select(processedHTML, `[aria-labelledby="${id}"]`);
     let refrencedByLabel = stew.select(processedHTML, `label[for="${id}"]`);
@@ -190,7 +190,8 @@ function isEmbededControl(element: DomElement, processedHTML: DomElement[], id):
         result = isWidget(referenced);
 
     }else if(withinLabel!== undefined){
-        result = true;
+
+        result = isWidget(withinLabel);
     }
 
     return result;
@@ -269,15 +270,8 @@ function getValueFromEmbededControl(element: DomElement): string {//stew
 }
 
 function getText(element: DomElement): string {
-    let result = "";
-    if (element.children === undefined)
-        return result;
-    for (let text of element.children) {
-        if (text.name === "text")
-            result = text.data;
-    }
 
-    return result;
+    return DomUtils.getText(element);
 }
 
 function isWidget(element: DomElement): boolean {
@@ -307,7 +301,15 @@ function isControl(element: DomElement): boolean {
 }
 function withingLabelOfWidget(element: DomElement): DomElement {
 
+      let parent = element.parent;
+      let text = DomUtils.getText(parent);
+
+      if(text!== "" )
+        return parent;
+      else
+        return undefined;
 }
+
 
 function allowsNameFromContent(element: DomElement): boolean {
 
