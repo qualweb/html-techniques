@@ -72,12 +72,11 @@ function hasPrincipleAndLevels(principles: string[], levels: string[]): boolean 
 
 async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
 
-  console.log("teste");
   if (element === undefined) {
     return;
   }
-  console.log(element);
-  try{console.log(getAccessibleName(element,processedHTML,false));}catch(e){console.log("erro");} 
+  console.log(element.name);
+  try{console.log("an ="+getAccessibleName(element,processedHTML,false));}catch(e){console.log(e);} 
   
 
   const evaluation: HTMLTechniqueResult = {

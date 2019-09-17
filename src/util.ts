@@ -95,50 +95,58 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 //Falta E,F
 function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean): string {
 
-    if(!element.attribs)
-        return "";
-
-
-    let isHidden,id,ariaLabelBy, ariaLabel, isReferenced,isEmbededControl,isControle,textAlternative,nameFromContent;
+    let isHidden,id,ariaLabelBy, ariaLabel,isControle,textAlternative,nameFromContent;
+    
     let textElement = getText(element);
+    
     let title;
-    let hasRolePresentOrNone = false;
+    let hasRolePresentOrNone,isEmbededControl,isReferenced = false;
 
- 
+    if(element.attribs){
+        title = element.attribs.title;
+        ariaLabelBy = getElementById(element.attribs["aria-labelledby"], processedHTML) ?  element.attribs["aria-labelledby"] : "";
+        ariaLabel = element.attribs["aria-label"];
+        id = element.attribs["id"];
         nameFromContent = allowsNameFromContent(element);
         isControle = isControl(element);
-        isEmbededControl = isEmbededinWidget(element, processedHTML,id);
         isHidden = elementIsHidden(element);
-        id = element.attribs["id"];
-        isReferenced = elementIsReferenced(id, processedHTML);
-        ariaLabelBy = getElementById(element.attribs["ariaLabelBy"], processedHTML) === [] ? undefined : element.attribs["ariaLabelBy"];
-        ariaLabel = element.attribs["ariaLabel"];
-        textAlternative = getTextAlternative(element,processedHTML);
+        textAlternative = getTextAlternative(element,processedHTML,id);
         hasRolePresentOrNone = hasRolePresentationOrNone(element);
-        title = element.attribs.title;
+    }  
 
+    if(id){
+        isEmbededControl = isEmbededinWidget(element, processedHTML,id);
+        isReferenced = elementIsReferenced(id, processedHTML);
+
+    }
+    console.log(element.name);
+    console.log("text"+textElement+"textAlt"+ textAlternative);
     
 
+    console.log(isHidden+"ref"+isReferenced);
+    console.log(ariaLabelBy);
+
     if (isHidden && !reference && !isReferenced) {//A
-        return "";
-    } else if (ariaLabelBy !== undefined && !reference) {//B
-        return getAccessibleName(getElementById(ariaLabelBy, processedHTML), processedHTML, true);
+        return ""+"A";
+    } else if (ariaLabelBy !== "" && !reference) {//B
+        console.log(getElementById(ariaLabelBy, processedHTML)[0]);
+        return getAccessibleName(getElementById(ariaLabelBy, processedHTML)[0], processedHTML, true)+"B";
     } else if (_.trim(ariaLabel) !== "" && !(isControle && isEmbededControl && reference)) {//C
-        return ariaLabel;
-    } else if (textAlternative != undefined && !hasRolePresentOrNone) {//D
-        return textAlternative;
+        return ariaLabel+"C";
+    } else if (textAlternative && !hasRolePresentOrNone) {//D
+        return textAlternative+"D";
     } else if (isControle && isEmbededControl) {//E
-        return getValueFromEmbededControl(element);
-    } else if (nameFromContent||isReferenced) {//F todo
+        return getValueFromEmbededControl(element)+"E";
+    } else if (false&&(nameFromContent||isReferenced)) {//F todo
        // let textFromCss = getTextFromCss(element);
        // return getAccessibleNameFromChildren(element,textFromCss);
        return  "waiting for fix";
     } else if (textElement !== "") {//G
-        return textElement;
+        return textElement+"G";
     } else if (title !== undefined) {//I toolTip
-        return title;
+        return title+"I";
     }else{
-        return "";
+        return "noname";
     }
 
 }
@@ -162,6 +170,7 @@ function elementIsHidden(element: DomElement): boolean {
 
 function elementIsReferenced(id: string, processedHTML: DomElement[]): boolean {
 
+
     let refrencedByAriaLabel = stew.select(processedHTML, `[aria-labelledby="${id}"]`);
     let refrencedByDecribeAriaLabel = stew.select(processedHTML, `[aria-describedby="${id}"]`);
     let refrencedByLabel = stew.select(processedHTML, `label[for="${id}"]`);
@@ -171,14 +180,16 @@ function elementIsReferenced(id: string, processedHTML: DomElement[]): boolean {
 
 }
 
-function getElementById(id: string, processedHTML: DomElement[]): DomElement {
+function getElementById(id: string|undefined, processedHTML: DomElement[]): DomElement[] {
+    let element;
+    if(id)
+        element = stew.select(processedHTML, '[id="'+id+'"]');
 
-    let element = stew.select(processedHTML, id);
     return element;
 
 }
 
-function isEmbededinWidget(element: DomElement, processedHTML: DomElement[], id): boolean {//stew
+function isEmbededinWidget(element: DomElement, processedHTML: DomElement[], id:string): boolean {//stew
 
     let refrencedByAriaLabel = stew.select(processedHTML, `[aria-labelledby="${id}"]`);
     let refrencedByLabel = stew.select(processedHTML, `label[for="${id}"]`);
@@ -206,23 +217,30 @@ function isEmbededinWidget(element: DomElement, processedHTML: DomElement[], id)
 
 }
 
-function getTextAlternative(element: DomElement, processedHTML: DomElement[]): string {//alt , title,label, fig capition  se for object procurar params
+function getTextAlternative(element: DomElement, processedHTML: DomElement[],id:string): string {//alt , title,label, fig capition  se for object procurar params
     if(!element.attribs)
         return "";
 
-    let id = element.attribs.id;
     let alt = element.attribs.alt;
 
     let title = element.attribs.title;
+    let labelContent;
 
-    let labelContent = stew.select(processedHTML, `label[for=${id}"]`);
+    console.log('label[for="'+ id+ '"]');
+    console.log(id);
+
+    if(id){
+     labelContent = stew.select(processedHTML, 'label[for="'+ id+ '"]');}
+
+     console.log(labelContent);
+
 
     if (alt !== undefined && _.trim(alt) !== "")
         return alt;
     else if (title !== undefined && _.trim(title) !== "")
         return title;
-    else if (labelContent !== undefined && _.trim(labelContent) !== "")
-        return labelContent;
+    else if (labelContent&&labelContent.length !== 0)
+        return getText(labelContent[0]);
     else
         return "";
 

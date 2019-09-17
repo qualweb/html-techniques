@@ -3,6 +3,6 @@
 
   },
   "post": {
-    "body>*": ["QW-HTML-T1"]
+    "*": ["QW-HTML-T1"]
   }
 }
