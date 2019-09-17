@@ -137,9 +137,9 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         return textAlternative+"D";
     } else if (isControle && isEmbededControl) {//E
         return getValueFromEmbededControl(element)+"E";
-    } else if (false&&(nameFromContent||isReferenced)) {//F todo
-       // let textFromCss = getTextFromCss(element);
-       // return getAccessibleNameFromChildren(element,textFromCss);
+    } else if (nameFromContent||isReferenced) {//F todo
+       let textFromCss = getTextFromCss(element,textElement);
+        return getAccessibleNameFromChildren(element,textFromCss);
        return  "waiting for fix";
     } else if (textElement !== "") {//G
         return textElement+"G";
@@ -248,7 +248,7 @@ function getTextAlternative(element: DomElement, processedHTML: DomElement[],id:
 
 
 function hasRolePresentationOrNone(element: DomElement): boolean {//stew
-    return !!element.attribs && (element.attribs.role === "none" || element.attribs.role === "presentation");
+    return !!element.attribs && (element.attribs["role"] === "none" || element.attribs["role"] === "presentation");
 
 }
 
@@ -358,44 +358,45 @@ function allowsNameFromContent(element: DomElement): boolean {
 
     return nameFromContentRoles.indexOf(role)>=0;
 }
-/*
-function getTextFromCss(element: DomElement): string {
-    let attribs = parseCSS (element);
-    if(!attribs){
+
+function getTextFromCss(element: DomElement,textContent :string): string {
+
+    let before = getComputedStylesAtribute (element, "computed-style-before","content:");
+    let after = getComputedStylesAtribute (element, "computed-style-after","content:");
+
+    return before+textContent+after;
+
+}
+
+function getComputedStylesAtribute (element: DomElement,computedStyle : string,atribute : string): string {
+    if(!element.attribs||!element.attribs[computedStyle]){
         return "";
     }
-    let before = new RegExp('::before');
-    let after = new RegExp('::after');
 
+    let computedStyleContent = element.attribs[computedStyle];
+    let attribs = computedStyleContent.split(";");
+    let isAttr = new RegExp(atribute);
+    let atributeContent = "";
 
-    for(let attrib of attribs ){
-        if(before.test(attrib)){
-
-        }else if(after.test(attrib)){
-
-        }
-
-
+    for(let attr of attribs){
+        if(isAttr.test(attr))
+            atributeContent = attr.split(atribute)[0];
     }
-
-    return "";
-
-}
-
-function parseCSS (element: DomElement): string [] {
-    if(!element.attribs||!element.attribs["computed-styles"]){
-        return [];
-    }
-
-    let computedStyle = element.attribs["computed-styles"];
-
-    return computedStyle.split(";");
+    
+    return atributeContent;
     
 }
-
 function getAccessibleNameFromChildren(element: DomElement,acumulatedText:string): string {
 
-}*/
+    if(element.children){
+        for(let child of element.children){
+            acumulatedText = acumulatedText+getAccessibleNameFromChildren(child,acumulatedText);
+        } 
+    }
+        return acumulatedText;
+    }
+
+
 export {
     getAccessibleName,
     getElementSelector,
