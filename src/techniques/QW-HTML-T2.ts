@@ -56,27 +56,6 @@ function hasPrincipleAndLevels(principles: string[], levels: string[]): boolean 
 	return has;
 }
 
-function verifyCaptionExistence(elem){
-	const childs = elem.children;
-	for (let i = 0; i < childs.length; i++){
-		if(childs[i] !== undefined && childs[i].name !== undefined){
-			return childs[i].name === 'caption'
-		}
-	}
-	return false;
-}
-
-function verifyCaptionContent(elem){
-	const children = elem.children;
-	if(children !== undefined) {
-		for (let i = 0; i < children.length; i++) {
-			if (children[i] !== undefined && children[i].name === 'caption') {
-				return (children[i].children[0] !== undefined) ? children[i].children[0].data.trim() === '' : false;
-			}
-		}
-	}
-	return false;
-}
 
 
 async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
@@ -116,6 +95,32 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
 	evaluation.pointer = getElementSelector(element);
 
 	technique.results.push(_.clone(evaluation));
+}
+
+
+function verifyCaptionExistence(elem){
+	const childs = elem.children;
+	for (let i = 0; i < childs.length; i++){
+		if(childs[i] !== undefined && childs[i].name !== undefined){
+			return childs[i].name === 'caption'
+		}
+	}
+	return false;
+}
+
+function verifyCaptionContent(elem){
+	const children = elem.children;
+	if(children !== undefined) {
+		for (let i = 0; i < children.length; i++) {
+			if (children[i] !== undefined && children[i].name === 'caption') {
+				if(children[i].children.length > 0){
+					return (children[i].children !== undefined || children[i].children[0] !== undefined)?
+						children[i].children[0].data.trim() === '' : true;
+				}
+			}
+		}
+	}
+	return true;
 }
 
 function getFinalResults() {
