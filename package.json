@@ -1,8 +1,9 @@
 {
   "name": "@qualweb/html-techniques",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Implementation of the WCAG 2.1 html techniques",
   "main": "dist/index.js",
+  "types": "./node_modules/@qualweb/types",
   "scripts": {
     "tsc": "tsc",
     "lint": "eslint src/**/*",
@@ -10,8 +11,8 @@
     "test-t1": "mocha test/techniques/QW-HTML-T1.spec.js",
     "test-t2": "mocha test/techniques/QW-HTML-T2.spec.js",
     "clean": "node clean.js",
-    "build": "npm run clean&& tsc --build",
-    "pub": "npm run build && npm publish"
+    "build": "npm run clean && tsc --build",
+    "pub": "npm run build && npm publish --access=public"
   },
   "repository": {
     "type": "git",
@@ -33,13 +34,14 @@
   "homepage": "https://github.com/qualweb/html-techniques#readme",
   "devDependencies": {
     "@qualweb/types": "0.0.7",
+    "@qualweb/get-dom-puppeteer": "0.0.2",
     "@types/htmlparser2": "^3.10.1",
-    "@types/lodash": "^4.14.136",
-    "@types/node": "^12.7.1",
+    "@types/lodash": "^4.14.138",
+    "@types/node": "^12.7.2",
     "chai": "^4.2.0",
     "mocha": "^6.2.0",
-    "tslint": "^5.18.0",
-    "typescript": "^3.5.3"
+    "tslint": "^5.19.0",
+    "typescript": "^3.6.2"
   },
   "dependencies": {
     "@qualweb/get-dom-puppeteer": "0.0.2",

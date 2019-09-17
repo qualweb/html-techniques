@@ -8,25 +8,12 @@ import { HTMLTOptions, HTMLTechniquesReport } from '@qualweb/html-techniques';
 const stew = new(require('stew-select')).Stew();
 
 import mapping from './techniques/mapping.json';
+import { techniques, techniquesToExecute } from './techniques';
 
-import * as QW_HTML_T1 from './techniques/QW-HTML-T1';
-
-import * as QW_HTML_T2 from './techniques/QW-HTML-T2';
-
-const techniques = {
-  'QW-HTML-T1': QW_HTML_T1,
-  'QW-HTML-T2': QW_HTML_T2
-
-};
-
-const techniques_to_execute = {
-  'QW-HTML-T1': false,
-  'QW-HTML-T2': true
-};
 
 function configure(options: HTMLTOptions): void {
   if (options.principles) {
-    options.principles = options.principles.map(p => (p.charAt(0).toUpperCase() + p.slice(1)).trim());
+    options.principles = options.principles.map(p => (p.charAt(0).toUpperCase() + p.toLowerCase().slice(1)).trim());
   }
   if (options.levels) {
     options.levels = options.levels.map(l => l.toUpperCase().trim());
@@ -36,63 +23,55 @@ function configure(options: HTMLTOptions): void {
   }
 
   for (const technique of Object.keys(techniques) || []) {
-    techniques_to_execute[technique] = true;
+    techniquesToExecute[technique] = true;
     
     if (options.principles && options.principles.length !== 0) {
       if (options.levels && options.levels.length !== 0) {
         if (!techniques[technique].hasPrincipleAndLevels(options.principles, options.levels)) {
-          techniques_to_execute[technique] = false;
+          techniquesToExecute[technique] = false;
         }
       } else if (!techniques[technique].hasPrincipleAndLevels(options.principles, ['A', 'AA', 'AAA'])) {
-        techniques_to_execute[technique] = false;
+        techniquesToExecute[technique] = false;
       }
     } else if (options.levels && options.levels.length !== 0) {
       if (!techniques[technique].hasPrincipleAndLevels(['Perceivable', 'Operable', 'Understandable', 'Robust'], options.levels)) {
-        techniques_to_execute[technique] = false;
+        techniquesToExecute[technique] = false;
       }
     }
     if (!options.principles && !options.levels) {
       if (options.techniques && options.techniques.length !== 0) {
         if (!options.techniques.includes(technique) && !options.techniques.includes(technique[technique].getTechniqueMapping())) {
-          techniques_to_execute[technique] = false;
+          techniquesToExecute[technique] = false;
         }
       }
     } else {
       if (options.techniques && options.techniques.length !== 0) {
         if (options.techniques.includes(technique) || options.techniques.includes(technique[technique].getTechniqueMapping())) {
-          techniques_to_execute[technique] = true;
+          techniquesToExecute[technique] = true;
         }
       }
     }
   }
 }
 
-async function executeHTMLT(sourceHTML: DomElement[], processedHTML: DomElement[]): Promise<HTMLTechniquesReport> {
-  
-  const report: HTMLTechniquesReport = {
-    type: 'html-techniques',
-    metadata: {
-      passed: 0,
-      warning: 0,
-      failed: 0,
-      inapplicable: 0
-    },
-    techniques: {}
-  };
+function resetConfiguration(): void {
+  for (const technique in techniquesToExecute) {
+    techniquesToExecute[technique] = true;
+  }
+}
 
-  const preTechniques = mapping['pre'];
-  const preSelectors = Object.keys(preTechniques);
-  
-  for (const selector of preSelectors || []) {
-    for (const technique of preTechniques[selector] || []) {
-      if (techniques_to_execute[technique]) {
-        let elements = stew.select(sourceHTML, selector);
+async function executeTechniques(report: HTMLTechniquesReport, html: DomElement[], selectors: string[], mappedTechniques: any): Promise<void> {
+  for (const selector of selectors || []) {
+    for (const technique of mappedTechniques[selector] || []) {
+      if (techniquesToExecute[technique]) {
+        let elements = stew.select(html, selector);
+        
         if (elements.length > 0) {
           for (const elem of elements || []) {
-            await techniques[technique].execute(elem, sourceHTML);
+            await techniques[technique].execute(elem, html);
           }
         } else {
-          await techniques[technique].execute(undefined, sourceHTML);
+          await techniques[technique].execute(undefined, html);
         }
         report.techniques[technique] = techniques[technique].getFinalResults();
         report.metadata[report.techniques[technique].metadata.outcome]++;
@@ -100,9 +79,9 @@ async function executeHTMLT(sourceHTML: DomElement[], processedHTML: DomElement[
       }
     }
   }
+}
 
-  const postTechniques = mapping['post'];
-  const postSelectors = Object.keys(postTechniques);
+async function executeHTMLT(sourceHTML: DomElement[], processedHTML: DomElement[]): Promise<HTMLTechniquesReport> {
   
   for (const selector of postSelectors || []) {
     for (const technique of postTechniques[selector] || []) {
@@ -120,7 +99,29 @@ async function executeHTMLT(sourceHTML: DomElement[], processedHTML: DomElement[
         techniques[technique].reset();
       }
     }
+  if (sourceHTML === null || sourceHTML === undefined) {
+    throw new Error(`Source html can't be null or undefined`);
   }
+
+  if (processedHTML === null || processedHTML === undefined) {
+    throw new Error(`Processed html can't be null or undefined`);
+  }
+
+  const report: HTMLTechniquesReport = {
+    type: 'html-techniques',
+    metadata: {
+      passed: 0,
+      warning: 0,
+      failed: 0,
+      inapplicable: 0
+    },
+    techniques: {}
+  };
+
+  await executeTechniques(report, sourceHTML, Object.keys(mapping.pre), mapping.pre);
+  await executeTechniques(report, sourceHTML, Object.keys(mapping.post), mapping.post);
+
+  resetConfiguration();
 
   return report;
 }
