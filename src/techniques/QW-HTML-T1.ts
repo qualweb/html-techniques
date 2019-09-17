@@ -75,7 +75,8 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
   if (element === undefined) {
     return;
   }
-  console.log(element);
+  if(element.name=== 'p')
+    console.log(element);
   try{console.log("an ="+getAccessibleName(undefined,processedHTML,false));}catch(e){console.log(e);} 
   
 
