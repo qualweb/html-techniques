@@ -75,8 +75,8 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
   if (element === undefined) {
     return;
   }
-  console.log(element.name);
-  try{console.log("an ="+getAccessibleName(element,processedHTML,false));}catch(e){console.log(e);} 
+  console.log(element);
+  try{console.log("an ="+getAccessibleName(undefined,processedHTML,false));}catch(e){console.log(e);} 
   
 
   const evaluation: HTMLTechniqueResult = {

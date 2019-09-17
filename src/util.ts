@@ -93,11 +93,15 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 }
 
 //Falta E,F
-function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean): string {
+function getAccessibleName(element: DomElement|undefined, processedHTML: DomElement[], reference: boolean): string {
+    if(!element)
+    return "";
 
     let isHidden,id,ariaLabelBy, ariaLabel,isControle,textAlternative,nameFromContent;
+    console.log(element);
     
     let textElement = getText(element);
+    
     
     let title;
     let hasRolePresentOrNone,isEmbededControl,isReferenced = false;
@@ -119,7 +123,7 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         isReferenced = elementIsReferenced(id, processedHTML);
 
     }
-    console.log(element.name);
+    
     console.log("text"+textElement+"textAlt"+ textAlternative);
     
 
@@ -139,7 +143,8 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         return getValueFromEmbededControl(element)+"E";
     } else if (nameFromContent||isReferenced) {//F todo
        let textFromCss = getTextFromCss(element,textElement);
-        return getAccessibleNameFromChildren(element,textFromCss);
+       console.log("css"+textFromCss);
+        return getAccessibleNameFromChildren(element,textFromCss)+"F";
        return  "waiting for fix";
     } else if (textElement !== "") {//G
         return textElement+"G";
@@ -369,6 +374,7 @@ function getTextFromCss(element: DomElement,textContent :string): string {
 }
 
 function getComputedStylesAtribute (element: DomElement,computedStyle : string,atribute : string): string {
+    console.log(element);
     if(!element.attribs||!element.attribs[computedStyle]){
         return "";
     }
@@ -390,7 +396,7 @@ function getAccessibleNameFromChildren(element: DomElement,acumulatedText:string
 
     if(element.children){
         for(let child of element.children){
-            acumulatedText = acumulatedText+getAccessibleNameFromChildren(child,acumulatedText);
+            acumulatedText = acumulatedText+getAccessibleNameFromChildren(child,"");
         } 
     }
         return acumulatedText;
