@@ -128,7 +128,7 @@ async function executeHTMLT(sourceHTML: DomElement[], processedHTML: DomElement[
   const postTechniques = mapping['post'];
   const postSelectors = Object.keys(postTechniques);
 
-  await executeTechniques(report, sourceHTML, postSelectors, postTechniques);
+  await executeTechniques(report, processedHTML, postSelectors, postTechniques);
   
   /*for (const selector of postSelectors || []) {
     for (const technique of postTechniques[selector] || []) {

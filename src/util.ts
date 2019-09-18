@@ -93,9 +93,8 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 }
 
 //Falta E,F
-function getAccessibleName(element: DomElement|undefined, processedHTML: DomElement[], reference: boolean): string {
-    if(!element)
-    return "";
+function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean): string {
+    
 
     let isHidden,id,ariaLabelBy, ariaLabel,isControle,textAlternative,nameFromContent;
     console.log(element);
@@ -366,8 +365,8 @@ function allowsNameFromContent(element: DomElement): boolean {
 
 function getTextFromCss(element: DomElement,textContent :string): string {
 
-    let before = getComputedStylesAtribute (element, "computed-style-before","content:");
-    let after = getComputedStylesAtribute (element, "computed-style-after","content:");
+    let before = getComputedStylesAtribute (element, "computed-style-before","^ content:");
+    let after = getComputedStylesAtribute (element, "computed-style-after","^ content:");
 
     return before+textContent+after;
 
@@ -379,7 +378,7 @@ function getComputedStylesAtribute (element: DomElement,computedStyle : string,a
         return "";
     }
 
-    let computedStyleContent = element.attribs[computedStyle];
+    let computedStyleContent = element.attribs[computedStyle].replace("&quot;","");
     let attribs = computedStyleContent.split(";");
     let isAttr = new RegExp(atribute);
     let atributeContent = "";
@@ -389,7 +388,7 @@ function getComputedStylesAtribute (element: DomElement,computedStyle : string,a
             atributeContent = attr.split(atribute)[0];
     }
     
-    return atributeContent;
+    return atributeContent.replace("&quot","");;
     
 }
 function getAccessibleNameFromChildren(element: DomElement,acumulatedText:string): string {
