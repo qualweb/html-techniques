@@ -91,8 +91,7 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
     technique.metadata.failed++;
   }
 
-
-  technique['data'].push(evaluation);
+  technique.results.push(_.clone(evaluation));
 
 }
 
