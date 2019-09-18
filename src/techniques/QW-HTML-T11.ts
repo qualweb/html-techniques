@@ -6,7 +6,7 @@ import {
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 import {
-  DomElement
+  DomElement, DomUtils
 } from 'htmlparser2';
 
 import {
@@ -14,7 +14,7 @@ import {
   transform_element_into_html
 } from '../util';
 
-const stew = new(require('stew-select')).Stew();
+const stew = new (require('stew-select')).Stew();
 
 const technique: HTMLTechnique = {
   name: 'Combining adjacent image and text links for the same resource',
@@ -23,8 +23,7 @@ const technique: HTMLTechnique = {
   description: 'The objective of this technique is to provide both text and iconic representations of links without making the web page more confusing or difficult for keyboard users or assistive technology users. Since different users finding text and icons more usable, providing both can improve the accessibility of the link.',
   metadata: {
     target: {
-      parent: 'a',
-      element: 'img'
+      element: 'a'
     },
     'success-criteria': [
       {
@@ -55,7 +54,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult> ()
+  results: new Array<HTMLTechniqueResult>()
 };
 
 function getTechniqueMapping(): string {
@@ -72,7 +71,7 @@ function hasPrincipleAndLevels(principles: string[], levels: string[]): boolean 
   return has;
 }
 
-async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
+async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
 
   if (element === undefined) {
     return;
@@ -83,44 +82,46 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
     description: ''
   };
 
-  if (element.children === undefined) { // fails if the element doesn't contain an alt attribute
+  if (element.children === undefined) { // fails if the element doesn't contain an image inside it
     evaluation.verdict = 'failed';
-    evaluation.description = `The element doesn't contain an image inside the a tag`;
+    evaluation.description = `The element doesn't contain an image inside the a element`;
     technique.metadata.failed++;
   }
 
-  let imgs = stew.select(processedHTML, 'img');
+  let imgs = stew.select(element, 'img');
 
-  let hasImage = imgs.length>0;
+  let hasImage = imgs.length > 0;
   let hasNonEmptyAlt = false;
   let hasAlt = false;
+  let equalAltText = false;
 
-  for (const img of imgs ) { // fails if the element doesn't contain an alt attribute
-      if(img.attribs&&img.attribs["alt"]&&!hasNonEmptyAlt){
-        hasAlt= true;
-        hasNonEmptyAlt = img.attribs["alt"] !== "";
-      }
+  for (const img of imgs) { // fails if the element doesn't contain an alt attribute
+    if (img.attribs && img.attribs["alt"] !== undefined && !hasNonEmptyAlt && !equalAltText) {
+      hasAlt = true;
+      hasNonEmptyAlt = img.attribs["alt"] !== "";
+      equalAltText = img.attribs["alt"] === DomUtils.getText(element);
+    }
 
-}
+  }
 
-  if(!hasImage){
+  if (!hasImage) {
     evaluation.verdict = 'failed';
-    evaluation.description = `The element doesn't contain an image attribute inside de a element`;
+    evaluation.description = `The element doesn't contain an image attribute inside the a element`;
     technique.metadata.failed++;
-
-  }else if (!hasAlt) {
-    //inaplicable
-
-  }else  if (!hasNonEmptyAlt) {
+  } else if (!hasAlt) {
+    //inapplicable
+  } else if (!hasNonEmptyAlt) {
     evaluation.verdict = 'passed';
-    evaluation.description = `The a element contains an image tha has an empty alt attribute`;
+    evaluation.description = `The a element contains an image that has an empty alt attribute`;
     technique.metadata.passed++;
-
-  }else {
+  } else if (equalAltText) {
+    evaluation.verdict = 'failed';
+    evaluation.description = `The element text is equal to img alternative text`;
+    technique.metadata.failed++;
+  } else {
     evaluation.verdict = 'warning';
-    evaluation.description = 'The a element contains an image tha has an alt attribute that should be manually verified';
+    evaluation.description = 'The a element contains an image that has an alt attribute that should be manually verified';
     technique.metadata.warning++;
-
   }
 
   evaluation.code = transform_element_into_html(element);

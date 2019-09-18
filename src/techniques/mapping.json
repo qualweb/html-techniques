@@ -3,6 +3,7 @@
 
   },
   "post": {
-    "img + map > area": ["QW-HTML-T1", "QW-HTML-T11"]
+    "img + map > area": ["QW-HTML-T1"],
+    "a": ["QW-HTML-T11"]
   }
 }
