@@ -96,7 +96,7 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
   let hasAlt = false;
 
   for (const img of imgs ) { // fails if the element doesn't contain an alt attribute
-      if(img.attribs&&img.attribs["alt"]){
+      if(img.attribs&&img.attribs["alt"]&&!gihasNonEmptyAlt){
         hasAlt= true;
         hasNonEmptyAlt = img.attribs["alt"] !== "";
       }
