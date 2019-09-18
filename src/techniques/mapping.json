@@ -3,7 +3,7 @@
 
   },
   "post": {
-    "a": ["QW-HTML-T6"],
+    "*[onmousedown], *[onmouseup], *{onclick], *[onmouseover], *[onmouseout]": ["QW-HTML-T6"],
     "img + map > area": ["QW-HTML-T1"]
   }
 }
