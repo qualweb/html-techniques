@@ -14,6 +14,8 @@ import {
   transform_element_into_html
 } from '../util';
 
+const stew = new(require('stew-select')).Stew();
+
 const technique: HTMLTechnique = {
   name: 'Combining adjacent image and text links for the same resource',
   code: 'QW-HTML-T11',
@@ -21,9 +23,8 @@ const technique: HTMLTechnique = {
   description: 'The objective of this technique is to provide both text and iconic representations of links without making the web page more confusing or difficult for keyboard users or assistive technology users. Since different users finding text and icons more usable, providing both can improve the accessibility of the link.',
   metadata: {
     target: {
-      'parent-sibling': 'img',
-      parent: 'map',
-      element: 'area'
+      parent: 'a',
+      element: 'img'
     },
     'success-criteria': [
       {
@@ -87,23 +88,30 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
     evaluation.description = `The element doesn't contain an image inside the a tag`;
     technique.metadata.failed++;
   }
-  let img: DomElement | null = null;
 
-  for (const child of element.children || []) { // fails if the element doesn't contain an alt attribute
-    if (child["name"] ==="img"){
-      img = child;
-    }
-  }
+  let imgs = stew.select(processedHTML, 'img');
 
-  if(img === null){
+  let hasImage = imgs.length>0;
+  let hasNonEmptyAlt = false;
+  let hasAlt = false;
+
+  for (const img of imgs ) { // fails if the element doesn't contain an alt attribute
+      if(img.attribs&&img.attribs["alt"]){
+        hasAlt= true;
+        hasNonEmptyAlt = img.attribs["alt"] !== "";
+      }
+
+}
+
+  if(!hasImage){
     evaluation.verdict = 'failed';
     evaluation.description = `The element doesn't contain an image attribute inside de a element`;
     technique.metadata.failed++;
 
-  }else if (img.attribs === undefined) {
-    //Undefined
+  }else if (!hasAlt) {
+    //inaplicable
 
-  }else  if (img.attribs["alt"] === "") {
+  }else  if (!hasNonEmptyAlt) {
     evaluation.verdict = 'passed';
     evaluation.description = `The a element contains an image tha has an empty alt attribute`;
     technique.metadata.passed++;
