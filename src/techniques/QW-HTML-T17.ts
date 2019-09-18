@@ -74,7 +74,6 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
     technique.metadata.inapplicable++;
   } else {
     //TODO verificar se ids sao unique ou nao? - usar htmlvalidator
-    //TODO e se houver tds sem headers?
     let headersElements = stew.select(element, "[headers]");
     for (let headerElem of headersElements) {
       if (checkHeadersMatchId(element, headerElem.attribs.headers)) {
@@ -147,21 +146,14 @@ function checkHeadersMatchId(table, headers) {
   let splitHeaders = headers.split(" ");
   for (let header of splitHeaders) {
     let matchingIdElem = stew.select(table, '[id="' + header + '"]')[0];
-    //console.log(header + " | " + matchingIdElem.name + " - " + matchingIdElem.attribs.id);
     if (matchingIdElem !== undefined) {
       let matchingIdElemHeaders = matchingIdElem.attribs.headers;
-      /*console.log("- " + matchingIdElemHeaders);
-      if(!matchingIdElemHeaders){
-        console.log(headers.split().length);
-      }*/
+
       if (headers.split(" ").length === 1 && matchingIdElemHeaders === undefined) {
         outcome = true;
       } else if (matchingIdElemHeaders !== undefined) {
         for (let headerIdElem of matchingIdElemHeaders.split(" ")) {
-          /*console.log("-- " + headerIdElem);
-          console.log(headers.split(" ").indexOf(headerIdElem));
-          console.log(splitHeaders);
-          console.log("ohoh " + headerIdElem + " - " + header); */
+        
           if (splitHeaders.indexOf(headerIdElem) >= 0 && headerIdElem !== header) {
             result++;
           }
@@ -173,7 +165,5 @@ function checkHeadersMatchId(table, headers) {
       }
     }
   }
-  /*console.log("> " + outcome);
-  console.log("-------");*/
   return outcome;
 }
