@@ -18,7 +18,7 @@ const technique: HTMLTechnique = {
   name: 'Using the title attribute of the frame and iframe elements',
   code: 'QW-HTML-T10',
   mapping: 'H64',
-  description: '',
+  description: 'The objective of this technique is to demonstrate the use of the title attribute of the frame or iframe element to describe the contents of each frame',
   metadata: {
     target: {
       element: 'frame, iframe'
@@ -75,26 +75,20 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
 
   //1. Check each frame and iframe element in the HTML or XHTML
   //source code for the presence of a title attribute.
-  if (element.name === 'frame' || element.name === 'iframe') {
-    // 2. Check that the title attribute contains text that identifies the frame.
-    if (element.attribs && element.attribs['title'] !== undefined) {
-      if (element.attribs['title'] !== '') {
-        evaluation.verdict = 'warning';
-        evaluation.description = 'Verify if title attribute contains text that identifies the frame';
-        technique.metadata.warning++;
-      } else {
-        evaluation.verdict = 'failed';
-        evaluation.description = 'Title attribute is empty';
-        technique.metadata.failed++;
-      }
+  // 2. Check that the title attribute contains text that identifies the frame.
+  if (element.attribs && element.attribs['title'] !== undefined) {
+    if (element.attribs['title'] !== '') {
+      evaluation.verdict = 'warning';
+      evaluation.description = 'Verify if title attribute contains text that identifies the frame';
+      technique.metadata.warning++;
     } else {
       evaluation.verdict = 'failed';
-      evaluation.description = 'frame or iframe doesn\'t have title attribute';
+      evaluation.description = 'Title attribute is empty';
       technique.metadata.failed++;
     }
   } else {
     evaluation.verdict = 'failed';
-    evaluation.description = '';
+    evaluation.description = 'frame or iframe doesn\'t have title attribute';
     technique.metadata.failed++;
   }
 
