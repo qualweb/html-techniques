@@ -6,7 +6,7 @@ import {
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 import {
-  DomElement
+  DomElement,DomUtils
 } from 'htmlparser2';
 
 import {
@@ -78,16 +78,8 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
     evaluation.description = `The element's alt attribute is empty`;
     technique.metadata.failed++;
   } else {
-    if (element.children) {
-      let has_text = false;
 
-      for (let i = 0 ; i < _.size(element.children) ; i++) {
-        let child = element.children[i];
-        if (child['type'] === 'text' && _.trim(child['data']) !== '') {
-          has_text = true;
-          break;
-        }
-      }
+      let has_text = DomUtils.getText(element);
 
       if (has_text) { // the element contains a non empty alt attribute and a text in his body
         evaluation.verdict = 'warning';
@@ -99,12 +91,7 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
         technique.metadata.failed++;
       }
     }
-    else { // fails if the element doesn't contain a text in the body
-      evaluation.verdict = 'failed';
-      evaluation.description = `The element doesn't contain a text in his body`;
-      technique.metadata.failed++;
-    }
-  }
+  
 
   evaluation.code = transform_element_into_html(element);
   evaluation.pointer = getElementSelector(element);
