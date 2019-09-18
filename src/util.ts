@@ -1,6 +1,6 @@
 'use strict';
 
-import {DomElement,DomUtils} from 'htmlparser2';
+import { DomElement, DomUtils } from 'htmlparser2';
 import html from 'htmlparser-to-html';
 import _ from 'lodash';
 
@@ -94,62 +94,52 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 
 //Falta E,F
 function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean): string {
-    
 
-    let isHidden,id,ariaLabelBy, ariaLabel,isControle,textAlternative,nameFromContent;
-    console.log(element);
-    
+    let isHidden, id, ariaLabelBy, ariaLabel, isControle, textAlternative, nameFromContent;
     let textElement = getText(element);
-    
-    
     let title;
-    let hasRolePresentOrNone,isEmbededControl,isReferenced = false;
+    let hasRolePresentOrNone, isEmbededControl, isReferenced = false;
 
-    if(element.attribs){
+    if (element.attribs) {
         title = element.attribs.title;
-        ariaLabelBy = getElementById(element.attribs["aria-labelledby"], processedHTML) ?  element.attribs["aria-labelledby"] : "";
+        ariaLabelBy = getElementById(element.attribs["aria-labelledby"], processedHTML) ? element.attribs["aria-labelledby"] : "";
         ariaLabel = element.attribs["aria-label"];
         id = element.attribs["id"];
         nameFromContent = allowsNameFromContent(element);
         isControle = isControl(element);
         isHidden = elementIsHidden(element);
-        textAlternative = getTextAlternative(element,processedHTML,id);
+        textAlternative = getTextAlternative(element, processedHTML, id);
         hasRolePresentOrNone = hasRolePresentationOrNone(element);
-    }  
-
-    if(id){
-        isEmbededControl = isEmbededinWidget(element, processedHTML,id);
-        isReferenced = elementIsReferenced(id, processedHTML);
-
     }
-    
-    console.log("text"+textElement+"textAlt"+ textAlternative);
-    
 
-    console.log(isHidden+"ref"+isReferenced);
-    console.log(ariaLabelBy);
+    if (id) {
+        isEmbededControl = isEmbededinWidget(element, processedHTML, id);
+        isReferenced = elementIsReferenced(id, processedHTML);
+    }
+
+    console.log(element.name);
+    console.log(isControle + "emb" + isEmbededControl);
 
     if (isHidden && !reference && !isReferenced) {//A
-        return ""+"A";
+        return "" + "A";
     } else if (ariaLabelBy !== "" && !reference) {//B
         console.log(getElementById(ariaLabelBy, processedHTML)[0]);
-        return getAccessibleName(getElementById(ariaLabelBy, processedHTML)[0], processedHTML, true)+"B";
-    } else if (_.trim(ariaLabel) !== "" && !(isControle && isEmbededControl && reference)) {//C
-        return ariaLabel+"C";
+        return getAccessibleName(getElementById(ariaLabelBy, processedHTML)[0], processedHTML, true) + "B";
+    } else if (ariaLabel && _.trim(ariaLabel) !== "" && !(isControle && isEmbededControl && reference)) {//C
+        return ariaLabel + "C";
     } else if (textAlternative && !hasRolePresentOrNone) {//D
-        return textAlternative+"D";
+        return textAlternative + "D";
     } else if (isControle && isEmbededControl) {//E
-        return getValueFromEmbededControl(element)+"E";
-    } else if (nameFromContent||isReferenced) {//F todo
-       let textFromCss = getTextFromCss(element,textElement);
-       console.log("css"+textFromCss);
-        return getAccessibleNameFromChildren(element,textFromCss)+"F";
-       return  "waiting for fix";
+        return getValueFromEmbededControl(element) + "E";
+    } else if (nameFromContent || isReferenced) {//F todo
+        let textFromCss = getTextFromCss(element, textElement);
+        console.log("css" + textFromCss);
+        return getAccessibleNameFromChildren(element, textFromCss) + "F";
     } else if (textElement !== "") {//G
-        return textElement+"G";
+        return textElement + "G";
     } else if (title !== undefined) {//I toolTip
-        return title+"I";
-    }else{
+        return title + "I";
+    } else {
         return "noname";
     }
 
@@ -157,7 +147,7 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
 
 function elementIsHidden(element: DomElement): boolean {
     // let styles = element.styles;
-    if(!element.attribs)
+    if (!element.attribs)
         return false;
 
 
@@ -166,7 +156,7 @@ function elementIsHidden(element: DomElement): boolean {
     let displayNone = false;
     //fixme css parser
     //if (element.attribs['computed-style'] !== undefined)
-        //displayNone = element.attribs['computed-style']['display'] === 'none';
+    //displayNone = element.attribs['computed-style']['display'] === 'none';
 
     let hasRolePresentOrNone = hasRolePresentationOrNone(element);
     return hasRolePresentOrNone || displayNone || hidden || aria_hidden;
@@ -184,20 +174,22 @@ function elementIsReferenced(id: string, processedHTML: DomElement[]): boolean {
 
 }
 
-function getElementById(id: string|undefined, processedHTML: DomElement[]): DomElement[] {
+function getElementById(id: string | undefined, processedHTML: DomElement[]): DomElement[] {
     let element;
-    if(id)
-        element = stew.select(processedHTML, '[id="'+id+'"]');
+    if (id)
+        element = stew.select(processedHTML, '[id="' + id + '"]');
 
     return element;
 
 }
 
-function isEmbededinWidget(element: DomElement, processedHTML: DomElement[], id:string): boolean {//stew
+function isEmbededinWidget(element: DomElement, processedHTML: DomElement[], id: string): boolean {//stew
 
     let refrencedByAriaLabel = stew.select(processedHTML, `[aria-labelledby="${id}"]`);
     let refrencedByLabel = stew.select(processedHTML, `label[for="${id}"]`);
     let withinLabel = withingLabelOfWidget(element);
+
+    console.log(withinLabel);
 
     let referenced;
     let result = false;
@@ -211,7 +203,7 @@ function isEmbededinWidget(element: DomElement, processedHTML: DomElement[], id:
         referenced = refrencedByLabel[0];
         result = isWidget(referenced);
 
-    }else {
+    } else {
 
         result = withinLabel;
     }
@@ -221,8 +213,8 @@ function isEmbededinWidget(element: DomElement, processedHTML: DomElement[], id:
 
 }
 
-function getTextAlternative(element: DomElement, processedHTML: DomElement[],id:string): string {//alt , title,label, fig capition  se for object procurar params
-    if(!element.attribs)
+function getTextAlternative(element: DomElement, processedHTML: DomElement[], id: string): string {//alt , title,label, fig capition  se for object procurar params
+    if (!element.attribs)
         return "";
 
     let alt = element.attribs.alt;
@@ -230,20 +222,21 @@ function getTextAlternative(element: DomElement, processedHTML: DomElement[],id:
     let title = element.attribs.title;
     let labelContent;
 
-    console.log('label[for="'+ id+ '"]');
+    console.log('label[for="' + id + '"]');
     console.log(id);
 
-    if(id){
-     labelContent = stew.select(processedHTML, 'label[for="'+ id+ '"]');}
+    if (id) {
+        labelContent = stew.select(processedHTML, 'label[for="' + id + '"]');
+    }
 
-     console.log(labelContent);
+    console.log(labelContent);
 
 
     if (alt !== undefined && _.trim(alt) !== "")
         return alt;
     else if (title !== undefined && _.trim(title) !== "")
         return title;
-    else if (labelContent&&labelContent.length !== 0)
+    else if (labelContent && labelContent.length !== 0)
         return getText(labelContent[0]);
     else
         return "";
@@ -258,41 +251,41 @@ function hasRolePresentationOrNone(element: DomElement): boolean {//stew
 
 
 function getValueFromEmbededControl(element: DomElement): string {//stew
-    if(!element.attribs)
-    return "";
-    
+    if (!element.attribs)
+        return "";
+
     let role = element.attribs.role;
     let value = "";
 
 
-    if(role === "textbox"&&element.children!== undefined){
+    if (role === "textbox" && element.children !== undefined) {
         value = element.children[0].data;
     }
-    else if(role === "button"&&element.children!== undefined){
+    else if (role === "button" && element.children !== undefined) {
         value = element.children[0].data;
     }
-    else if(role === "combobox"){
+    else if (role === "combobox") {
         let refrencedByLabel = stew.select(element, `[aria-activedescendant]`);
         let aria_descendendant = refrencedByLabel.attribs["aria-activedescendant"];
         let selectedElement = stew.select(element, `[id=/"${aria_descendendant}"/]`);
         value = DomUtils.getText(selectedElement);
     }
-    else if(role === "listbox"){
+    else if (role === "listbox") {
         let elementsWithId = stew.select(element, `[id]`);
 
-        for(let elementWithId of elementsWithId){
+        for (let elementWithId of elementsWithId) {
 
-            let id =  elementWithId.attribs.id;
+            let id = elementWithId.attribs.id;
             let selectedElement = stew.select(element, `[aria-activedescendant=/"${id}"/]`);
 
-            if(selectedElement!== undefined)
+            if (selectedElement !== undefined)
                 value = DomUtils.getText(elementsWithId);
         }
     }
     else {//range
-        if(element.attribs["aria-valuetext"]!==undefined)
+        if (element.attribs["aria-valuetext"] !== undefined)
             value = element.attribs["aria-valuetext"];
-        else if(element.attribs["aria-valuenow"]!==undefined)
+        else if (element.attribs["aria-valuenow"] !== undefined)
             value = element.attribs["aria-valuenow"];
         else {//alt
             //TODO
@@ -312,94 +305,94 @@ function getText(element: DomElement): string {
 
 function isWidget(element: DomElement): boolean {
 
-    let widgetRoles = ["button","checkbox","gridcell","link","menuitem", "menuitemcheckbox", "menuitemradio","option","progressbar","radio","scrollbar","searchbox","separator","slider","spinbutton", "switch", "tab", "tabpanel","textbox", "treeitem"];
+    let widgetRoles = ["button", "checkbox", "gridcell", "link", "menuitem", "menuitemcheckbox", "menuitemradio", "option", "progressbar", "radio", "scrollbar", "searchbox", "separator", "slider", "spinbutton", "switch", "tab", "tabpanel", "textbox", "treeitem"];
 
-    if(element.attribs=== undefined)
+    if (element.attribs === undefined)
         return false;
 
     let role = element.attribs.role;
 
-    return widgetRoles.indexOf(role)>=0;
+    return widgetRoles.indexOf(role) >= 0;
 }
 
 function isControl(element: DomElement): boolean {
 
-    let controlRoles = ["textbox","button","combobox","listbox","range"];
+    let controlRoles = ["textbox", "button", "combobox", "listbox", "range"];
 
-    if(element.attribs=== undefined)
+    if (element.attribs === undefined)
         return false;
 
     let role = element.attribs.role;
 
-    return controlRoles.indexOf(role)>=0
+    return controlRoles.indexOf(role) >= 0
 
 
 }
 function withingLabelOfWidget(element: DomElement): boolean {
 
-      let parent = element.parent;
-      let text = "";
-      let widget = false;
+    let parent = element.parent;
+    let text = "";
+    let widget = false;
 
-      if(parent!== undefined){
+    if (parent !== undefined) {
         text = DomUtils.getText(parent);
         widget = isWidget(parent);
     }
-    
 
-      return text!== "" && widget;
+
+    return text !== "" && widget;
 }
 
 
 function allowsNameFromContent(element: DomElement): boolean {
 
-    if(element.attribs=== undefined)
+    if (element.attribs === undefined)
         return false;
 
-    let nameFromContentRoles = ["button","cell","checkbox","columnheader","gridcell","heading","link","menuitem","menuitemcheckbox","menuitemradio","option","radio","row","rowgroup","rowheader","switch","tab","tooltip","tree","treeitem"];
+    let nameFromContentRoles = ["button", "cell", "checkbox", "columnheader", "gridcell", "heading", "link", "menuitem", "menuitemcheckbox", "menuitemradio", "option", "radio", "row", "rowgroup", "rowheader", "switch", "tab", "tooltip", "tree", "treeitem"];
 
     let role = element.attribs.role;
 
-    return nameFromContentRoles.indexOf(role)>=0;
+    return nameFromContentRoles.indexOf(role) >= 0;
 }
 
-function getTextFromCss(element: DomElement,textContent :string): string {
+function getTextFromCss(element: DomElement, textContent: string): string {
 
-    let before = getComputedStylesAtribute (element, "computed-style-before","^ content:");
-    let after = getComputedStylesAtribute (element, "computed-style-after","^ content:");
+    let before = getComputedStylesAtribute(element, "computed-style-before", "^ content:");
+    let after = getComputedStylesAtribute(element, "computed-style-after", "^ content:");
 
-    return before+textContent+after;
+    return before + textContent + after;
 
 }
 
-function getComputedStylesAtribute (element: DomElement,computedStyle : string,atribute : string): string {
-    console.log(element);
-    if(!element.attribs||!element.attribs[computedStyle]){
+function getComputedStylesAtribute(element: DomElement, computedStyle: string, atribute: string): string {
+
+    if (!element.attribs || !element.attribs[computedStyle]) {
         return "";
     }
 
-    let computedStyleContent = element.attribs[computedStyle].replace("&quot;","");
+    let computedStyleContent = element.attribs[computedStyle].replace("&quot;", "");
     let attribs = computedStyleContent.split(";");
     let isAttr = new RegExp(atribute);
     let atributeContent = "";
 
-    for(let attr of attribs){
-        if(isAttr.test(attr))
+    for (let attr of attribs) {
+        if (isAttr.test(attr))
             atributeContent = attr.split(atribute)[0];
     }
-    
-    return atributeContent.replace("&quot","");;
-    
-}
-function getAccessibleNameFromChildren(element: DomElement,acumulatedText:string): string {
 
-    if(element.children){
-        for(let child of element.children){
-            acumulatedText = acumulatedText+getAccessibleNameFromChildren(child,"");
-        } 
+    return atributeContent.replace("&quot", "");;
+
+}
+function getAccessibleNameFromChildren(element: DomElement, acumulatedText: string): string {
+
+    if (element.children) {
+        for (let child of element.children) {
+            acumulatedText = acumulatedText + getAccessibleNameFromChildren(child, "");
+        }
     }
-        return acumulatedText;
-    }
+    return acumulatedText;
+}
 
 
 export {

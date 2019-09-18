@@ -21,7 +21,7 @@ describe('Technique QW-HTML-T50', function() {
       outcome: 'failed'
     },*/
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/testeAN/test4.html',
       outcome: 'failed'
     }
   ];
