@@ -63,7 +63,6 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
   if (element === undefined) {
     return;
   }
-  else{
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -95,16 +94,17 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
     evaluation.pointer = getElementSelector(element);
 
     technique.results.push(_.clone(evaluation));
-  }
+
 
 }
 
 function verifyAlt(elem){
-  return (elem.attribs['alt'] === undefined);
+  return (elem.attribs !== undefined)?
+   (elem.attribs['alt'] === undefined):true;
 }
 
 function verifyAltContent(elem){
-  return (elem.atribs['alt'] !== undefined)? elem.atribs['alt'].trim(): true;
+  return (elem.attribs !== undefined) ? ((elem.attribs['alt'] !== undefined)? elem.attribs['alt'].trim() === '': true): true;
 
 }
 

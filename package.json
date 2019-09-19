@@ -34,7 +34,8 @@
   "homepage": "https://github.com/qualweb/html-techniques#readme",
   "devDependencies": {
     "@qualweb/get-dom-puppeteer": "0.0.2",
-    "@qualweb/types": "0.0.33",
+    "@qualweb/types": "0.0.24",
+    "@types/css": "0.0.31",
     "@types/htmlparser2": "^3.10.1",
     "@types/lodash": "^4.14.138",
     "@types/node": "^12.7.2",

@@ -25,10 +25,6 @@ describe('Technique QW-HTML-T5', function() {
       outcome: 'failed'
     },
     {
-      url: 'https://accessible-serv.lasige.di.fc.ul.pt/~fcaeiro/H36/H36fail4.html',
-      outcome: 'failed'
-    },
-    {
       url: 'https://accessible-serv.lasige.di.fc.ul.pt/~fcaeiro/H36/H36warning.html',
       outcome: 'warning'
     },

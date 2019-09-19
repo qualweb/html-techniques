@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 'use strict';
 
@@ -24,7 +24,7 @@ function configure(options: HTMLTOptions): void {
 
   for (const technique of Object.keys(techniques) || []) {
     techniquesToExecute[technique] = true;
-    
+
     if (options.principles && options.principles.length !== 0) {
       if (options.levels && options.levels.length !== 0) {
         if (!techniques[technique].hasPrincipleAndLevels(options.principles, options.levels)) {
@@ -65,7 +65,7 @@ async function executeTechniques(report: HTMLTechniquesReport, html: DomElement[
     for (const technique of mappedTechniques[selector] || []) {
       if (techniquesToExecute[technique]) {
         let elements = stew.select(html, selector);
-        
+
         if (elements.length > 0) {
           for (const elem of elements || []) {
             await techniques[technique].execute(elem, html);
@@ -82,7 +82,7 @@ async function executeTechniques(report: HTMLTechniquesReport, html: DomElement[
 }
 
 async function executeHTMLT(sourceHTML: DomElement[], processedHTML: DomElement[]): Promise<HTMLTechniquesReport> {
-  
+
   if (sourceHTML === null || sourceHTML === undefined) {
     throw new Error(`Source html can't be null or undefined`);
   }
