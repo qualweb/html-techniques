@@ -16,7 +16,7 @@ import {
 
 const technique: HTMLTechnique = {
   name: 'Using the summary attribute of the table element to give an overview of data tables',
-  code: 'QW-HTML-T3',
+  code: 'QW-HTML-T4',
   mapping: 'H73',
   description: 'This technique checks the correcy use of the summary attribute for table elements',
   metadata: {
