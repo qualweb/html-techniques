@@ -86,7 +86,6 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
                 headersMatchId = checkHeadersMatchId(element, headerElem.attribs.headers);
             }
         }
-
         if (headersMatchId) {
             evaluation.verdict = 'passed';
             evaluation.description = 'id and headers attributes are correctly used';
@@ -97,7 +96,8 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
             technique.metadata.failed++;
         }
     }
-
+    console.log(evaluation.description);
+    console.log(isDataTable(element));
     evaluation.code = transform_element_into_html(element);
     evaluation.pointer = getElementSelector(element);
 
@@ -158,9 +158,9 @@ function duplicateId(table: DomElement) {
 
     for (let elementId of elementsId) {
         counter = 0;
-        for (let elementId2 of elementId) {
+        for (let elementId2 of elementsId) {
 
-            if (elementId.attribs["id"] !== elementId2.attribs["id"]) {
+            if (elementId.attribs["id"] === elementId2.attribs["id"]) {
                 counter++;
             }
 
