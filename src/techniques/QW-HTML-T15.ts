@@ -29,10 +29,10 @@ const technique: HTMLTechnique = {
         name: '1.3.1',
         level: 'A',
         principle: 'Perceivable',
-        url: 'https://www.w3.org/TR/2016/NOTE-UNDERSTANDING-WCAG20-20161007/content-structure-separation-programmatic.html'
+        url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
       }
     ],
-    related: ['H39', 'H51','H73'],
+    related: ['H39', 'H51', 'H73'],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/failures/F46',
     passed: 0,
     warning: 0,
@@ -41,7 +41,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult> ()
+  results: new Array<HTMLTechniqueResult>()
 };
 
 function getTechniqueMapping(): string {
@@ -58,7 +58,7 @@ function hasPrincipleAndLevels(principles: string[], levels: string[]): boolean 
   return has;
 }
 
-async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
+async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
 
   const evaluation: HTMLTechniqueResult = {
     verdict: '',
@@ -75,24 +75,24 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
     checks["hasCaption"] = false;
     checks["hasTh"] = false;
 
-    checks =  checkChildren(children,checks);
+    checks = checkChildren(children, checks);
 
     if (summary !== "" && summary !== undefined) {
 
       evaluation.verdict = 'failed';
-      evaluation.description = 'The table has a non-empty table. Check if it is not a layout table';
+      evaluation.description = 'The table has a non-empty summary - Amend it if it\'s a layout table';
       technique.metadata.failed++;
 
     } else if (checks["hasTh"]) {
 
       evaluation.verdict = 'failed';
-      evaluation.description = 'The table has a th element. Check if it is not a layout table';
+      evaluation.description = 'The table has a th element - Amend it if it\'s a layout table';
       technique.metadata.failed++;
 
     } else if (checks["hasCaption"]) {
 
       evaluation.verdict = 'failed';
-      evaluation.description = 'The table has a caption element. Check if it is not a layout table';
+      evaluation.description = 'The table has a caption element - Amend it if it\'s a layout table';
       technique.metadata.failed++;
     } else {
       evaluation.verdict = 'warning';
@@ -108,16 +108,15 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
   technique.results.push(_.clone(evaluation));
 }
 
-function checkChildren(children,checks){
+function checkChildren(children, checks) {
 
   for (let child of children) {
-    console.log(child["name"]);
     if (child["name"] === "th")
       checks["hasTh"] = true;
     if (child["name"] === "caption")
       checks["hasCaption"] = true;
-    if(child["children"]!==undefined){
-      checkChildren(child["children"],checks);
+    if (child["children"] !== undefined) {
+      checkChildren(child["children"], checks);
     }
 
   }
