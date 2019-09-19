@@ -79,26 +79,26 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
     if (!verifyFormControl(element)) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The fieldset is not in a form control';
-      technique.resultCode = 'RC1';
+      evaluation.resultCode = 'RC1';
       technique.metadata.failed++;
     }
     if (!verifyLegendExistence(element)) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The legend does not exist in the fieldset element';
-      technique.resultCode = 'RC2';
+      evaluation.resultCode = 'RC2';
       technique.metadata.failed++;
 
     }
-    if (!verifyLegendContent(element)) {
+    if (verifyLegendContent(element)) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The legend is empty';
-      technique.resultCode = 'RC3';
+      evaluation.resultCode = 'RC3';
       technique.metadata.failed++;
     }
     if (technique.metadata.failed == 0) {
       evaluation.verdict = 'warning';
       evaluation.description = 'Please verify that the legend description is valid';
-      technique.resultCode = 'RC4';
+      evaluation.resultCode = 'RC4';
       technique.metadata.warning++;
     }
 
@@ -111,8 +111,7 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
 }
 
 function verifyFormControl(elem){
-  const parent = elem.parentNode;
-  return parent == 'form';
+  return elem.parent.name === 'form';
 
 }
 
@@ -130,12 +129,12 @@ function verifyLegendContent(elem){
   const children = elem.children;
   if(children !== undefined) {
     for (let i = 0; i < children.length; i++) {
-      if (children[i] !== undefined && children[i].name === 'legend') {
+      if (children[i] !== undefined && children[i].name === 'legend' && children[i].children.length > 0 && children[i].children[0].data !== undefined) {
         return children[i].children[0].data.trim() === '';
       }
     }
   }
-  return false;
+  return true;
 }
 
 

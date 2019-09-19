@@ -78,7 +78,8 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
 
   const evaluation: HTMLTechniqueResult = {
     verdict: '',
-    description: ''
+    description: '',
+    resultCode: ''
   };
 
   if (element.attribs === undefined) { // fails if the element doesn't contain an alt attribute
@@ -99,7 +100,7 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
     technique.metadata.warning++;
   }
 
-  evaluation.code = transform_element_into_html(element);
+  evaluation.htmlCode = transform_element_into_html(element);
   evaluation.pointer = getElementSelector(element);
 
   technique.results.push(_.clone(evaluation));
@@ -137,7 +138,7 @@ function outcomeTechnique(): void {
 function addDescription(): void {
   for (const result of technique.results || []) {
     if (result.verdict === technique.metadata.outcome) {
-      technique.metadata.description = result.description;
+      technique.metadata.description = <string> result.description;
       break;
     }
   }
