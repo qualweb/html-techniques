@@ -28,11 +28,11 @@ const technique: HTMLTechnique = {
         name: '2.2.2',
         level: 'A',
         principle: 'Operable',
-        url: 'https://www.w3.org/TR/2016/NOTE-UNDERSTANDING-WCAG20-20161007/time-limits-pause.html'
+        url: 'https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide'
       }
     ],
     related: [],
-    url: 'https://www.w3.org/TR/WCAG20-TECHS/F47.html',
+    url: 'https://www.w3.org/WAI/WCAG21/Techniques/failures/F47',
     passed: 0,
     warning: 0,
     failed: 0,
@@ -65,11 +65,9 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
   };
 
   if (element !== undefined) {
-
     evaluation.verdict = 'failed';
     evaluation.description = 'Used blink element';
     technique.metadata.failed++;
-
     evaluation.code = transform_element_into_html(element);
     evaluation.pointer = getElementSelector(element);
   } else { // success if refresh element doesn't exist
