@@ -13,6 +13,7 @@ import {
   getElementSelector,
   transform_element_into_html
 } from '../util';
+import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
   name: 'Failure due to using meta redirect with a time limit',
@@ -24,11 +25,11 @@ const technique: HTMLTechnique = {
       element: 'meta'
     },
     'success-criteria': [{
-        name: '2.2.1',
-        level: 'A',
-        principle: 'Operable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/timing-adjustable'
-      },
+      name: '2.2.1',
+      level: 'A',
+      principle: 'Operable',
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/timing-adjustable'
+    },
       {
         name: '2.2.4',
         level: 'AAA',
@@ -48,96 +49,48 @@ const technique: HTMLTechnique = {
   results: new Array<HTMLTechniqueResult> ()
 };
 
-function getTechniqueMapping(): string {
-  return technique.mapping;
-}
+class QW_HTML_T1 extends Technique {
 
-function hasPrincipleAndLevels(principles: string[], levels: string[]): boolean {
-  let has = false;
-  for (const sc of technique.metadata['success-criteria'] || []) {
-    if (principles.includes(sc.principle) && levels.includes(sc.level)) {
-      has = true;
+  constructor() {
+    super(technique);
+  }
+
+  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+
+    if (element === undefined) {
+      return;
     }
-  }
-  return has;
-}
 
-async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
+    const evaluation: HTMLTechniqueResult = {
+      verdict: '',
+      description: '',
+      resultCode: ''
+    };
 
-  if (element === undefined) {
-    return;
-  }
-
-  const evaluation: HTMLTechniqueResult = {
-    verdict: '',
-    description: ''
-  };
-
-  if (element !== undefined) {
-    if(element.attribs !== undefined) { // always true
-      let contentSeconds = parseInt((element.attribs["content"]).split(";")[0]);
-      if (contentSeconds <= 72000 && contentSeconds >= 1) {
-        evaluation.verdict = 'failed';
-        evaluation.description = 'Time interval to redirect is between 1 and 72000 seconds';
-        technique.metadata.failed++;
-      } else {
-        evaluation.verdict = 'warning';
-        evaluation.description = `Meta redirect time interval is correctly used`;
-        technique.metadata.warning++;
+    if (element !== undefined) {
+      if(element.attribs !== undefined) { // always true
+        let content = (element.attribs["content"]).split(";");
+        let contentSeconds = parseInt(content[0]);
+        if (content.length === 1) {
+          // Meta redirect with no url is refresh
+        }
+        else if (contentSeconds <= 72000 && contentSeconds >= 1) {
+          evaluation.verdict = 'failed';
+          evaluation.description = 'Time interval to redirect is between 1 and 72000 seconds';
+          technique.metadata.failed++;
+        } else {
+          evaluation.verdict = 'warning';
+          evaluation.description = `Meta redirect time interval is correctly used`;
+          technique.metadata.warning++;
+        }
+        evaluation.htmlCode = transform_element_into_html(element);
+        evaluation.pointer = getElementSelector(element);
       }
-      evaluation.code = transform_element_into_html(element);
-      evaluation.pointer = getElementSelector(element);
+    } else {
+      // redirect element doesn't exist
     }
-  } else { // success if refresh element doesn't exist
-    evaluation.verdict = 'inapplicable';
-    evaluation.description = `Meta redirect is not used`;
-    technique.metadata.inapplicable++;
-  }
-  technique.results.push(_.clone(evaluation));
-}
-
-function getFinalResults() {
-  outcomeTechnique();
-  return _.cloneDeep(technique);
-}
-
-function reset(): void {
-  technique.metadata.passed = 0;
-  technique.metadata.warning = 0;
-  technique.metadata.failed = 0;
-  technique.metadata.inapplicable = 0;
-  technique.results = new Array<HTMLTechniqueResult>();
-}
-
-function outcomeTechnique(): void {
-  if (technique.metadata.failed > 0) {
-    technique.metadata.outcome = 'failed';
-  } else if (technique.metadata.warning > 0) {
-    technique.metadata.outcome = 'warning';
-  } else if (technique.metadata.passed > 0) {
-    technique.metadata.outcome = 'passed';
-  } else {
-    technique.metadata.outcome = 'inapplicable';
-  }
-
-  if (technique.results.length > 0) {
-    addDescription();
+    super.addEvaluationResult(evaluation);
   }
 }
 
-function addDescription(): void {
-  for (const result of technique.results || []) {
-    if (result.verdict === technique.metadata.outcome) {
-      technique.metadata.description = result.description;
-      break;
-    }
-  }
-}
-
-export {
-  getTechniqueMapping,
-  hasPrincipleAndLevels,
-  execute,
-  getFinalResults,
-  reset
-};
+export = QW_HTML_T1;

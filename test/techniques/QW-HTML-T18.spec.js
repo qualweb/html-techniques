@@ -30,6 +30,10 @@ describe('Technique QW-HTML-T18', function() {
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/f40/inapplicable.html',
       outcome: 'inapplicable'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/f40/inapplicable2.html',
+      outcome: 'inapplicable'
     }
   ];
 
