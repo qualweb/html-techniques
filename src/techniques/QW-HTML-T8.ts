@@ -14,6 +14,11 @@ import {
     transform_element_into_html
 } from '../util';
 
+const default_title = [
+    "spacer", "image", "picture", "separador", "imagem", "fotografia"
+];
+
+
 const technique: HTMLTechnique = {
     name: 'Providing text alternatives for the area elements of image maps',
     code: 'QW-HTML-T8',
@@ -31,18 +36,18 @@ const technique: HTMLTechnique = {
             principle: 'Perceivable',
             url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/text-equiv-all.html'
         },
-            {
-                name: '2.4.4',
-                level: 'A',
-                principle: 'Operable',
-                url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/navigation-mechanisms-refs.html'
-            },
-            {
-                name: '2.4.9',
-                level: 'AAA',
-                principle: 'Operable',
-                url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/navigation-mechanisms-link.html'
-            }
+        {
+            name: '2.4.4',
+            level: 'A',
+            principle: 'Operable',
+            url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/navigation-mechanisms-refs.html'
+        },
+        {
+            name: '2.4.9',
+            level: 'AAA',
+            principle: 'Operable',
+            url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/navigation-mechanisms-link.html'
+        }
         ],
         related: ['G91', 'H30'],
         url: 'https://www.w3.org/TR/WCAG20-TECHS/H24.html',
@@ -53,7 +58,7 @@ const technique: HTMLTechnique = {
         outcome: '',
         description: ''
     },
-    results: new Array<HTMLTechniqueResult> ()
+    results: new Array<HTMLTechniqueResult>()
 };
 
 function getTechniqueMapping(): string {
@@ -70,37 +75,47 @@ function hasPrincipleAndLevels(principles: string[], levels: string[]): boolean 
     return has;
 }
 
-async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
+async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
 
-    if (element === undefined||element.attribs===undefined) {
+    if (element === undefined || !element['children']) {
         return;
     }
 
     const evaluation: HTMLTechniqueResult = {
         verdict: '',
-        description: ''
+        description: '',
+        resultCode: ''
     };
 
-   if (element.attribs['alt'] === undefined) { // fails if the element doesn't contain an alt attribute
-        evaluation.verdict = 'failed';
-        evaluation.description = `The element doesn't contain an alt attribute`;
-        technique.metadata.failed++;
-    } else if (element.attribs['alt'] === '') { // fails if the element's alt attribute value is empty
-        evaluation.verdict = 'failed';
-        evaluation.description = `The element's alt attribute value is empty`;
-        technique.metadata.failed++;
-    } else if (element.attribs['alt'] === 'spacer'||element.attribs['alt'] === 'image'||element.attribs['alt'] === 'area') { // fails if the element's alt attribute value is empty
-       evaluation.verdict = 'failed';
-       evaluation.description = `The element's alt attribute value doesnt provide extra information`;
-       technique.metadata.failed++;
-   } else { // the element contains an non-empty alt attribute, and it's value needs to be verified
-        evaluation.verdict = 'warning';
-        evaluation.description = 'Please verify the alt attribute value describes correctly the element';
-        technique.metadata.warning++;
+    let patt = new RegExp(".+\\.(jpg|png)");
+    let patt1 = new RegExp("^picture/s[0-9]+");
+    let patt2 = new RegExp("[0-9]+");
+    let patt3 = new RegExp("^Intro#[0-9]+");
+    let patt4 = new RegExp("^imagem/s[0-9]+");
+
+
+    const text = element['children'][0];
+
+    let textData = text['data'];
+    if (text['type'] !== 'text') {
+        evaluation['verdict'] = 'failed';
+        evaluation['description'] = 'Title tag contains elements instead of text';
+        technique['metadata']['failed']++;
+
+    } else if (textData !== "" && !patt4.test(textData) && !patt3.test(textData) && !patt2.test(textData) && !patt1.test(textData) && !patt.test(textData) && !_.includes(default_title, textData)) { // the title text exists and needs to be verified
+        evaluation['verdict'] = 'warning';
+        evaluation['description'] = `Please verify the title text correlates to the page's content`;
+        technique['metadata']['warning']++;
+    } else { // fails if inside the title tag exists another element instead of text
+        evaluation['verdict'] = 'failed';
+        evaluation['description'] = 'Title tag contains text that doesnt identify the website ';
+        technique['metadata']['failed']++;
     }
 
-    evaluation.code = transform_element_into_html(element);
+    evaluation.htmlCode = transform_element_into_html(element);
     evaluation.pointer = getElementSelector(element);
+
+
 
     technique.results.push(_.clone(evaluation));
 }
@@ -115,7 +130,7 @@ function reset(): void {
     technique.metadata.warning = 0;
     technique.metadata.failed = 0;
     technique.metadata.inapplicable = 0;
-    technique.results = new Array < HTMLTechniqueResult > ();
+    technique.results = new Array<HTMLTechniqueResult>();
 }
 
 function outcomeTechnique(): void {
