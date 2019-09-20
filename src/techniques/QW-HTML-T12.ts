@@ -80,26 +80,28 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
   };
 
   if (element !== undefined) {
-    if(element.attribs !== undefined) { // always true
+    if (element.attribs !== undefined) { // always true
       let content = element.attribs["content"];
       let intContent = parseInt(content);
-
-      if (!isNaN(intContent) && intContent > 0 && intContent < 72000) {
-        evaluation.verdict = 'warning';
-        evaluation.description = 'Time interval for redirect is bigger than 0.Check if there is a way to turn off the refresh';
-        technique.metadata.warning++;
+      console.log(content);
+      console.log(intContent);
+      console.log(content.includes('url'));
+      if (content.includes('url')) {
+        // meta refresh with url is a redirect
+      } else if (intContent > 0 && intContent <= 72000) {
+        evaluation.verdict = 'failed';
+        evaluation.description = 'Time interval to refresh is between 1 and 72000 seconds';
+        technique.metadata.failed++;
       } else {
-        evaluation.verdict = 'passed';
-        evaluation.description = `Meta refresh is correctly used`;
-        technique.metadata.passed++;
+        evaluation.verdict = 'warning';
+        evaluation.description = `Meta refresh time interval is correctly used`;
+        technique.metadata.warning++;
       }
       evaluation.code = transform_element_into_html(element);
       evaluation.pointer = getElementSelector(element);
     }
-  } else { // success if refresh element doesn't exist
-    evaluation.verdict = 'passed';
-    evaluation.description = `Meta refresh is not used`;
-    technique.metadata.passed++;
+  } else {
+    // refresh element doesn't exist
   }
   technique.results.push(_.clone(evaluation));
 }
