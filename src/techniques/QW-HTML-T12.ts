@@ -15,29 +15,35 @@ import {
 } from '../util';
 
 const technique: HTMLTechnique = {
-  name: 'Failure due to using meta redirect with a time limit',
-  code: 'QW-HTML-T18',
-  mapping: 'F40',
-  description: 'meta http-equiv of {time-out}; url=... is often used to automatically redirect users. When this occurs after a time delay, it is an unexpected change of context that may interrupt the user. It is acceptable to use the meta element to create a redirect when the time-out is set to zero, since the redirect is instant and will not be perceived as a change of context. However, it is preferable to use server-side methods to accomplish this.',
+  name: 'Failure of Success Criterion 2.2.1, 2.2.4, and 3.2.5 due to using meta refresh to reload the page',
+  code: 'QW-HTML-T12',
+  mapping: 'F41',
+  description: 'meta http-equiv of refresh is often used to periodically refresh pages or to redirect users to another page. If the time interval is too short, and there is no way to turn auto-refresh off, people who are blind will not have enough time to make their screen readers read the page before the page refreshes unexpectedly and causes the screen reader to begin reading at the top. Sighted users may also be disoriented by the unexpected refresh.',
   metadata: {
     target: {
       element: 'meta'
     },
     'success-criteria': [{
-        name: '2.2.1',
-        level: 'A',
-        principle: 'Operable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/timing-adjustable'
-      },
+      name: '2.2.1',
+      level: 'A',
+      principle: 'Operable',
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/timing-adjustable'
+    },
       {
         name: '2.2.4',
         level: 'AAA',
         principle: 'Operable',
         url: 'https://www.w3.org/WAI/WCAG21/Understanding/interruptions'
+      },
+      {
+        name: '3.2.5',
+        level: 'AAA',
+        principle: 'Operable',
+        url: 'https://www.w3.org/WAI/WCAG21/Understanding/change-on-request'
       }
     ],
-    related: ['SVR1', 'H76'],
-    url: 'https://www.w3.org/WAI/WCAG21/Techniques/failures/F40',
+    related: [],
+    url: 'https://www.w3.org/WAI/WCAG21/Techniques/failures/F41',
     passed: 0,
     warning: 0,
     failed: 0,
@@ -45,7 +51,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult> ()
+  results: new Array<HTMLTechniqueResult>()
 };
 
 function getTechniqueMapping(): string {
@@ -62,7 +68,7 @@ function hasPrincipleAndLevels(principles: string[], levels: string[]): boolean 
   return has;
 }
 
-async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
+async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
 
   if (element === undefined) {
     return;
@@ -75,23 +81,25 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
 
   if (element !== undefined) {
     if(element.attribs !== undefined) { // always true
-      let contentSeconds = parseInt((element.attribs["content"]).split(";")[0]);
-      if (contentSeconds <= 72000 && contentSeconds >= 1) {
-        evaluation.verdict = 'failed';
-        evaluation.description = 'Time interval for redirect is less than 0 or greater than 72000 seconds';
-        technique.metadata.failed++;
-      } else {
+      let content = element.attribs["content"];
+      let intContent = parseInt(content);
+
+      if (!isNaN(intContent) && intContent > 0 && intContent < 72000) {
         evaluation.verdict = 'warning';
-        evaluation.description = `Meta redirect time interval is correctly used`;
+        evaluation.description = 'Time interval for redirect is bigger than 0.Check if there is a way to turn off the refresh';
         technique.metadata.warning++;
+      } else {
+        evaluation.verdict = 'passed';
+        evaluation.description = `Meta refresh is correctly used`;
+        technique.metadata.passed++;
       }
       evaluation.code = transform_element_into_html(element);
       evaluation.pointer = getElementSelector(element);
     }
   } else { // success if refresh element doesn't exist
-    evaluation.verdict = 'inapplicable';
-    evaluation.description = `Meta redirect is not used`;
-    technique.metadata.inapplicable++;
+    evaluation.verdict = 'passed';
+    evaluation.description = `Meta refresh is not used`;
+    technique.metadata.passed++;
   }
   technique.results.push(_.clone(evaluation));
 }
