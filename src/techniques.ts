@@ -1,9 +1,9 @@
-import * as QW_HTML_T1 from './techniques/QW-HTML-T1';
-import * as QW_HTML_T12 from './techniques/QW-HTML-T12';
+import QW_HTML_T1 from './techniques/QW-HTML-T1';
+import QW_HTML_T12 from './techniques/QW-HTML-T12';
 
 const techniques = {
-  'QW-HTML-T1': QW_HTML_T1,
-  'QW-HTML-T12': QW_HTML_T12
+  'QW-HTML-T1': new QW_HTML_T1(),
+  'QW-HTML-T12': new QW_HTML_T12()
 };
 
 const techniquesToExecute = {

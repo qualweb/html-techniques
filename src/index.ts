@@ -103,7 +103,7 @@ async function executeHTMLT(sourceHTML: DomElement[], processedHTML: DomElement[
   };
 
   await executeTechniques(report, sourceHTML, Object.keys(mapping.pre), mapping.pre);
-  await executeTechniques(report, sourceHTML, Object.keys(mapping.post), mapping.post);
+  await executeTechniques(report, processedHTML, Object.keys(mapping.post), mapping.post);
 
   resetConfiguration();
 
