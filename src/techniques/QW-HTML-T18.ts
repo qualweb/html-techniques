@@ -93,4 +93,4 @@ class QW_HTML_T1 extends Technique {
   }
 }
 
-export = QW_HTML_T1;
+export = QW_HTML_T18;
