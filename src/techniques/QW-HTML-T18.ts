@@ -78,7 +78,7 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
       let contentSeconds = parseInt((element.attribs["content"]).split(";")[0]);
       if (contentSeconds <= 72000 && contentSeconds >= 1) {
         evaluation.verdict = 'failed';
-        evaluation.description = 'Time interval for redirect is less than 0 or greater than 72000 seconds';
+        evaluation.description = 'Time interval to redirect is between 1 and 72000 seconds';
         technique.metadata.failed++;
       } else {
         evaluation.verdict = 'warning';
