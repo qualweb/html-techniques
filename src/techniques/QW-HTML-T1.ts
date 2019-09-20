@@ -13,6 +13,7 @@ import {
     getElementSelector,
     transform_element_into_html
 } from '../util';
+import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
     name: 'Providing text alternatives for the area elements of image maps',
@@ -56,118 +57,81 @@ const technique: HTMLTechnique = {
     results: new Array<HTMLTechniqueResult>()
 };
 
-function getTechniqueMapping(): string {
-    return technique.mapping;
-}
+class QW_HTML_T1 extends Technique {
 
-function hasPrincipleAndLevels(principles: string[], levels: string[]): boolean {
-    let has = false;
-    for (const sc of technique.metadata['success-criteria'] || []) {
-        if (principles.includes(sc.principle) && levels.includes(sc.level)) {
-            has = true;
-        }
-    }
-    return has;
-}
+  constructor() {
+    super(technique);
+  }
 
-async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
-
+  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+    
     if (element === undefined || element.children === undefined) {
         return;
     }
 
     const evaluation: HTMLTechniqueResult = {
         verdict: '',
-        description: ''
+        description: '',
+        resultCode:''
     };
-    let regexp = new RegExp('^H[1-6]$');
+    let regexp = new RegExp('^h[1-6]$');
     let name;
     let list: number[] = [];
+    let split;
 
     for (let child of element.children) {
         name = child["name"];
+        console.log(name);
         if (name !== undefined && regexp.test(name)) {
-            list.push();
+            split = name.split("h")
+            list.push(split[1]);
         }
 
     }
+
+    console.log(list);
     if (list.length === 0) {
         return;//no H elements
     }
     let sortedArray: number[] = list.sort((n1, n2) => n1 - n2);
     let equal = true;
     let complete = true;
+    console.log(sortedArray[0]);
 
     for (let i = 0; i < list.length; i++) {
         if (list[i] !== sortedArray[i])
             equal = false;
-        if (i > 0 && i - 1 < list.length && sortedArray[i] - sortedArray[i - 1] > 1)
-            complete = false;
+        if (i > 0 && i - 1 < list.length && sortedArray[i] - sortedArray[i - 1] > 1){
+            complete = false; }
     }
+
 
 
     if (!equal) { // fails if the headers arent in the correct order
         evaluation.verdict = 'failed';
-        evaluation.description = `The element doesn't contain an alt attribute`;
+        evaluation.description = `Headers are not in the correct order`;
         technique.metadata.failed++;
     } else if (!complete) { // fails if a header number is missing
         evaluation.verdict = 'failed';
-        evaluation.description = `The element doesn't contain an alt attribute`;
+        evaluation.description = `Header number is missing`;
         technique.metadata.failed++;
     } else { // the H elements are correctly used
-        evaluation.verdict = 'passed';
-        evaluation.description = 'Please verify the alt attribute value describes correctly the correspondent area of the image';
+        evaluation.verdict = 'warning';
+        evaluation.description = 'Please verify that headers are used to divide the page correctly';
         technique.metadata.passed++;
     }
 
-    evaluation.code = transform_element_into_html(element);
+    console.log( evaluation.verdict);
+    console.log( evaluation.description);
+
+    evaluation.htmlCode = transform_element_into_html(element);
     evaluation.pointer = getElementSelector(element);
 
-    technique.results.push(_.clone(evaluation));
-}
+    super.addEvaluationResult(evaluation);
+}}
 
-function getFinalResults() {
-    outcomeTechnique();
-    return _.cloneDeep(technique);
-}
 
-function reset(): void {
-    technique.metadata.passed = 0;
-    technique.metadata.warning = 0;
-    technique.metadata.failed = 0;
-    technique.metadata.inapplicable = 0;
-    technique.results = new Array<HTMLTechniqueResult>();
-}
 
-function outcomeTechnique(): void {
-    if (technique.metadata.failed > 0) {
-        technique.metadata.outcome = 'failed';
-    } else if (technique.metadata.warning > 0) {
-        technique.metadata.outcome = 'warning';
-    } else if (technique.metadata.passed > 0) {
-        technique.metadata.outcome = 'passed';
-    } else {
-        technique.metadata.outcome = 'inapplicable';
-    }
+export = QW_HTML_T1;
 
-    if (technique.results.length > 0) {
-        addDescription();
-    }
-}
 
-function addDescription(): void {
-    for (const result of technique.results || []) {
-        if (result.verdict === technique.metadata.outcome) {
-            technique.metadata.description = result.description;
-            break;
-        }
-    }
-}
-
-export {
-    getTechniqueMapping,
-    hasPrincipleAndLevels,
-    execute,
-    getFinalResults,
-    reset
-};

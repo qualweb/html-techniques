@@ -3,20 +3,7 @@
 
   },
   "post": {
-    "*": ["H36"],
-    "img + map > area": ["H24"],
-    "head > title": ["H25"],
-    "a": ["H30", "H33"],
-    "form": ["H32"],
-    "applet": ["H35"],
-    "input[type=\"image\"]": ["H36"],
-    "input": [],
-    "img": ["H37", "H45"],
-    "table": ["H39", "H51"],
-    "embed": ["H46"],
-    "object": ["H53"],
-    "table th": ["H63"],
-    "frame, iframe" : ["H64"],
-    "html": ["H57", "H93"]
+    "*": ["QW-HTML-T1"]
+   
   }
 }
