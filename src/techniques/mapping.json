@@ -3,6 +3,7 @@
 
   },
   "post": {
-    "img + map > area": ["QW-HTML-T1"]
+    "img + map > area": ["QW-HTML-T1"],
+    "b, basefont, font, i, s, strike, u": ["QW-HTML-T21"]
   }
 }
