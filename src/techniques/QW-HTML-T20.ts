@@ -26,27 +26,16 @@ const technique: HTMLTechnique = {
       parent: 'map',
       element: 'area'
     },
-    'success-criteria': [{
-        name: '1.1.1',
-        level: 'A',
-        principle: 'Perceivable',
-        url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/text-equiv-all.html'
-      },
+    'success-criteria': [
       {
-        name: '2.4.4',
+        name: '2.2.1',
         level: 'A',
         principle: 'Operable',
-        url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/navigation-mechanisms-refs.html'
-      },
-      {
-        name: '2.4.9',
-        level: 'AAA',
-        principle: 'Operable',
-        url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/navigation-mechanisms-link.html'
+        url: 'https://www.w3.org/WAI/WCAG21/Understanding/keyboard'
       }
     ],
-    related: ['G91', 'H30'],
-    url: 'https://www.w3.org/TR/WCAG20-TECHS/H24.html',
+    related: [ 'SCR20'],
+    url: 'https://www.w3.org/WAI/WCAG21/Techniques/failures/F54',
     passed: 0,
     warning: 0,
     failed: 0,
@@ -76,25 +65,25 @@ class QW_HTML_T20 extends Technique {
     };
 
     if (element.attribs["onmousedown"]) {
-      evaluation.verdict = 'failed';
+      evaluation.verdict = 'warning';
       evaluation.description = `The mousedown attribute is used`;
-      technique.metadata.failed++;
+      technique.metadata.warning++;
     } else if (element.attribs["onmouseup"]) {
-      evaluation.verdict = 'failed';
+      evaluation.verdict = 'warning';
       evaluation.description = `The mouseup attribute is used`;
-      technique.metadata.failed++;
+      technique.metadata.warning++;
     } else if (element.attribs["onclick"]) {
-      evaluation.verdict = 'failed';
+      evaluation.verdict = 'warning';
       evaluation.description = `The click attribute is used`;
-      technique.metadata.failed++;
+      technique.metadata.warning++;
     } else if (element.attribs["onmouseover"] ) {
-      evaluation.verdict = 'failed';
+      evaluation.verdict = 'warning';
       evaluation.description = `The mouseover attribute is used`;
-      technique.metadata.failed++;
+      technique.metadata.warning++;
     } else if (element.attribs["onmouseout"] ) {
-      evaluation.verdict = 'failed';
+      evaluation.verdict = 'warning';
       evaluation.description = `The mouseout attribute is used`;
-      technique.metadata.failed++;
+      technique.metadata.warning++;
     } else {
       evaluation.verdict = 'passed';
       evaluation.description = `No mouse specific event handlers are used`;

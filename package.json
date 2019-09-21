@@ -9,6 +9,7 @@
     "lint": "eslint src/**/*",
     "test": "mocha test/**/*",
     "test-t1": "mocha test/techniques/QW-HTML-T1.spec.js",
+    "test-t20": "mocha test/techniques/QW-HTML-T20.spec.js",
     "clean": "node clean.js",
     "build": "npm run clean && tsc --build",
     "pub": "npm run build && npm publish --access=public"
