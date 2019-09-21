@@ -43,7 +43,7 @@ const technique: HTMLTechnique = {
   results: new Array<HTMLTechniqueResult> ()
 };
 
-class QW_HTML_T1 extends Technique {
+class QW_HTML_T21 extends Technique {
 
   constructor() {
     super(technique);
@@ -61,10 +61,12 @@ class QW_HTML_T1 extends Technique {
       evaluation.verdict = 'passed';
       evaluation.description = `The webpage doesn't use elements to control the visual text presentation`;
       evaluation.resultCode = 'RC1';
+      technique.metadata.passed++;
     } else {
       evaluation.verdict = 'failed';
       evaluation.description = `The webpage uses the element ${element.name} to control the visual text presentation`;
       evaluation.resultCode = 'RC2';
+      technique.metadata.failed++;
 
       evaluation.htmlCode = transform_element_into_html(element);
       evaluation.pointer = getElementSelector(element);
@@ -74,4 +76,4 @@ class QW_HTML_T1 extends Technique {
   }
 }
 
-export = QW_HTML_T1;
+export = QW_HTML_T21;
