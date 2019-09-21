@@ -2,18 +2,18 @@
 
 import _ from 'lodash';
 import {
-    HTMLTechnique,
-    HTMLTechniqueResult
+  HTMLTechnique,
+  HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 import {
-    DomElement
+  DomElement
 } from 'htmlparser2';
 
 import {
-    getElementSelector,
-    transform_element_into_html
+  getElementSelector,
+  transform_element_into_html
 } from '../util';
-
+import Technique from './Technique.object';
 const technique: HTMLTechnique = {
     name: 'Providing text alternatives for the area elements of image maps',
     code: 'QW-HTML-T7',
@@ -42,31 +42,25 @@ const technique: HTMLTechnique = {
     results: new Array<HTMLTechniqueResult>()
 };
 
-function getTechniqueMapping(): string {
-    return technique.mapping;
-}
+class QW_HTML_T7 extends Technique {
 
-function hasPrincipleAndLevels(principles: string[], levels: string[]): boolean {
-    let has = false;
-    for (const sc of technique.metadata['success-criteria'] || []) {
-        if (principles.includes(sc.principle) && levels.includes(sc.level)) {
-            has = true;
-        }
-    }
-    return has;
-}
+  constructor() {
+    super(technique);
+  }
 
-async function execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
 
     if (element === undefined) {
-        return;
+      return;
     }
 
-    let evaluation: HTMLTechniqueResult = {
-        verdict: '',
-        description: ''
+    const evaluation: HTMLTechniqueResult = {
+      verdict: '',
+      description: '',
+      resultCode: ''
     };
 
+ 
     if(element.attribs === undefined){
         evaluation.verdict = 'failed';
         evaluation.description = `The element abbrv doesnt have the definition in the title attribute`;
@@ -82,55 +76,13 @@ async function execute(element: DomElement | undefined, processedHTML: DomElemen
         technique.metadata.failed++;
 
     }
-
-    evaluation.code = transform_element_into_html(element);
+    evaluation.htmlCode = transform_element_into_html(element);
     evaluation.pointer = getElementSelector(element);
+    
 
-    technique.results.push(_.clone(evaluation));
+    super.addEvaluationResult(evaluation);
+  }
 }
 
-function getFinalResults() {
-    outcomeTechnique();
-    return _.cloneDeep(technique);
-}
+export = QW_HTML_T7;
 
-function reset(): void {
-    technique.metadata.passed = 0;
-    technique.metadata.warning = 0;
-    technique.metadata.failed = 0;
-    technique.metadata.inapplicable = 0;
-    technique.results = new Array<HTMLTechniqueResult>();
-}
-
-function outcomeTechnique(): void {
-    if (technique.metadata.failed > 0) {
-        technique.metadata.outcome = 'failed';
-    } else if (technique.metadata.warning > 0) {
-        technique.metadata.outcome = 'warning';
-    } else if (technique.metadata.passed > 0) {
-        technique.metadata.outcome = 'passed';
-    } else {
-        technique.metadata.outcome = 'inapplicable';
-    }
-
-    if (technique.results.length > 0) {
-        addDescription();
-    }
-}
-
-function addDescription(): void {
-    for (const result of technique.results || []) {
-        if (result.verdict === technique.metadata.outcome) {
-            technique.metadata.description = result.description;
-            break;
-        }
-    }
-}
-
-export {
-    getTechniqueMapping,
-    hasPrincipleAndLevels,
-    execute,
-    getFinalResults,
-    reset
-};
