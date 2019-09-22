@@ -8,7 +8,7 @@ const {
 } = require('@qualweb/get-dom-puppeteer');
 
 
-describe('Technique QW-HTML-T20', function() {
+describe('Technique QW-HTML-T29', function() {
 
   const tests = [
     {
@@ -36,7 +36,7 @@ describe('Technique QW-HTML-T20', function() {
 
 
         const report = await executeHTMLT(source.html.parsed, processed.html.parsed);
-        expect(report.techniques['QW-HTML-T20'].metadata.outcome).to.be.equal(test.outcome);
+        expect(report.techniques['QW-HTML-T29'].metadata.outcome).to.be.equal(test.outcome);
       });
     });
   }

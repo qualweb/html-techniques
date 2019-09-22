@@ -46,7 +46,7 @@ const technique: HTMLTechnique = {
   results: new Array<HTMLTechniqueResult> ()
 };
 
-class QW_HTML_T20 extends Technique {
+class QW_HTML_T29 extends Technique {
 
   constructor() {
     super(technique);
@@ -99,4 +99,4 @@ class QW_HTML_T20 extends Technique {
   }
 }
 
-export = QW_HTML_T20;
+export = QW_HTML_T29;
