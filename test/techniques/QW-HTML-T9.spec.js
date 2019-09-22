@@ -30,7 +30,7 @@ describe('Technique QW-HTML-T9', function() {
       outcome: 'failed'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g141/failed5.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/g141/failed5.html',
       outcome: 'failed'
     },
     {

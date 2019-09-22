@@ -14,6 +14,7 @@ import {
   transform_element_into_html
 } from '../util';
 import Technique from './Technique.object';
+const stew = new(require('stew-select')).Stew();
 
 const technique: HTMLTechnique = {
   name: 'Organizing a page using headings',
@@ -22,7 +23,7 @@ const technique: HTMLTechnique = {
   description: 'The objective of this technique is to ensure that sections have headings that identify them and that the heading are used in the correct order',
   metadata: {
     target: {
-      element: '*'
+      element: 'h1,h2,h3,h4,h5,h6'
     },
     'success-criteria': [{
       name: '1.3.1',
@@ -87,6 +88,8 @@ class QW_HTML_T9 extends Technique {
     let sortedArray: number[] = list.sort((n1, n2) => n1 - n2);
     let equal = true;
     let complete = true;
+    let startsWithOne = (sortedArray[0]-1)=== 0;
+    let hasH1= stew.select(processedHTML, 'h1').length>0;
 
     for (let i = 0; i < list.length; i++) {
       if (list[i] !== sortedArray[i])
@@ -104,7 +107,11 @@ class QW_HTML_T9 extends Technique {
       evaluation.verdict = 'failed';
       evaluation.description = `Heading number is missing`;
       technique.metadata.failed++;
-    } else { // the heading elements are correctly used
+    } else if(!startsWithOne && !hasH1){
+      evaluation.verdict = 'failed';
+      evaluation.description = 'Headings dont start with h1';
+      technique.metadata.failed++;
+    }else { // the heading elements are correctly used
       evaluation.verdict = 'warning';
       evaluation.description = 'Please verify that headers are used to divide the page correctly';
       technique.metadata.warning++;
