@@ -16,17 +16,18 @@ import {
 import Technique from './Technique.object';
 
 const default_title = [
-  "Enter the title of your HTML document here,", "Untitled Document", "No Title", "Untitled Page", "New Page 1", "Escreve o titulo do documento aqui,", "Documento sem titulo", "Sem titulo", "Nova pagina 1"
+  "Enter the title of your HTML document here", "Untitled Document", "No Title", "Untitled Page", "New Page 1", "Escreve o título do documento aqui,", "Documento sem título", "Sem título", "Nova página 1"
 ];
 
 
 const technique: HTMLTechnique = {
-  name: 'Providing text alternatives for the area elements of image maps',
+  name: 'Failure of Success Criterion 2.4.2 due to the title of a Web page not identifying the contents',
   code: 'QW-HTML-T26',
   mapping: 'F25',
-  description: 'This technique checks the text alternative of area elements of images maps',
+  description: 'This technique describes a failure condition when the Web page has a title, but the title does not identify the contents or purpose of the Web page',
   metadata: {
     target: {
+      parent: 'head',
       element: 'title'
     },
     'success-criteria': [{
@@ -70,18 +71,18 @@ class QW_HTML_T26 extends Technique {
 
     if (textData) {
        if (textData !== "" && !patt.test(textData) && !_.includes(default_title, textData)) { // the title text exists and needs to be verified
-        evaluation['verdict'] = 'warning';
-        evaluation['description'] = `Please verify the title text correlates to the page's content`;
-        technique['metadata']['warning']++;
+        evaluation.verdict = 'warning';
+        evaluation.description = `Please verify the title tag text correlates to the page's content`;
+        technique.metadata.warning++;
       } else { // fails if inside the title tag exists another element instead of text
-        evaluation['verdict'] = 'failed';
-        evaluation['description'] = 'Title tag contains text that doesnt identify the website ';
-        technique['metadata']['failed']++;
+        evaluation.verdict = 'failed';
+        evaluation.description = 'Title tag contains text that doesn\'t identify the website';
+        technique.metadata.failed++;
       }
     } else { // fails if the title tag is empty
-      evaluation['verdict'] = 'failed';
-      evaluation['description'] = 'Title text is empty';
-      technique['metadata']['failed']++;
+      evaluation.verdict = 'failed';
+      evaluation.description = 'Title tag is empty';
+      technique.metadata.failed++;
     }
 
     evaluation.htmlCode = transform_element_into_html(element);
