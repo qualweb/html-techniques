@@ -14,6 +14,7 @@ import {
   transform_element_into_html
 } from '../util';
 import Technique from './Technique.object';
+
 const stew = new (require('stew-select')).Stew();
 
 const technique: HTMLTechnique = {
@@ -26,11 +27,11 @@ const technique: HTMLTechnique = {
       element: 'form'
     },
     'success-criteria': [{
-        name: '3.2.2',
-        level: 'A',
-        principle: 'Understandable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/on-input'
-      }
+      name: '3.2.2',
+      level: 'A',
+      principle: 'Understandable',
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/on-input'
+    }
     ],
     related: ['G80', 'H36', 'H84'],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H32',
@@ -41,7 +42,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult> ()
+  results: new Array<HTMLTechniqueResult>()
 };
 
 class QW_HTML_T32 extends Technique {
@@ -78,7 +79,7 @@ class QW_HTML_T32 extends Technique {
 
     evaluation.htmlCode = transform_element_into_html(element);
     evaluation.pointer = getElementSelector(element);
-    
+
 
     super.addEvaluationResult(evaluation);
   }
