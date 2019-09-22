@@ -22,7 +22,7 @@ const technique: HTMLTechnique = {
   description: 'This technique checks that no attributes are being used to control the visual text presentation',
   metadata: {
     target: {
-      element: ['text', 'vlink', 'alink', 'link']
+      attributes: ['text', 'vlink', 'alink', 'link']
     },
     'success-criteria': [{
         name: '1.3.1',
@@ -55,7 +55,7 @@ const technique: HTMLTechnique = {
   results: new Array<HTMLTechniqueResult> ()
 };
 
-class QW_HTML_T1 extends Technique {
+class QW_HTML_T22 extends Technique {
 
   constructor() {
     super(technique);
@@ -73,10 +73,12 @@ class QW_HTML_T1 extends Technique {
       evaluation.verdict = 'passed';
       evaluation.description = `The webpage doesn't use attributes to control the visual text presentation`;
       evaluation.resultCode = 'RC1';
+      technique.metadata.passed++;
     } else {
       evaluation.verdict = 'failed';
-      evaluation.description = `The webpage uses the attribute ${element.name} to control the visual text presentation`;
+      evaluation.description = `The webpage uses attributes in ${element.name} element to control the visual text presentation`;
       evaluation.resultCode = 'RC2';
+      technique.metadata.failed++;
 
       evaluation.htmlCode = transform_element_into_html(element);
       evaluation.pointer = getElementSelector(element);
@@ -87,4 +89,4 @@ class QW_HTML_T1 extends Technique {
   }
 }
 
-export = QW_HTML_T1;
+export = QW_HTML_T22;
