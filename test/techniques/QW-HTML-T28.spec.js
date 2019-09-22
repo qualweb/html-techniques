@@ -26,6 +26,10 @@ describe('Technique QW-HTML-T28', function() {
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T28/test4.html',
       outcome: 'failed'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h48/failed2.html',
+      outcome: 'failed'
     }
   ];
 
