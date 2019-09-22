@@ -14,6 +14,7 @@ import {
   transform_element_into_html
 } from '../util';
 import Technique from './Technique.object';
+const stew = new(require('stew-select')).Stew();
 
 const technique: HTMLTechnique = {
   name: 'Using ol, ul and dl for lists or groups of links',
@@ -61,24 +62,28 @@ class QW_HTML_T28 extends Technique {
       resultCode: ''
     };
 
-    if (element.parent["name"] === "ul" && element["name"] === "li") { // fails if the element doesn't contain an alt attribute
+    let hasLi=stew.select(element,"li").length !==0;
+    let hasDd=stew.select(element,"dd").length !==0;
+    let hasDt=stew.select(element,"dt").length !==0;
+
+    if (hasLi && element.name === "ul") { // fails if the element doesn't contain an alt attribute
       evaluation.verdict = 'warning';
       evaluation.description = 'Check that content that has the visual appearance of a list (with or without bullets) is marked as an unordered list';
       evaluation.resultCode = 'RC1';
       technique.metadata.warning++;
-    } else if (element.parent["name"] === "ol" && element["name"] === "li") {
+    } else if (hasLi && element.name === "ol") {
       evaluation.verdict = 'warning';
       evaluation.description = 'Check that content that has the visual appearance of a numbered list is marked as an ordered list.';
       evaluation.resultCode = 'RC2';
       technique.metadata.warning++;
-    } else if (element.parent["name"] === "dl" && (element["name"] === "dd" || element["name"] === "dt")) {
+    } else if (element.name === "dl" && (hasDt|| hasDd)) {
       evaluation.verdict = 'warning';
       evaluation.description = 'Check that content is marked as a definition list when terms and their definitions are presented in the form of a list.';
       evaluation.resultCode = 'RC3';
       technique.metadata.warning++;
     } else {
       evaluation.verdict = 'failed';
-      evaluation.description = `The list item is not contained in a valid list`;
+      evaluation.description = `A list item is not contained in a correct list element`;
       evaluation.resultCode = 'RC4';
       technique.metadata.failed++;
     }
