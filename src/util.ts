@@ -221,12 +221,17 @@ function getTextAlternative(element: DomElement, processedHTML: DomElement[], id
 
     let title = element.attribs.title;
     let labelContent;
+    let caption;
 
     console.log('label[for="' + id + '"]');
     console.log(id);
 
     if (id) {
         labelContent = stew.select(processedHTML, 'label[for="' + id + '"]');
+    }
+
+    if (element.name === 'table') {
+        caption = stew.select(element, 'caption');
     }
 
     console.log(labelContent);
@@ -238,6 +243,8 @@ function getTextAlternative(element: DomElement, processedHTML: DomElement[], id
         return title;
     else if (labelContent && labelContent.length !== 0)
         return getText(labelContent[0]);
+    else if (caption && caption.length !== 0)
+        return getText(caption[0]);
     else
         return "";
 
