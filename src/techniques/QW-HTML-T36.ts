@@ -17,24 +17,24 @@ import {
 import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
-  name: 'Failure of Success Criterion 4.1.2 due to a user interface control not having a programmatically determined name',
+  name: 'Failure of Success Criterion 1.1.1 due to omitting the alt attribute or text alternative on img elements, area elements, and input elements of type "image" ',
   code: 'QW-HTML-T35',
-  mapping: 'F68',
-  description: 'This technique checks the accesible name for input,select,textarea.',
+  mapping: 'F65',
+  description: 'This technique checks the accesible name for img,area and input of type image.',
   metadata: {
     target: {
-      element: 'input,textarea,select'
+      element: 'input,img,area'
     },
     'success-criteria': [
       {
-        name: '4.1.2',
+        name: '1.1.1',
         level: 'A',
-        principle: 'Robust',
-        url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/ensure-compat-rsv.html'
+        principle: 'Perceivable',
+        url: 'https://www.w3.org/WAI/WCAG21/Understanding/non-text-content'
       }
     ],
-    related: ['H44', 'H65','G167','ARIA6','ARIA9','ARIA16','ARIA14'],
-    url: 'https://www.w3.org/TR/WCAG20-TECHS/F68.html',
+    related: ['H67', 'H37','ARIA10'],
+    url: 'https://www.w3.org/WAI/WCAG21/Techniques/failures/F65',
     passed: 0,
     warning: 0,
     failed: 0,
@@ -45,7 +45,7 @@ const technique: HTMLTechnique = {
   results: new Array<HTMLTechniqueResult> ()
 };
 
-class QW_HTML_T35 extends Technique {
+class QW_HTML_T36 extends Technique {
 
   constructor() {
     super(technique);
@@ -53,7 +53,7 @@ class QW_HTML_T35 extends Technique {
 
   async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
 
-    if (element === undefined||(element.attribs&&element.name === 'input'&&(element.attribs['type'] === 'hidden'||element.attribs['type'] === 'submit'||element.attribs['type'] === 'reset'&&element.attribs['type'] === 'button'))) {
+    if (element === undefined) {
       return;
     }
 
@@ -83,4 +83,4 @@ class QW_HTML_T35 extends Technique {
   }
 }
 
-export = QW_HTML_T35;
+export = QW_HTML_T36;
