@@ -13,20 +13,24 @@ describe('Technique QW-HTML-T35', function() {
 
   const tests = [
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T31/test1.html',
-      outcome: 'warning'
-    },
-    {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T31/test2.html',
-      outcome: 'warning'
-    },
-    {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T31/test3.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T36/test1.html',
       outcome: 'failed'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T31/test4.html',
-      outcome: 'failed'
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T36/test2.html',
+      outcome: 'passed'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T36/test3.html',
+      outcome: 'passed'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T36/test4.html',
+      outcome: 'passed'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T36/test5.html',
+      outcome: 'passed'
     }
   ];
 
@@ -45,7 +49,7 @@ describe('Technique QW-HTML-T35', function() {
 
 
         const report = await executeHTMLT(source.html.parsed, processed.html.parsed);
-        expect(report.techniques['QW-HTML-T35'].metadata.outcome).to.be.equal(test.outcome);
+        expect(report.techniques['QW-HTML-T36'].metadata.outcome).to.be.equal(test.outcome);
       });
     });
   }

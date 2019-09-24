@@ -6,6 +6,6 @@
     "img + map > area": ["QW-HTML-T1"],
     "a": ["QW-HTML-T34"],
     "input,textarea,select": ["QW-HTML-T35"],
-    "input,img,input[type=\"image\"]": ["QW-HTML-T36"]
+    "area,img,input[type=\"image\"]": ["QW-HTML-T36"]
   }
 }
