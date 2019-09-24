@@ -7,88 +7,88 @@ import _ from 'lodash';
 const stew = new (require('stew-select')).Stew();
 
 function getSelfLocationInParent(element: DomElement): string {
-  let selector = '';
+    let selector = '';
 
-  if (element.name === 'body' || element.name === 'head') {
-    return element.name;
-  }
-
-  let sameEleCount = 0;
-
-  let prev = element.prev;
-  while(prev) {
-    if (prev.type === 'tag'&& prev.name === element.name) {
-      sameEleCount++;
+    if (element.name === 'body' || element.name === 'head') {
+        return element.name;
     }
-    prev = prev.prev;
-  }
 
-  selector += `${element.name}:nth-of-type(${sameEleCount+1})`;
+    let sameEleCount = 0;
 
-  return selector;
+    let prev = element.prev;
+    while (prev) {
+        if (prev.type === 'tag' && prev.name === element.name) {
+            sameEleCount++;
+        }
+        prev = prev.prev;
+    }
+
+    selector += `${element.name}:nth-of-type(${sameEleCount + 1})`;
+
+    return selector;
 }
 
 function getElementSelector(element: DomElement): string {
 
-  if (element.name === 'html') {
-    return 'html';
-  } else if (element.name === 'head') {
-    return 'html > head';
-  } else if (element.name === 'body') {
-    return 'html > body';
-  }
+    if (element.name === 'html') {
+        return 'html';
+    } else if (element.name === 'head') {
+        return 'html > head';
+    } else if (element.name === 'body') {
+        return 'html > body';
+    }
 
-  let selector = 'html > ';
+    let selector = 'html > ';
 
-  let parents = new Array<string>();
-  let parent = element.parent;
-  while (parent && parent.name !== 'html') {
-    parents.unshift(getSelfLocationInParent(parent));
-    parent = parent.parent;
-  }
-  
-  selector += _.join(parents, ' > ');
-  selector += ' > ' + getSelfLocationInParent(element);
+    let parents = new Array<string>();
+    let parent = element.parent;
+    while (parent && parent.name !== 'html') {
+        parents.unshift(getSelfLocationInParent(parent));
+        parent = parent.parent;
+    }
 
-  return selector;
+    selector += _.join(parents, ' > ');
+    selector += ' > ' + getSelfLocationInParent(element);
+
+    return selector;
 }
 
-function transform_element_into_html(element: DomElement, withText: boolean=true, fullElement: boolean=false): string {
+function transform_element_into_html(element: DomElement, withText: boolean = true, fullElement: boolean = false): string {
 
-  if (!element) {
-    return '';
-  }
-
-  let codeElement: DomElement = _.clone(element);
-
-  if (codeElement.attribs) {
-    delete codeElement.attribs['computed-style'];
-    delete codeElement.attribs['w-scrollx'];
-    delete codeElement.attribs['w-scrolly'];
-    delete codeElement.attribs['b-right'];
-    delete codeElement.attribs['b-bottom'];
-  }
-
-  if (codeElement.attribs && codeElement.attribs.id && _.startsWith(codeElement.attribs.id, 'qualweb_generated_id')) {
-    delete codeElement.attribs.id;
-  }
-
-  if (!fullElement) {
-    if (withText) {
-      let children = _.clone(codeElement.children);
-      codeElement.children = [];
-
-      for (let child of children || []) {
-        if (child.type === 'text') {
-          codeElement.children.push(_.clone(child));
-        }
-      }
-    } else {
-      codeElement.children = [];
+    if (!element) {
+        return '';
     }
-  }
-  
-  return html(codeElement);
+
+    let codeElement: DomElement = _.clone(element);
+
+    if (codeElement.attribs) {
+        delete codeElement.attribs['computed-style'];
+        delete codeElement.attribs['w-scrollx'];
+        delete codeElement.attribs['w-scrolly'];
+        delete codeElement.attribs['b-right'];
+        delete codeElement.attribs['b-bottom'];
+    }
+
+    if (codeElement.attribs && codeElement.attribs.id && _.startsWith(codeElement.attribs.id, 'qualweb_generated_id')) {
+        delete codeElement.attribs.id;
+    }
+
+    if (!fullElement) {
+        if (withText) {
+            let children = _.clone(codeElement.children);
+            codeElement.children = [];
+
+            for (let child of children || []) {
+                if (child.type === 'text') {
+                    codeElement.children.push(_.clone(child));
+                }
+            }
+        } else {
+            codeElement.children = [];
+        }
+    }
+
+    return html(codeElement);
 }
 function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean): string {
 
@@ -114,13 +114,13 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         isReferenced = elementIsReferenced(id, processedHTML);
     }
 
-    console.log(element.name);
-    console.log(isControle + "emb" + isEmbededControl);
+    //console.log("aria-lblBy"+ariaLabelBy);
+    // console.log(isControle + "emb" + isEmbededControl);
 
     if (isHidden && !reference && !isReferenced) {//A
         return "" + "A";
     } else if (ariaLabelBy !== "" && !reference) {//B
-        console.log(getElementById(ariaLabelBy, processedHTML)[0]);
+        // console.log(getElementById(ariaLabelBy, processedHTML)[0]);
         return getAccessibleName(getElementById(ariaLabelBy, processedHTML)[0], processedHTML, true) + "B";
     } else if (ariaLabel && _.trim(ariaLabel) !== "" && !(isControle && isEmbededControl && reference)) {//C
         return ariaLabel + "C";
@@ -130,20 +130,19 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         return getValueFromEmbededControl(element) + "E";
     } else if (nameFromContent || isReferenced) {//F todo
         let textFromCss = getTextFromCss(element, textElement);
-        console.log("css" + textFromCss);
+        // console.log("css" + textFromCss);
         return getAccessibleNameFromChildren(element, textFromCss) + "F";
     } else if (textElement !== "") {//G
-        return textElement + "G";
+        return textElement;
     } else if (title !== undefined) {//I toolTip
         return title + "I";
     } else {
-        return "noname";
+        return "";
     }
 
 }
 
 function elementIsHidden(element: DomElement): boolean {
-    // let styles = element.styles;
     if (!element.attribs)
         return false;
 
@@ -151,9 +150,9 @@ function elementIsHidden(element: DomElement): boolean {
     let aria_hidden = Boolean(element.attribs["aria-hidden"]);
     let hidden = Boolean(element.attribs["hidden"]);
     let displayNone = false;
-    //fixme css parser
-    //if (element.attribs['computed-style'] !== undefined)
-    //displayNone = element.attribs['computed-style']['display'] === 'none';
+
+    if (element.attribs['computed-style'] !== undefined)
+        displayNone = _.trim(getComputedStylesAtribute(element, "computed-style-before", "^ display:")) === 'none';
 
     let hasRolePresentOrNone = hasRolePresentationOrNone(element);
     return hasRolePresentOrNone || displayNone || hidden || aria_hidden;
@@ -186,7 +185,7 @@ function isEmbededinWidget(element: DomElement, processedHTML: DomElement[], id:
     let refrencedByLabel = stew.select(processedHTML, `label[for="${id}"]`);
     let withinLabel = withingLabelOfWidget(element);
 
-    console.log(withinLabel);
+    //console.log(withinLabel);
 
     let referenced;
     let result = false;
@@ -220,8 +219,8 @@ function getTextAlternative(element: DomElement, processedHTML: DomElement[], id
     let labelContent;
     let caption;
 
-    console.log('label[for="' + id + '"]');
-    console.log(id);
+    //('label[for="' + id + '"]');
+    //console.log(id);
 
     if (id) {
         labelContent = stew.select(processedHTML, 'label[for="' + id + '"]');
@@ -231,7 +230,7 @@ function getTextAlternative(element: DomElement, processedHTML: DomElement[], id
         caption = stew.select(element, 'caption');
     }
 
-    console.log(labelContent);
+    //console.log(labelContent);
 
 
     if (alt !== undefined && _.trim(alt) !== "")
@@ -304,7 +303,7 @@ function getValueFromEmbededControl(element: DomElement): string {//stew
 
 function getText(element: DomElement): string {
 
-    return DomUtils.getText(element);
+    return _.trim(DomUtils.getText(element));
 }
 
 function isWidget(element: DomElement): boolean {

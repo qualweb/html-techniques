@@ -67,7 +67,7 @@ class QW_HTML_T34 extends Technique {
 
   async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
 
-    if (element === undefined||element['children'] === undefined) {
+    if (element === undefined||element.children === undefined) {
       return;
     }
 
@@ -88,20 +88,19 @@ class QW_HTML_T34 extends Technique {
             aText = child["data"];
         }
     }
-    console.log(img);
 
-    if (aText !== undefined) {
-        //undefined
 
-    } else if (!(img["attribs"]["role"] === "presentation" || img["attribs"]["alt"] === "")) {
+    if (aText !== undefined&&_.trim(aText)!=="") {
+
+    } else if (getAccessibleName(img,processedHTML,false)) {
         evaluation.verdict = 'passed';
         evaluation.description = `The image has an accessible name`;
-        technique.metadata['success']++;
+        technique.metadata['passed']++;
 
     } else if (getAccessibleName(element,processedHTML,false)) {
         evaluation['verdict'] = 'passed';
         evaluation['description'] = `The link has an accessible name`;
-        technique['metadata']['success']++;
+        technique['metadata']['passed']++;
 
     } else {
         evaluation['verdict'] = 'failed';

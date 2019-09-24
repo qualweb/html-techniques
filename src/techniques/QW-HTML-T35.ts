@@ -53,7 +53,7 @@ class QW_HTML_T35 extends Technique {
 
   async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
 
-    if (element === undefined||(element.attribs&&element.name === 'input'&&(element.attribs['type'] === 'hidden'||element.attribs['type'] === 'submit'||element.attribs['type'] === 'reset'&&element.attribs['type'] === 'button'))) {
+    if (element === undefined||(element.attribs&&element.name === 'input'&&(element.attribs['type'] === 'hidden'||element.attribs['type'] === 'submit'||element.attribs['type'] === 'reset'||element.attribs['type'] === 'button'))) {
       return;
     }
 
