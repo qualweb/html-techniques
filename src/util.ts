@@ -1,6 +1,6 @@
 'use strict';
 
-import { DomElement } from 'htmlparser2';
+import {DomElement} from 'htmlparser2';
 import html from 'htmlparser-to-html';
 import _ from 'lodash';
 
@@ -14,14 +14,14 @@ function getSelfLocationInParent(element: DomElement): string {
   let sameEleCount = 0;
 
   let prev = element.prev;
-  while(prev) {
-    if (prev.type === 'tag'&& prev.name === element.name) {
+  while (prev) {
+    if (prev.type === 'tag' && prev.name === element.name) {
       sameEleCount++;
     }
     prev = prev.prev;
   }
 
-  selector += `${element.name}:nth-of-type(${sameEleCount+1})`;
+  selector += `${element.name}:nth-of-type(${sameEleCount + 1})`;
 
   return selector;
 }
@@ -44,14 +44,14 @@ function getElementSelector(element: DomElement): string {
     parents.unshift(getSelfLocationInParent(parent));
     parent = parent.parent;
   }
-  
+
   selector += _.join(parents, ' > ');
   selector += ' > ' + getSelfLocationInParent(element);
 
   return selector;
 }
 
-function transform_element_into_html(element: DomElement, withText: boolean=true, fullElement: boolean=false): string {
+function transform_element_into_html(element: DomElement, withText: boolean = true, fullElement: boolean = false): string {
 
   if (!element) {
     return '';
@@ -85,11 +85,48 @@ function transform_element_into_html(element: DomElement, withText: boolean=true
       codeElement.children = [];
     }
   }
-  
+
   return html(codeElement);
+}
+
+function isFocusable(element: DomElement) {
+
+  if (element.attribs && element.attribs["disabled"] !== undefined) { // TODO ainda falta verificar se está escondido por css
+    return false;
+  } else if (isDefaultFocusable(element)) {
+    return true;
+  }
+
+  let tabIndex = element.attribs ? element.attribs["tabindex"] : undefined;
+  console.log(!!(tabIndex && !isNaN(parseInt(tabIndex, 10))));
+  return !!(tabIndex && !isNaN(parseInt(tabIndex, 10)));
+
+}
+
+function isDefaultFocusable(element: DomElement) {
+  switch (element.name) {
+    case 'a':
+    case 'area':
+    case 'link':
+      if (element.attribs && element.attribs['href'])
+        return true;
+      break;
+    case 'input':
+      return element.attribs && element.attribs['type'] !== 'hidden';
+    case 'summary':
+      let parent = element.parent;
+      // @ts-ignore
+      return parent && parent.name === 'details' && parent.children[0] === element;
+    case 'textarea':
+    case 'select':
+    case 'button':
+      return true;
+  }
+  return false;
 }
 
 export {
   getElementSelector,
-  transform_element_into_html
+  transform_element_into_html,
+  isFocusable
 };
