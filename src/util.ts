@@ -125,8 +125,37 @@ function isDefaultFocusable(element: DomElement) {
   return false;
 }
 
+function getElementByHRef(element: DomElement) {
+
+  // @ts-ignore
+  let href = element.attribs['href'];
+  if (!href) {
+    return null;
+  }
+
+  if (href.charAt(0) === '#') {
+    href = decodeURIComponent(href.substring(1));
+  } else if (href.substr(0, 2) === '/#') {
+    href = decodeURIComponent(href.substring(2));
+  }
+
+  let result = document.getElementById(href);
+  if (result) {
+    return result;
+  }
+
+  let results = document.getElementsByName(href);
+  if (results.length) {
+    return results[0];
+  }
+  return null;
+}
+
+
+
 export {
   getElementSelector,
   transform_element_into_html,
-  isFocusable
+  isFocusable,
+  getElementByHRef
 };

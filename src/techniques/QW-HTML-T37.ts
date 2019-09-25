@@ -10,7 +10,8 @@ import {
 } from 'htmlparser2';
 
 import {
-  getElementSelector, isFocusable,
+  getElementByHRef,
+  getElementSelector,
   transform_element_into_html
 } from '../util';
 import Technique from './Technique.object';
@@ -62,18 +63,21 @@ class QW_HTML_T37 extends Technique {
       resultCode: ''
     };
 
-    if (isFocusable(element)) {
-      evaluation.verdict = 'passed';
-      technique.metadata.passed++;
-    } else {
-      evaluation.verdict = 'failed';
-      technique.metadata.failed++;
+    let refElement = getElementByHRef(element);
+    let visible = true; //TODO isvisible
+    if (refElement) {
+      if (visible) {
+        evaluation.verdict = 'warning';
+        evaluation.description = 'This link skips a content block';
+        technique.metadata.warning++;
+      } else {
+        evaluation.verdict = 'failed';
+        evaluation.description = 'This link that skips a content block is not visible';
+        technique.metadata.failed++;
+      }
+      evaluation.htmlCode = transform_element_into_html(element);
+      evaluation.pointer = getElementSelector(element);
     }
-
-    evaluation.htmlCode = transform_element_into_html(element);
-    evaluation.pointer = getElementSelector(element);
-
-
     super.addEvaluationResult(evaluation);
   }
 }
