@@ -149,13 +149,34 @@ function elementIsHidden(element: DomElement): boolean {
 
     let aria_hidden = Boolean(element.attribs["aria-hidden"]);
     let hidden = Boolean(element.attribs["hidden"]);
+    let cssHidden = elementIsHiddenCSS(element);
+    let parent = element.parent;
+    let parentHidden =false;
+
+    if(parent){
+        parentHidden = elementIsHidden(parent);
+    }
+
+    
+    let hasRolePresentOrNone = hasRolePresentationOrNone(element);
+    return hasRolePresentOrNone || cssHidden || hidden || aria_hidden||parentHidden;
+}
+
+function elementIsHiddenCSS(element: DomElement): boolean {
+    if (!element.attribs)
+        return false;
+
+
+    let visibility = false;
     let displayNone = false;
 
-    if (element.attribs['computed-style'] !== undefined)
-        displayNone = _.trim(getComputedStylesAtribute(element, "computed-style-before", "^ display:")) === 'none';
+    if (element.attribs['computed-style'] !== undefined){
+        displayNone = _.trim(getComputedStylesAtribute(element, "computed-style", "^ display:")) === 'none';
+         let visibilityATT = _.trim(getComputedStylesAtribute(element, "computed-style", "^ visibility:"));
+         visibility = visibilityATT === 'collapse'||visibilityATT === 'hidden'
+        }
 
-    let hasRolePresentOrNone = hasRolePresentationOrNone(element);
-    return hasRolePresentOrNone || displayNone || hidden || aria_hidden;
+    return visibility || displayNone ;
 }
 
 function elementIsReferenced(id: string, processedHTML: DomElement[]): boolean {
