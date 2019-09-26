@@ -157,9 +157,9 @@ function elementIsHidden(element: DomElement): boolean {
         parentHidden = elementIsHidden(parent);
     }
 
-    
-    let hasRolePresentOrNone = hasRolePresentationOrNone(element);
-    return hasRolePresentOrNone || cssHidden || hidden || aria_hidden||parentHidden;
+    //tecnicamente nao eh hidden
+    ///let hasRolePresentOrNone = hasRolePresentationOrNone(element);
+    return  cssHidden || hidden || aria_hidden||parentHidden;
 }
 
 function elementIsHiddenCSS(element: DomElement): boolean {
@@ -268,7 +268,7 @@ function getTextAlternative(element: DomElement, processedHTML: DomElement[], id
 }
 
 
-function hasRolePresentationOrNone(element: DomElement): boolean {//stew
+function hasRolePresentationOrNone(element: DomElement): boolean {
     return !!element.attribs && (element.attribs["role"] === "none" || element.attribs["role"] === "presentation");
 
 }
