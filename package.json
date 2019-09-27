@@ -9,6 +9,8 @@
     "lint": "eslint src/**/*",
     "test": "mocha test/**/*",
     "test-t1": "mocha test/techniques/QW-HTML-T1.spec.js",
+    "test-t2": "mocha test/techniques/QW-HTML-T2.spec.js",
+    "test-t24": "mocha test/techniques/QW-HTML-T24.spec.js",
     "clean": "node clean.js",
     "build": "npm run clean && tsc --build",
     "pub": "npm run build && npm publish --access=public"
@@ -32,17 +34,18 @@
   },
   "homepage": "https://github.com/qualweb/html-techniques#readme",
   "devDependencies": {
-    "@qualweb/get-dom-puppeteer": "0.0.3",
-    "@qualweb/types": "0.0.10",
+    "@qualweb/types": "0.0.7",
+    "@qualweb/get-dom-puppeteer": "0.0.2",
     "@types/htmlparser2": "^3.10.1",
     "@types/lodash": "^4.14.138",
-    "@types/node": "^12.7.5",
+    "@types/node": "^12.7.2",
     "chai": "^4.2.0",
     "mocha": "^6.2.0",
-    "tslint": "^5.20.0",
-    "typescript": "^3.6.3"
+    "tslint": "^5.19.0",
+    "typescript": "^3.6.2"
   },
   "dependencies": {
+    "@qualweb/get-dom-puppeteer": "0.0.2",
     "htmlparser-to-html": "0.0.6",
     "lodash": "^4.17.15",
     "stew-select": "0.0.5"
