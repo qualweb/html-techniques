@@ -8,10 +8,10 @@ const {
 } = require('@qualweb/get-dom-puppeteer');
 
 
-describe('Technique QW-HTML-T00', function() {
+describe('Technique QW-HTML-T37', function() {
 
   const tests = [
-    {
+    /**{
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/failedSummary1.html',
       outcome: 'failed'
     },
@@ -22,8 +22,20 @@ describe('Technique QW-HTML-T00', function() {
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/failedInput1.html',
       outcome: 'failed'
+    },*/
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/failed1.html',
+      outcome: 'inapplicable'
     },
     {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/failedHidden1.html',
+      outcome: 'failed'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/failedHidden2.html',
+      outcome: 'failed'
+    },
+    /**{
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/passedSummary1.html',
       outcome: 'passed'
     },
@@ -42,6 +54,14 @@ describe('Technique QW-HTML-T00', function() {
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/passedInput1.html',
       outcome: 'passed'
+    },*/
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/passed1.html',
+      outcome: 'warning'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/passedHidden1.html',
+      outcome: 'warning'
     }
   ];
 
@@ -60,7 +80,7 @@ describe('Technique QW-HTML-T00', function() {
 
 
         const report = await executeHTMLT(source.html.parsed, processed.html.parsed);
-        expect(report.techniques['QW-HTML-T00'].metadata.outcome).to.be.equal(test.outcome);
+        expect(report.techniques['QW-HTML-T37'].metadata.outcome).to.be.equal(test.outcome);
       });
     });
   }

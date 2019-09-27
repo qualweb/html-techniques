@@ -4,6 +4,8 @@ import {DomElement} from 'htmlparser2';
 import html from 'htmlparser-to-html';
 import _ from 'lodash';
 
+const stew = new(require('stew-select')).Stew();
+
 function getSelfLocationInParent(element: DomElement): string {
   let selector = '';
 
@@ -90,17 +92,14 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 }
 
 function isFocusable(element: DomElement) {
-
   if (element.attribs && element.attribs["disabled"] !== undefined) { // TODO ainda falta verificar se está escondido por css
     return false;
   } else if (isDefaultFocusable(element)) {
     return true;
   }
-
   let tabIndex = element.attribs ? element.attribs["tabindex"] : undefined;
   console.log(!!(tabIndex && !isNaN(parseInt(tabIndex, 10))));
   return !!(tabIndex && !isNaN(parseInt(tabIndex, 10)));
-
 }
 
 function isDefaultFocusable(element: DomElement) {
@@ -125,37 +124,79 @@ function isDefaultFocusable(element: DomElement) {
   return false;
 }
 
-function getElementByHRef(element: DomElement) {
-
+function getElementByHRef(processedHTML: DomElement[], element: DomElement) {
   // @ts-ignore
   let href = element.attribs['href'];
   if (!href) {
     return null;
   }
-
   if (href.charAt(0) === '#') {
     href = decodeURIComponent(href.substring(1));
   } else if (href.substr(0, 2) === '/#') {
     href = decodeURIComponent(href.substring(2));
+  } else {
+    return null;
   }
-
-  let result = document.getElementById(href);
-  if (result) {
-    return result;
+  let results = stew.select(processedHTML, '[id="' + href + '"]');
+  console.log(results.toString());
+  if (results.length) {
+    return results[0];
   }
-
-  let results = document.getElementsByName(href);
+  results = stew.select(processedHTML, '[name="' + href + '"]');
+  console.log(results.toString());
   if (results.length) {
     return results[0];
   }
   return null;
 }
 
+function elementIsHidden(element: DomElement): boolean {
+  if (!element.attribs)
+    return false;
+  let aria_hidden = element.attribs["aria-hidden"] === 'true';
+  let hidden = element.attribs["hidden"] !== undefined;
+  let cssHidden = elementIsHiddenCSS(element);
+  let parent = element.parent;
+  let parentHidden = false;
 
+  if(parent){
+    parentHidden = elementIsHidden(parent);
+  }
+  return cssHidden || hidden || aria_hidden || parentHidden;
+}
+
+function elementIsHiddenCSS(element: DomElement): boolean {
+  if (!element.attribs)
+    return false;
+  let visibility = false;
+  let displayNone = false;
+  if (element.attribs['computed-style'] !== undefined){
+    displayNone = _.trim(getComputedStylesAttribute(element, "computed-style", "^ display:")) === 'none';
+    let visibilityATT = _.trim(getComputedStylesAttribute(element, "computed-style", "^ visibility:"));
+    visibility = visibilityATT === 'collapse' ||visibilityATT === 'hidden'
+  }
+  return visibility || displayNone ;
+}
+
+function getComputedStylesAttribute(element: DomElement, computedStyle: string, attribute: string): string {
+  if (!element.attribs || !element.attribs[computedStyle]) {
+    return "";
+  }
+  let computedStyleContent = element.attribs[computedStyle].replace("&quot;", "");
+  let attribs = computedStyleContent.split(";");
+  let isAttr = new RegExp(attribute);
+  let attributeContent = "";
+  for (let attr of attribs) {
+    if (isAttr.test(attr))
+      attributeContent = attr.split(attribute)[0];
+  }
+  return attributeContent.replace("&quot", "");
+}
 
 export {
   getElementSelector,
   transform_element_into_html,
   isFocusable,
-  getElementByHRef
+  getElementByHRef,
+  elementIsHidden
 };

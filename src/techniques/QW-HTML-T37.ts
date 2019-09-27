@@ -10,6 +10,7 @@ import {
 } from 'htmlparser2';
 
 import {
+  elementIsHidden,
   getElementByHRef,
   getElementSelector,
   transform_element_into_html
@@ -63,10 +64,11 @@ class QW_HTML_T37 extends Technique {
       resultCode: ''
     };
 
-    let refElement = getElementByHRef(element);
-    let visible = true; //TODO isvisible
+    let refElement = getElementByHRef(processedHTML, element);
+    let hidden = elementIsHidden(element);
+    console.log(hidden);
     if (refElement) {
-      if (visible) {
+      if (!hidden) {
         evaluation.verdict = 'warning';
         evaluation.description = 'This link skips a content block';
         technique.metadata.warning++;
