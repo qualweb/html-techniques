@@ -90,6 +90,13 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 
     return html(codeElement);
 }
+
+// opcao E adicionar  a AN do label em vez de dar AN do control ir buscar AN  do pai
+// label com relacao pai filho refrenced
+//adiconar verificacao de botao,link,etc hidden
+//adicionar aria selected(relacao entre combobox e listbox via aria owns)
+//listbox filhos com option ou listitem
+//ariaownedBy listbox
 function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean): string {
 
     let isHidden, id, ariaLabelBy, ariaLabel, isControle, textAlternative, nameFromContent;
@@ -126,9 +133,9 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         return ariaLabel + "C";
     } else if (textAlternative && !hasRolePresentOrNone) {//D
         return textAlternative + "D";
-    } else if (isControle && isEmbededControl) {//E
+    } else if (isControle && isEmbededControl) {//E adicionar  a AN do label
         return getValueFromEmbededControl(element) + "E";
-    } else if (nameFromContent || isReferenced) {//F todo
+    } else if (nameFromContent || isReferenced) {//F
         let textFromCss = getTextFromCss(element, textElement);
         // console.log("css" + textFromCss);
         return getAccessibleNameFromChildren(element, textFromCss) + "F";
@@ -141,6 +148,7 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
     }
 
 }
+
 
 function elementIsHidden(element: DomElement): boolean {
     if (!element.attribs)
@@ -291,7 +299,7 @@ function getValueFromEmbededControl(element: DomElement): string {//stew
     else if (role === "combobox") {
         let refrencedByLabel = stew.select(element, `[aria-activedescendant]`);
         let aria_descendendant = refrencedByLabel.attribs["aria-activedescendant"];
-        let selectedElement = stew.select(element, `[id=/"${aria_descendendant}"/]`);
+        let selectedElement = stew.select(element, `[id="${aria_descendendant}"]`);
         value = DomUtils.getText(selectedElement);
     }
     else if (role === "listbox") {
@@ -300,7 +308,7 @@ function getValueFromEmbededControl(element: DomElement): string {//stew
         for (let elementWithId of elementsWithId) {
 
             let id = elementWithId.attribs.id;
-            let selectedElement = stew.select(element, `[aria-activedescendant=/"${id}"/]`);
+            let selectedElement = stew.select(element, `[aria-activedescendant="${id}"]`);
 
             if (selectedElement !== undefined)
                 value = DomUtils.getText(elementsWithId);
@@ -311,8 +319,8 @@ function getValueFromEmbededControl(element: DomElement): string {//stew
             value = element.attribs["aria-valuetext"];
         else if (element.attribs["aria-valuenow"] !== undefined)
             value = element.attribs["aria-valuenow"];
-        else {//alt
-            //TODO
+        else {//value now deve ser obrigatorio
+            value="";
         }
 
     }
