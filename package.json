@@ -23,8 +23,6 @@
     "test-t14": "mocha test/techniques/QW-HTML-T14.spec.js",
     "test-t15": "mocha test/techniques/QW-HTML-T15.spec.js",
     "test-t16": "mocha test/techniques/QW-HTML-T16.spec.js",
-    "test-t32": "mocha test/techniques/QW-HTML-T32.spec.js",
-    "test-t30": "mocha test/techniques/QW-HTML-T30.spec.js",
     "test-t19": "mocha test/techniques/QW-HTML-T19.spec.js",
     "test-t22": "mocha test/techniques/QW-HTML-T22.spec.js",
     "test-t23": "mocha test/techniques/QW-HTML-T23.spec.js",
@@ -33,6 +31,9 @@
     "test-t26": "mocha test/techniques/QW-HTML-T26.spec.js",
     "test-t27": "mocha test/techniques/QW-HTML-T27.spec.js",
     "test-t28": "mocha test/techniques/QW-HTML-T28.spec.js",
+    "test-t29": "mocha test/techniques/QW-HTML-T29.spec.js",
+    "test-t32": "mocha test/techniques/QW-HTML-T32.spec.js",
+    "test-t30": "mocha test/techniques/QW-HTML-T30.spec.js",
     "clean": "node clean.js",
     "build": "npm run clean && tsc --build",
     "pub": "npm run build && npm publish --access=public"

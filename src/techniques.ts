@@ -23,6 +23,7 @@ import QW_HTML_T25 from './techniques/QW-HTML-T25';
 import QW_HTML_T26 from './techniques/QW-HTML-T26';
 import QW_HTML_T27 from './techniques/QW-HTML-T27';
 import QW_HTML_T28 from './techniques/QW-HTML-T28';
+import QW_HTML_T29 from './techniques/QW-HTML-T29';
 import QW_HTML_T30 from './techniques/QW-HTML-T30';
 import QW_HTML_T32 from './techniques/QW-HTML-T32';
 
@@ -52,6 +53,7 @@ const techniques = {
   'QW-HTML-T26': new QW_HTML_T26(),
   'QW-HTML-T27': new QW_HTML_T27(),
   'QW-HTML-T28': new QW_HTML_T28(),
+  'QW-HTML-T29': new QW_HTML_T29(),
   'QW-HTML-T30': new QW_HTML_T30()};
 
 
@@ -81,6 +83,7 @@ const techniquesToExecute = {
   'QW-HTML-T26': true,
   'QW-HTML-T27': true,
   'QW-HTML-T28': true,
+  'QW-HTML-T29': true,
   'QW-HTML-T30': true
 };
 
