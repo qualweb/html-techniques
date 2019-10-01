@@ -27,11 +27,11 @@ const technique: HTMLTechnique = {
       element: 'area'
     },
     'success-criteria': [{
-        name: '1.1.1',
-        level: 'A',
-        principle: 'Perceivable',
-        url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/text-equiv-all.html'
-      },
+      name: '1.1.1',
+      level: 'A',
+      principle: 'Perceivable',
+      url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/text-equiv-all.html'
+    },
       {
         name: '2.4.4',
         level: 'A',
@@ -91,7 +91,7 @@ class QW_HTML_T1 extends Technique {
 
     evaluation.htmlCode = transform_element_into_html(element);
     evaluation.pointer = getElementSelector(element);
-    
+
 
     super.addEvaluationResult(evaluation);
   }
