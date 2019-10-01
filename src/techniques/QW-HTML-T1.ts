@@ -75,7 +75,7 @@ class QW_HTML_T1 extends Technique {
       resultCode: ''
     };
 
-    if (element.attribs === undefined) { // fails if the element doesn't contain an alt attribute
+    if (!element.attribs) { // fails if the element doesn't contain an alt attribute
       evaluation.verdict = 'failed';
       evaluation.description = `The element doesn't contain an alt attribute`;
     } else if (element.attribs['alt'] === undefined) { // fails if the element doesn't contain an alt attribute
