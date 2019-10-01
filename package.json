@@ -22,7 +22,7 @@
     "test-t11": "mocha test/techniques/QW-HTML-T11.spec.js",
     "test-t12": "mocha test/techniques/QW-HTML-T12.spec.js",
     "test-t13": "mocha test/techniques/QW-HTML-T13.spec.js",
-
+    "test-t14": "mocha test/techniques/QW-HTML-T14.spec.js",
     "clean": "node clean.js",
     "build": "npm run clean && tsc --build",
     "pub": "npm run build && npm publish --access=public"
