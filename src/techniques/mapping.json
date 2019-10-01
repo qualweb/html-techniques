@@ -7,6 +7,7 @@
     "fieldset": ["QW-HTML-T3"],
     "*": ["QW-HTML-T9"],
     "frame, iframe": ["QW-HTML-T10"],
+    "title": ["QW-HTML-T13"],
     "form": ["QW-HTML-T32"],
     "a": ["QW-HTML-T11"],
     "input[type=\"image\"]": ["QW-HTML-T5"],
