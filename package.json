@@ -12,6 +12,7 @@
     "test-t32": "mocha test/techniques/QW-HTML-T32.spec.js",
     "test-t5": "mocha test/techniques/QW-HTML-T5.spec.js",
     "test-t30": "mocha test/techniques/QW-HTML-T30.spec.js",
+    "test-t6": "mocha test/techniques/QW-HTML-T6.spec.js",
     "clean": "node clean.js",
     "build": "npm run clean && tsc --build",
     "pub": "npm run build && npm publish --access=public"
@@ -46,6 +47,7 @@
     "typescript": "^3.6.3"
   },
   "dependencies": {
+    "@qualweb/get-dom-puppeteer": "0.0.2",
     "htmlparser-to-html": "0.0.6",
     "lodash": "^4.17.15",
     "stew-select": "0.0.5"

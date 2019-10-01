@@ -6,6 +6,6 @@
     "img + map > area": ["QW-HTML-T1"],
     "form": ["QW-HTML-T32"],
     "input[type=\"image\"]": ["QW-HTML-T5"],
-    "table": ["QW-HTML-T30"]
-  }
+    "table": ["QW-HTML-T30"],
+    "*[onmousedown], *[onmouseup], *{onclick], *[onmouseover], *[onmouseout]": ["QW-HTML-T6"]
 }
