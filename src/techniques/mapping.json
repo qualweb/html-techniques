@@ -16,5 +16,6 @@
     "*[onmousedown], *[onmouseup], *{onclick], *[onmouseover], *[onmouseout]": ["QW-HTML-T6"],
     "abbr": ["QW-HTML-T7"],
     "blink": ["QW-HTML-T16"],
-    "meta[http-equiv=\"refresh\"][content]": ["QW-HTML-T18"]
+    "meta[http-equiv=\"refresh\"][content]": ["QW-HTML-T18"],
+    "link": ["QW-HTML-T19"]
   }}

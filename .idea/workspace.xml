@@ -2,12 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a8e05569-8519-4f98-b883-982b15a4becd" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/test/techniques/QW-HTML-T18.spec.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/techniques/QW-HTML-T19.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/techniques/QW-HTML-T19.spec.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/techniques.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/techniques.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/techniques/QW-HTML-T1.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/techniques/QW-HTML-T1.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/techniques/QW-HTML-T18.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/techniques/QW-HTML-T18.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/techniques/QW-HTML-T12.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/test/techniques/QW-HTML-T12.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/techniques/mapping.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/techniques/mapping.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -21,9 +21,9 @@
         <entry file="file://$PROJECT_DIR$/src/techniques.ts">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="690">
-              <caret line="56" column="22" lean-forward="true" selection-start-line="56" selection-start-column="22" selection-end-line="56" selection-end-column="22" />
+              <caret line="60" column="14" selection-start-line="60" selection-start-column="14" selection-end-line="60" selection-end-column="14" />
               <folding>
-                <element signature="e#63#112#0" expanded="true" />
+                <element signature="e#0#49#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -80,8 +80,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/techniques/mapping.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="18" column="4" selection-start-line="18" selection-start-column="4" selection-end-line="18" selection-end-column="4" />
+            <state relative-caret-position="285">
+              <caret line="19" column="27" lean-forward="true" selection-start-line="19" selection-start-column="27" selection-end-line="19" selection-end-column="27" />
             </state>
           </provider>
         </entry>
@@ -90,7 +90,7 @@
         <entry file="file://$PROJECT_DIR$/package.json">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="570">
-              <caret line="38" column="11" lean-forward="true" selection-start-line="38" selection-start-column="11" selection-end-line="38" selection-end-column="11" />
+              <caret line="42" column="11" selection-start-line="42" selection-start-column="11" selection-end-line="42" selection-end-column="11" />
             </state>
           </provider>
         </entry>
@@ -130,13 +130,13 @@
         <option value="$PROJECT_DIR$/src/techniques/QW-HTML-T13.ts" />
         <option value="$PROJECT_DIR$/src/techniques/QW-HTML-T14.ts" />
         <option value="$PROJECT_DIR$/src/techniques/QW-HTML-T15.ts" />
-        <option value="$PROJECT_DIR$/src/techniques/mapping.json" />
         <option value="$PROJECT_DIR$/package.json" />
         <option value="$PROJECT_DIR$/src/techniques/QW-HTML-T16.ts" />
         <option value="$PROJECT_DIR$/src/techniques/QW-HTML-T1.ts" />
-        <option value="$PROJECT_DIR$/src/techniques.ts" />
         <option value="$PROJECT_DIR$/test/techniques/QW-HTML-T18.spec.js" />
         <option value="$PROJECT_DIR$/src/techniques/QW-HTML-T18.ts" />
+        <option value="$PROJECT_DIR$/src/techniques.ts" />
+        <option value="$PROJECT_DIR$/src/techniques/mapping.json" />
       </list>
     </option>
   </component>
@@ -186,12 +186,17 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1569960281230" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1569960464669" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="ts.external.directory.path" value="C:\Users\bruno\Downloads\Investig\html-techniques\node_modules\typescript\lib" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/test/techniques" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -220,7 +225,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6190000" />
+    <option name="totallyTimeSpent" value="6441000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="25" width="1922" height="1056" extended-state="6" />
@@ -449,20 +454,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/techniques.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="690">
-          <caret line="56" column="22" lean-forward="true" selection-start-line="56" selection-start-column="22" selection-end-line="56" selection-end-column="22" />
-          <folding>
-            <element signature="e#63#112#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="570">
-          <caret line="38" column="11" lean-forward="true" selection-start-line="38" selection-start-column="11" selection-end-line="38" selection-end-column="11" />
+          <caret line="42" column="11" selection-start-line="42" selection-start-column="11" selection-end-line="42" selection-end-column="11" />
         </state>
       </provider>
     </entry>
@@ -480,10 +475,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/techniques.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="690">
+          <caret line="60" column="14" selection-start-line="60" selection-start-column="14" selection-end-line="60" selection-end-column="14" />
+          <folding>
+            <element signature="e#0#49#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/techniques/mapping.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="4" selection-start-line="18" selection-start-column="4" selection-end-line="18" selection-end-column="4" />
+        <state relative-caret-position="285">
+          <caret line="19" column="27" lean-forward="true" selection-start-line="19" selection-start-column="27" selection-end-line="19" selection-end-column="27" />
         </state>
       </provider>
     </entry>
