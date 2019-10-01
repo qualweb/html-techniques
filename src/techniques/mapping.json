@@ -1,6 +1,6 @@
 {
-	"pre": {
-
+  "pre": {
+    "meta[http-equiv=\"refresh\"][content]": ["QW-HTML-T12"]
   },
   "post": {
     "img + map > area": ["QW-HTML-T1"],
@@ -14,4 +14,3 @@
     "*[onmousedown], *[onmouseup], *{onclick], *[onmouseover], *[onmouseout]": ["QW-HTML-T6"],
     "abbr": ["QW-HTML-T7"]
   }}
-
