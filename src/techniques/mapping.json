@@ -17,5 +17,6 @@
     "abbr": ["QW-HTML-T7"],
     "blink": ["QW-HTML-T16"],
     "meta[http-equiv=\"refresh\"][content]": ["QW-HTML-T18"],
-    "link": ["QW-HTML-T19"]
+    "link": ["QW-HTML-T19"],
+    "[text], [vlink], [alink], [link]": ["QW-HTML-T22"]
   }}

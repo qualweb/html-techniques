@@ -9,7 +9,6 @@
     "lint": "eslint src/**/*",
     "test": "mocha test/**/*",
     "test-t1": "mocha test/techniques/QW-HTML-T1.spec.js",
-<<<<<<< HEAD
     "test-t2": "mocha test/techniques/QW-HTML-T2.spec.js",
     "test-t3": "mocha test/techniques/QW-HTML-T3.spec.js",
     "test-t4": "mocha test/techniques/QW-HTML-T4.spec.js",
@@ -26,9 +25,8 @@
     "test-t16": "mocha test/techniques/QW-HTML-T16.spec.js",
     "test-t32": "mocha test/techniques/QW-HTML-T32.spec.js",
     "test-t30": "mocha test/techniques/QW-HTML-T30.spec.js",
-=======
     "test-t19": "mocha test/techniques/QW-HTML-T19.spec.js",
->>>>>>> origin/feature/QW-T19-H59
+    "test-t22": "mocha test/techniques/QW-HTML-T22.spec.js",
     "clean": "node clean.js",
     "build": "npm run clean && tsc --build",
     "pub": "npm run build && npm publish --access=public"
