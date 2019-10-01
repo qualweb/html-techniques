@@ -8,7 +8,7 @@
     "*": ["QW-HTML-T9"],
     "applet": ["QW-HTML-T14"],
     "frame, iframe": ["QW-HTML-T10"],
-    "title": ["QW-HTML-T13"],
+    "title": ["QW-HTML-T13","QW-HTML-T24"],
     "form": ["QW-HTML-T32"],
     "a": ["QW-HTML-T11"],
     "input[type=\"image\"]": ["QW-HTML-T5"],
