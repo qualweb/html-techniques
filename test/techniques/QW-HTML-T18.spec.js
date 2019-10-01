@@ -1,3 +1,4 @@
+
 const {
   configure,
   executeHTMLT
@@ -8,31 +9,27 @@ const {
 } = require('@qualweb/get-dom-puppeteer');
 
 
-describe('Technique QW-HTML-T12', function() {
+describe('Technique QW-HTML-T18', function() {
 
   const tests = [
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/f41/warning2.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/f40/warning1.html',
       outcome: 'warning'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/f41/warning1.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/f40/warning2.html',
       outcome: 'warning'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/f41/failed1.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/f40/failed1.html',
       outcome: 'failed'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/f41/failed2.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/f40/failed2.html',
       outcome: 'failed'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/f41/inapplicable.html',
-      outcome: 'inapplicable'
-    },
-    {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/f41/inapplicable2.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/f40/inapplicable.html',
       outcome: 'inapplicable'
     },
     {
@@ -56,7 +53,7 @@ describe('Technique QW-HTML-T12', function() {
 
 
         const report = await executeHTMLT(source.html.parsed, processed.html.parsed);
-        expect(report.techniques['QW-HTML-T12'].metadata.outcome).to.be.equal(test.outcome);
+        expect(report.techniques['QW-HTML-T18'].metadata.outcome).to.be.equal(test.outcome);
       });
     });
   }
