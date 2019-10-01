@@ -8,8 +8,10 @@
     "*": ["QW-HTML-T9"],
     "frame, iframe": ["QW-HTML-T10"],
     "form": ["QW-HTML-T32"],
+    "a": ["QW-HTML-T11"],
     "input[type=\"image\"]": ["QW-HTML-T5"],
     "table": ["QW-HTML-T30","QW-HTML-T2","QW-HTML-T4"],
     "*[onmousedown], *[onmouseup], *{onclick], *[onmouseover], *[onmouseout]": ["QW-HTML-T6"],
     "abbr": ["QW-HTML-T7"]
   }}
+
