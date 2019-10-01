@@ -13,6 +13,7 @@
     "test-t5": "mocha test/techniques/QW-HTML-T5.spec.js",
     "test-t30": "mocha test/techniques/QW-HTML-T30.spec.js",
     "test-t6": "mocha test/techniques/QW-HTML-T6.spec.js",
+    "test-t7": "mocha test/techniques/QW-HTML-T7.spec.js",
     "clean": "node clean.js",
     "build": "npm run clean && tsc --build",
     "pub": "npm run build && npm publish --access=public"
