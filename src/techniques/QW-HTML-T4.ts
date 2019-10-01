@@ -92,7 +92,7 @@ class QW_HTML_T4 extends Technique {
     evaluation.htmlCode = transform_element_into_html(element);
     evaluation.pointer = getElementSelector(element);
 
-    technique.results.push(_.clone(evaluation));
+    super.addEvaluationResult(evaluation);
   }
 
 }}
