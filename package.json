@@ -11,7 +11,7 @@
     "test-t1": "mocha test/techniques/QW-HTML-T1.spec.js",
     "test-t32": "mocha test/techniques/QW-HTML-T32.spec.js",
     "test-t5": "mocha test/techniques/QW-HTML-T5.spec.js",
-
+    "test-t30": "mocha test/techniques/QW-HTML-T30.spec.js",
     "clean": "node clean.js",
     "build": "npm run clean && tsc --build",
     "pub": "npm run build && npm publish --access=public"

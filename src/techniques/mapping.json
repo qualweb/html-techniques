@@ -5,7 +5,7 @@
   "post": {
     "img + map > area": ["QW-HTML-T1"],
     "form": ["QW-HTML-T32"],
-    "input[type=\"image\"]": ["QW-HTML-T5"]
-
+    "input[type=\"image\"]": ["QW-HTML-T5"],
+    "table": ["QW-HTML-T30"]
   }
 }
