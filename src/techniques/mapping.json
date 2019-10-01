@@ -8,4 +8,4 @@
     "input[type=\"image\"]": ["QW-HTML-T5"],
     "table": ["QW-HTML-T30"],
     "*[onmousedown], *[onmouseup], *{onclick], *[onmouseover], *[onmouseout]": ["QW-HTML-T6"]
-}
+}}
