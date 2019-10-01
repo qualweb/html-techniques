@@ -19,5 +19,7 @@
     "meta[http-equiv=\"refresh\"][content]": ["QW-HTML-T18"],
     "link": ["QW-HTML-T19"],
     "[text], [vlink], [alink], [link]": ["QW-HTML-T22"],
-    "a[href], area[href]": ["QW-HTML-T23"]
+    "a[href], area[href]": ["QW-HTML-T23"],
+    "input": ["QW-HTML-T25"]
   }}
+
