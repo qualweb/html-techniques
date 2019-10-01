@@ -20,6 +20,6 @@
     "link": ["QW-HTML-T19"],
     "[text], [vlink], [alink], [link]": ["QW-HTML-T22"],
     "a[href], area[href]": ["QW-HTML-T23"],
-    "input": ["QW-HTML-T25"]
+    "input": ["QW-HTML-T25"],
+    "head > title": ["QW-HTML-T26"]
   }}
-

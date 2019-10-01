@@ -30,6 +30,7 @@
     "test-t23": "mocha test/techniques/QW-HTML-T23.spec.js",
     "test-t24": "mocha test/techniques/QW-HTML-T24.spec.js",
     "test-t25": "mocha test/techniques/QW-HTML-T25.spec.js",
+    "test-t26": "mocha test/techniques/QW-HTML-T26.spec.js",
     "clean": "node clean.js",
     "build": "npm run clean && tsc --build",
     "pub": "npm run build && npm publish --access=public"
