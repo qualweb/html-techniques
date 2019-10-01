@@ -7,7 +7,7 @@
     "fieldset": ["QW-HTML-T3"],
     "form": ["QW-HTML-T32"],
     "input[type=\"image\"]": ["QW-HTML-T5"],
-    "table": ["QW-HTML-T30","QW-HTML-T2"],
+    "table": ["QW-HTML-T30","QW-HTML-T2","QW-HTML-T4"],
     "*[onmousedown], *[onmouseup], *{onclick], *[onmouseover], *[onmouseout]": ["QW-HTML-T6"],
     "abbr": ["QW-HTML-T7"]
   }}
