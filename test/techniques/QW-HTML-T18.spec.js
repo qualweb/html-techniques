@@ -18,7 +18,7 @@ describe('Technique QW-HTML-T18', function() {
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/f40/warning2.html',
-      outcome: 'warning'
+      outcome: 'inapplicable'
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/f40/failed1.html',

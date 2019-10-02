@@ -91,8 +91,8 @@ class QW_HTML_T25 extends Technique {
             evaluation.resultCode = 'RC4';
         }
         if (result === 'pass') {
-            evaluation.verdict = 'warning';
-            evaluation.description = 'Passed';
+            evaluation.verdict = 'passed';
+            evaluation.description = 'The form field has well positioned label';
             evaluation.resultCode = 'RC5';
         }
 

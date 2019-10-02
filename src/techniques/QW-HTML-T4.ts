@@ -68,18 +68,18 @@ class QW_HTML_T4 extends Technique {
       evaluation.description = 'The summary does not exist in the table element';
       evaluation.resultCode = 'RC1';
     }
-    if (verifySummaryContent(element)) {
+    else if (verifySummaryContent(element)) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The summary is empty';
       evaluation.resultCode = 'RC2';
 
     }
-    if (verifyCaptionDuplicate(element)) {
+    else if (verifyCaptionDuplicate(element)) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The caption is a duplicate of the summary';
       evaluation.resultCode = 'RC3';
     }
-    if (technique.metadata.failed === 0) {
+   else {
       evaluation.verdict = 'warning';
       evaluation.description = 'Please verify that the summary is a valid description of the table';
       evaluation.resultCode = 'RC4';

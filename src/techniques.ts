@@ -67,7 +67,7 @@ const techniques = {
 
 
 const techniquesToExecute = {
-  'QW-HTML-T1': false,
+  'QW-HTML-T1': true,
   'QW-HTML-T2': true,
   'QW-HTML-T3': true,
   'QW-HTML-T4': true,

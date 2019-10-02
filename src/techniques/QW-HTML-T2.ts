@@ -66,12 +66,12 @@ class QW_HTML_T2 extends Technique {
 		evaluation.resultCode = 'RC1';
 
 	}
-	if (verifyCaptionContent(element)){
+	else if (verifyCaptionContent(element)){
 		evaluation.verdict = 'failed';
 		evaluation.description = 'The caption is empty';
 		evaluation.resultCode = 'RC2';
 	}
-	if(technique.metadata.failed == 0){
+	else {
 		evaluation.verdict = 'warning';
 		evaluation.description = 'Please verify that the caption element identifies the table correctly.';
 		evaluation.resultCode = 'RC3';

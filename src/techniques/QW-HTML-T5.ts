@@ -68,13 +68,13 @@ class QW_HTML_T5 extends Technique {
             evaluation.description = 'The alt does not exist in the input element';
             evaluation.resultCode = 'RC1';
         }
-        if (verifyAltContent(element)) {
+        else if (verifyAltContent(element)) {
             evaluation.verdict = 'failed';
             evaluation.description = 'The alt is empty';
             evaluation.resultCode = 'RC2';
 
         }
-        if (technique.metadata.failed === 0) {
+        else {
             evaluation.verdict = 'warning';
             evaluation.description = 'Please verify that the alt is a valid description of the input image';
             evaluation.resultCode = 'RC3';

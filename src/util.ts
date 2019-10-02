@@ -185,13 +185,12 @@ function getComputedStylesAttribute(element: DomElement, computedStyle: string, 
   let attributeContent = "";
   for (let attr of attribs) {
     if (isAttr.test(attr)){
-      console.log(attr);
-      console.log(attr.split(attribute));
       attributeContent = attr.split(isAttr)[1];
-      }
+    }
   }
   return attributeContent.replace("&quot", "");
 }
+
 
 export {
   getElementSelector,

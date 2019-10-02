@@ -77,7 +77,7 @@ class QW_HTML_T8 extends Technique {
         let patt3 = new RegExp("^Intro#[0-9]+");
         let patt4 = new RegExp("^imagem/s[0-9]+");
 
-        let altText = element.attribs["alt"];
+        let altText = element.attribs["alt"].toLocaleLowerCase();
 
         if (altText !== "" && !patt4.test(altText) && !patt3.test(altText) && !patt2.test(altText) && !patt1.test(altText) && !patt.test(altText) && !_.includes(default_title, altText)) {
             evaluation.verdict = 'warning';

@@ -72,18 +72,18 @@ class QW_HTML_T3 extends Technique {
       evaluation.description = 'The fieldset is not in a form control';
       evaluation.resultCode = 'RC1';
     }
-    if (!verifyLegendExistence(element)) {
+    else if (!verifyLegendExistence(element)) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The legend does not exist in the fieldset element';
       evaluation.resultCode = 'RC2';
 
     }
-    if (verifyLegendContent(element)) {
+    else if (verifyLegendContent(element)) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The legend is empty';
       evaluation.resultCode = 'RC3';
     }
-    if (technique.metadata.failed == 0) {
+    else {
       evaluation.verdict = 'warning';
       evaluation.description = 'Please verify that the legend description is valid';
       evaluation.resultCode = 'RC4';

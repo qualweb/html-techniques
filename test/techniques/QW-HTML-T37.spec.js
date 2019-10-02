@@ -106,7 +106,6 @@ describe('Technique QW-HTML-T37', function() {
         this.timeout(10 * 1000);
         const { source, processed } = await getDom(test.url);
 
-
         const report = await executeHTMLT(source.html.parsed, processed.html.parsed);
         expect(report.techniques['QW-HTML-T37'].metadata.outcome).to.be.equal(test.outcome);
       });

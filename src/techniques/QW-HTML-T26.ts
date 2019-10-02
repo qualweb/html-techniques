@@ -16,7 +16,7 @@ import {
 import Technique from './Technique.object';
 
 const default_title = [
-    "Enter the title of your HTML document here", "Untitled Document", "No Title", "Untitled Page", "New Page 1", "Escreve o título do documento aqui,", "Documento sem título", "Sem título", "Nova página 1"
+    "ENTER THE TITLE OF YOUR HTML DOCUMENT HERE", "UNTITLED DOCUMENT", "NO TITLE", "UNTITLED PAGE", "NEW PAGE 1", "ESCREVE O TÍTULO DO DOCUMENTO AQUI,", "DOCUMENTO SEM TÍTULO", "SEM TÍTULO", "NOVA PÁGINA 1"
 ];
 
 
@@ -70,7 +70,7 @@ class QW_HTML_T26 extends Technique {
         let textData = DomUtils.getText(element);
 
         if (textData) {
-            if (textData !== "" && !patt.test(textData) && !_.includes(default_title, textData)) { // the title text exists and needs to be verified
+            if (textData !== "" && !patt.test(textData) && !_.includes(default_title, textData.toLocaleUpperCase())) { // the title text exists and needs to be verified
                 evaluation.verdict = 'warning';
                 evaluation.description = `Please verify the title tag text correlates to the page's content`;
                 evaluation.resultCode = 'RC1';

@@ -31,7 +31,7 @@ describe('Technique QW-HTML-T1', function() {
   ];
 
   let i = 0;
-  let lastOutcome = 'failed';
+  let lastOutcome = 'warning';
   for (const test of tests || []) {
     if (test.outcome !== lastOutcome) {
       lastOutcome = test.outcome;
