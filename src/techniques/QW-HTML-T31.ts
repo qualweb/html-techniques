@@ -17,10 +17,10 @@ const stew = new (require('stew-select')).Stew();
 import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
-  name: 'Providing text alternatives for the area elements of image maps',
+  name: 'Using longdesc',
   code: 'QW-HTML-T31',
   mapping: 'H45',
-  description: 'This technique checks the text alternative of area elements of images maps',
+  description: ' The objective of this technique is to provide information in a file designated by the longdesc attribute',
   metadata: {
     target: {
       element: 'img'
@@ -29,11 +29,11 @@ const technique: HTMLTechnique = {
       name: '1.1.1',
       level: 'A',
       principle: 'Perceivable',
-      url: 'https://www.w3.org/WAI/WCAG20/quickref/20160105/#text-equiv-all'
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/non-text-content'
     }
     ],
     related: ['G73', 'G74', 'G92', 'G94'],
-    url: 'https://www.w3.org/TR/WCAG20-TECHS/H45.html',
+    url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H45',
     passed: 0,
     warning: 0,
     failed: 0,
