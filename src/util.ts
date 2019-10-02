@@ -1,28 +1,25 @@
 'use strict';
 
-import { DomElement } from 'htmlparser2';
+import {DomElement} from 'htmlparser2';
 import html from 'htmlparser-to-html';
 import _ from 'lodash';
 
 function getSelfLocationInParent(element: DomElement): string {
   let selector = '';
-
   if (element.name === 'body' || element.name === 'head') {
     return element.name;
   }
 
   let sameEleCount = 0;
-
   let prev = element.prev;
-  while(prev) {
-    if (prev.type === 'tag'&& prev.name === element.name) {
+  while (prev) {
+    if (prev.type === 'tag' && prev.name === element.name) {
       sameEleCount++;
     }
     prev = prev.prev;
   }
 
-  selector += `${element.name}:nth-of-type(${sameEleCount+1})`;
-
+  selector += `${element.name}:nth-of-type(${sameEleCount + 1})`;
   return selector;
 }
 
@@ -37,28 +34,25 @@ function getElementSelector(element: DomElement): string {
   }
 
   let selector = 'html > ';
-
   let parents = new Array<string>();
   let parent = element.parent;
   while (parent && parent.name !== 'html') {
     parents.unshift(getSelfLocationInParent(parent));
     parent = parent.parent;
   }
-  
+
   selector += _.join(parents, ' > ');
   selector += ' > ' + getSelfLocationInParent(element);
-
   return selector;
 }
 
-function transform_element_into_html(element: DomElement, withText: boolean=true, fullElement: boolean=false): string {
+function transform_element_into_html(element: DomElement, withText: boolean = true, fullElement: boolean = false): string {
 
   if (!element) {
     return '';
   }
 
   let codeElement: DomElement = _.clone(element);
-
   if (codeElement.attribs) {
     delete codeElement.attribs['computed-style'];
     delete codeElement.attribs['w-scrollx'];
@@ -85,7 +79,6 @@ function transform_element_into_html(element: DomElement, withText: boolean=true
       codeElement.children = [];
     }
   }
-  
   return html(codeElement);
 }
 
