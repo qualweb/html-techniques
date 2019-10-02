@@ -32,8 +32,8 @@
     "test-t27": "mocha test/techniques/QW-HTML-T27.spec.js",
     "test-t28": "mocha test/techniques/QW-HTML-T28.spec.js",
     "test-t29": "mocha test/techniques/QW-HTML-T29.spec.js",
-    "test-t32": "mocha test/techniques/QW-HTML-T32.spec.js",
     "test-t30": "mocha test/techniques/QW-HTML-T30.spec.js",
+    "test-t32": "mocha test/techniques/QW-HTML-T32.spec.js",
     "clean": "node clean.js",
     "build": "npm run clean && tsc --build",
     "pub": "npm run build && npm publish --access=public"
