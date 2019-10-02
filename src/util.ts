@@ -184,8 +184,11 @@ function getComputedStylesAttribute(element: DomElement, computedStyle: string, 
   let isAttr = new RegExp(attribute);
   let attributeContent = "";
   for (let attr of attribs) {
-    if (isAttr.test(attr))
+    if (isAttr.test(attr)){
+      console.log(attr);
+      console.log(attr.split(attribute));
       attributeContent = attr.split(isAttr)[1];
+      }
   }
   return attributeContent.replace("&quot", "");
 }
