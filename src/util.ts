@@ -4,7 +4,7 @@ import {DomElement} from 'htmlparser2';
 import html from 'htmlparser-to-html';
 import _ from 'lodash';
 
-const stew = new(require('stew-select')).Stew();
+const stew = new (require('stew-select')).Stew();
 
 function getSelfLocationInParent(element: DomElement): string {
   let selector = '';
@@ -92,13 +92,12 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 }
 
 function isFocusable(element: DomElement) {
-  if (element.attribs && element.attribs["disabled"] !== undefined) { // TODO ainda falta verificar se está escondido por css
+  if (element.attribs && (element.attribs["disabled"] !== undefined || elementIsHidden(element))){
     return false;
   } else if (isDefaultFocusable(element)) {
     return true;
   }
   let tabIndex = element.attribs ? element.attribs["tabindex"] : undefined;
-  console.log(!!(tabIndex && !isNaN(parseInt(tabIndex, 10))));
   return !!(tabIndex && !isNaN(parseInt(tabIndex, 10)));
 }
 
@@ -138,12 +137,10 @@ function getElementByHRef(processedHTML: DomElement[], element: DomElement) {
     return null;
   }
   let results = stew.select(processedHTML, '[id="' + href + '"]');
-  console.log(results.toString());
   if (results.length) {
     return results[0];
   }
   results = stew.select(processedHTML, '[name="' + href + '"]');
-  console.log(results.toString());
   if (results.length) {
     return results[0];
   }
@@ -159,7 +156,7 @@ function elementIsHidden(element: DomElement): boolean {
   let parent = element.parent;
   let parentHidden = false;
 
-  if(parent){
+  if (parent) {
     parentHidden = elementIsHidden(parent);
   }
   return cssHidden || hidden || aria_hidden || parentHidden;
@@ -170,12 +167,12 @@ function elementIsHiddenCSS(element: DomElement): boolean {
     return false;
   let visibility = false;
   let displayNone = false;
-  if (element.attribs['computed-style'] !== undefined){
+  if (element.attribs['computed-style'] !== undefined) {
     displayNone = _.trim(getComputedStylesAttribute(element, "computed-style", "^ display:")) === 'none';
     let visibilityATT = _.trim(getComputedStylesAttribute(element, "computed-style", "^ visibility:"));
-    visibility = visibilityATT === 'collapse' ||visibilityATT === 'hidden'
+    visibility = visibilityATT === 'collapse' || visibilityATT === 'hidden';
   }
-  return visibility || displayNone ;
+  return visibility || displayNone;
 }
 
 function getComputedStylesAttribute(element: DomElement, computedStyle: string, attribute: string): string {
@@ -188,7 +185,7 @@ function getComputedStylesAttribute(element: DomElement, computedStyle: string, 
   let attributeContent = "";
   for (let attr of attribs) {
     if (isAttr.test(attr))
-      attributeContent = attr.split(attribute)[0];
+      attributeContent = attr.split(isAttr)[1];
   }
   return attributeContent.replace("&quot", "");
 }
