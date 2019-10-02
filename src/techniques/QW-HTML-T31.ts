@@ -66,11 +66,9 @@ class QW_HTML_T31 extends Technique {
       evaluation['verdict'] = 'failed';
       evaluation['description'] = `The element doesn't contain a longdesc attribute`;
       evaluation.resultCode = 'RC1';
-      technique['metadata']['failed']++;
     } else if (element['attribs']['longdesc'] === '') { // fails if the element's longdesc attribute is empty
       evaluation['verdict'] = 'failed';
       evaluation['description'] = `The element's longdesc attribute is empty`;
-      technique['metadata']['failed']++;
       evaluation.resultCode = 'RC2';
     } else {
       const longdesc = element['attribs']['longdesc'];
@@ -88,19 +86,16 @@ class QW_HTML_T31 extends Technique {
         if (_.size(exists) > 0) { // the element has a longdesc attribute pointing to a resource in the current page
           evaluation['verdict'] = 'warning';
           evaluation['description'] = 'Please verify that the resource that longdesc is pointing at describes correctly the image';
-          technique['metadata']['warning']++;
           evaluation.resultCode = 'RC3';
         } else { // fails if the element that the longdesc is pointing at doesn't exist
           evaluation['verdict'] = 'failed';
           evaluation['description'] = `The resource that longdesc is pointing at doesn't exist`;
-          technique['metadata']['failed']++;
           evaluation.resultCode = 'RC4';
         }
       } else { // the element has a longdesc attribute pointing to a resource outside the current page
         //var res = request('GET', longdesc);
         evaluation['verdict'] = 'warning';
         evaluation['description'] = 'Please verify that the resource that longdesc is pointing at exists and describes correctly the image';
-        technique['metadata']['warning']++;
         evaluation.resultCode = 'RC5';
       }
 
