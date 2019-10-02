@@ -26,5 +26,6 @@
     "h1, h2, h3, h4, h5, h6": ["QW-HTML-T27"],
     "ol,ul,dl": ["QW-HTML-T28"],
     "img": ["QW-HTML-T31"],
-    "a[href]": ["QW-HTML-T37"]
+    "a[href]": ["QW-HTML-T37"],
+    "[alt]": ["QW-HTML-T8"]
   }}
