@@ -61,7 +61,7 @@ class QW_HTML_T8 extends Technique {
 
   async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
 
-    if (element === undefined || !element['children']) {
+    if (element === undefined || element.attribs === undefined) {
       return;
     }
 
@@ -71,29 +71,22 @@ class QW_HTML_T8 extends Technique {
       resultCode: ''
     };
 
-    let patt = new RegExp(".+\\.(jpg|png)");
+    let patt = new RegExp(".+\\.(jpg|jpeg|png|gif|tiff|bmp)");
     let patt1 = new RegExp("^picture/s[0-9]+");
     let patt2 = new RegExp("[0-9]+");
     let patt3 = new RegExp("^Intro#[0-9]+");
     let patt4 = new RegExp("^imagem/s[0-9]+");
 
-    const text = element.children[0];
-    let textData = text['data'];
-    if (text['type'] !== 'text') {
-      evaluation.verdict = 'failed';
-      evaluation.description = 'Title tag contains elements instead of text';
-      evaluation.resultCode = 'RC1';
-      technique.metadata.failed++;
-    } else if (textData !== "" && !patt4.test(textData) && !patt3.test(textData) && !patt2.test(textData) && !patt1.test(textData) && !patt.test(textData) && !_.includes(default_title, textData)) { // the title text exists and needs to be verified
+    let altText = element.attribs["alt"];
+
+    if (altText !== "" && !patt4.test(altText) && !patt3.test(altText) && !patt2.test(altText) && !patt1.test(altText) && !patt.test(altText) && !_.includes(default_title, altText)) {
       evaluation.verdict = 'warning';
-      evaluation.description = `Please verify the title text correlates to the page's content`;
-      evaluation.resultCode = 'RC2';
-      technique.metadata.warning++;
-    } else { // fails if inside the title tag exists another element instead of text
+      evaluation.description = `Text alternative needs manual verification`;
+      evaluation.resultCode = 'RC1';
+    } else {
       evaluation.verdict = 'failed';
-      evaluation.description = 'Title tag contains text that doesnt identify the website';
-      evaluation.resultCode = 'RC3';
-      technique.metadata.failed++;
+      evaluation.description = 'Text alternative is not actually a text alternative for the non-text content';
+      evaluation.resultCode = 'RC2';
     }
 
     evaluation.htmlCode = transform_element_into_html(element);
