@@ -33,6 +33,7 @@
     "test-t28": "mocha test/techniques/QW-HTML-T28.spec.js",
     "test-t29": "mocha test/techniques/QW-HTML-T29.spec.js",
     "test-t30": "mocha test/techniques/QW-HTML-T30.spec.js",
+    "test-t31": "mocha test/techniques/QW-HTML-T31.spec.js",
     "test-t32": "mocha test/techniques/QW-HTML-T32.spec.js",
     "clean": "node clean.js",
     "build": "npm run clean && tsc --build",
@@ -58,7 +59,7 @@
   "homepage": "https://github.com/qualweb/html-techniques#readme",
   "devDependencies": {
     "@qualweb/types": "0.0.7",
-    "@qualweb/get-dom-puppeteer": "0.0.2",
+    "@qualweb/get-dom-puppeteer": "0.0.4",
     "@types/htmlparser2": "^3.10.1",
     "@types/lodash": "^4.14.138",
     "@types/node": "^12.7.2",
@@ -68,7 +69,7 @@
     "typescript": "^3.6.2"
   },
   "dependencies": {
-    "@qualweb/get-dom-puppeteer": "0.0.2",
+    "@qualweb/get-dom-puppeteer": "0.0.4",
     "htmlparser-to-html": "0.0.6",
     "lodash": "^4.17.15",
     "stew-select": "0.0.5"
