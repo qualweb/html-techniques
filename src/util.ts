@@ -91,9 +91,11 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
     return html(codeElement);
 }
 
-//adicionar aria selected(relacao entre combobox e listbox via aria owns)
-//listbox filhos com option ou listitem
-//ariaownedBy listbox
+//multiple labels
+//placeholder attribute
+//value attribute
+//For input type=reset: If steps 1 to 2 do not yield a usable text string, the accessible name is a localized string of the word "reset". 
+//fieldset child is a legend
 function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean): string {
 
     let isHidden, id, ariaLabelBy, ariaLabel, isWidgetElem, textAlternative, nameFromContent;
