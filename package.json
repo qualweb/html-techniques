@@ -24,6 +24,7 @@
     "test-t15": "mocha test/techniques/QW-HTML-T15.spec.js",
     "test-t16": "mocha test/techniques/QW-HTML-T16.spec.js",
     "test-t19": "mocha test/techniques/QW-HTML-T19.spec.js",
+    "test-t21": "mocha test/techniques/QW-HTML-T21.spec.js",
     "test-t22": "mocha test/techniques/QW-HTML-T22.spec.js",
     "test-t23": "mocha test/techniques/QW-HTML-T23.spec.js",
     "test-t24": "mocha test/techniques/QW-HTML-T24.spec.js",
