@@ -100,8 +100,6 @@ class QW_HTML_T31 extends Technique {
       }
 
     }
-
-    console.log(evaluation.resultCode);
     evaluation.htmlCode = transform_element_into_html(element);
     evaluation.pointer = getElementSelector(element);
 
