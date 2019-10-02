@@ -62,7 +62,7 @@ class QW_HTML_T23 extends Technique {
       if (element.attribs['href'] !== '') {
         evaluation.verdict = 'warning';
         evaluation.description = `Check whether the link leads to related information`;
-        technique.metadata.warning++;
+        evaluation.resultCode = 'RC1';
 
         evaluation.htmlCode = transform_element_into_html(element);
         evaluation.pointer = getElementSelector(element);

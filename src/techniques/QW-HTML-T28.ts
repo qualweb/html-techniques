@@ -70,22 +70,18 @@ class QW_HTML_T28 extends Technique {
       evaluation.verdict = 'warning';
       evaluation.description = 'Check that content that has the visual appearance of a list (with or without bullets) is marked as an unordered list';
       evaluation.resultCode = 'RC1';
-      technique.metadata.warning++;
     } else if (hasLi && element.name === "ol") {
       evaluation.verdict = 'warning';
       evaluation.description = 'Check that content that has the visual appearance of a numbered list is marked as an ordered list.';
       evaluation.resultCode = 'RC2';
-      technique.metadata.warning++;
     } else if (element.name === "dl" && (hasDt|| hasDd)) {
       evaluation.verdict = 'warning';
       evaluation.description = 'Check that content is marked as a definition list when terms and their definitions are presented in the form of a list.';
       evaluation.resultCode = 'RC3';
-      technique.metadata.warning++;
     } else {
       evaluation.verdict = 'failed';
       evaluation.description = `A list item is not contained in a correct list element`;
       evaluation.resultCode = 'RC4';
-      technique.metadata.failed++;
     }
 
     evaluation.htmlCode = transform_element_into_html(element);

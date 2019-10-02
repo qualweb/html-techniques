@@ -73,12 +73,10 @@ class QW_HTML_T22 extends Technique {
       evaluation.verdict = 'passed';
       evaluation.description = `The webpage doesn't use attributes to control the visual text presentation`;
       evaluation.resultCode = 'RC1';
-      technique.metadata.passed++;
     } else {
       evaluation.verdict = 'failed';
       evaluation.description = `The webpage uses attributes in ${element.name} element to control the visual text presentation`;
       evaluation.resultCode = 'RC2';
-      technique.metadata.failed++;
 
       evaluation.htmlCode = transform_element_into_html(element);
       evaluation.pointer = getElementSelector(element);

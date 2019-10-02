@@ -16,10 +16,10 @@ import {
 import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
-  name: 'Providing text alternatives for the area elements of image maps',
+  name: 'Using the link element and navigation tools\n',
   code: 'QW-HTML-T1',
   mapping: 'H24',
-  description: 'This technique checks the text alternative of area elements of images maps',
+  description: 'The objective of this technique is to describe how the link element can provide metadata about the position of an HTML page within a set of Web pages or can assist in locating content with a set of Web pages.',
   metadata: {
     target: {
       'parent-sibling': 'img',
@@ -31,17 +31,17 @@ const technique: HTMLTechnique = {
       name: '2.4.5',
       level: 'AA',
       principle: 'Operable',
-      url: 'https://www.w3.org/TR/2016/NOTE-UNDERSTANDING-WCAG20-20161007/navigation-mechanisms-mult-loc.html'
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/multiple-ways'
     },
     {
       name: '2.4.8',
       level: 'AAA',
       principle: 'Operable',
-      url: 'https://www.w3.org/TR/2016/NOTE-UNDERSTANDING-WCAG20-20161007/navigation-mechanisms-location.html'
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/location'
     }
     ],
     related: ['G1','G63','G64', 'G123'],
-    url: 'https://www.w3.org/TR/WCAG20-TECHS/H59.html',
+    url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H59',
     passed: 0,
     warning: 0,
     failed: 0,
@@ -74,12 +74,12 @@ class QW_HTML_T19 extends Technique {
     if (parentName != "head") {
       evaluation.verdict = 'failed';
       evaluation.description = `The element is not contained in the head element`;
-      technique.metadata.failed++;
+      evaluation.resultCode = 'RC1';
     }
     else if (!element.attribs) { // fails if the element doesn't contain an alt attribute
       evaluation.verdict = 'failed';
       evaluation.description = `The element doesn't contain a rel or an href attribute`;
-      technique.metadata.failed++;
+      evaluation.resultCode = 'RC2';
     } else {
       let rel = element.attribs["rel"];
       let href = element.attribs["href"];
@@ -87,15 +87,15 @@ class QW_HTML_T19 extends Technique {
       if (!rel) {
         evaluation.verdict = 'warning';
         evaluation.description = `The element doesn't contain a rel attribute check if this element pertains navigation `;
-        technique.metadata.warning++;
+        evaluation.resultCode = 'RC3';
       } else if (!href) {
         evaluation.verdict = 'warning';
         evaluation.description = `The element doesn't contain an href attribute check if this element pertains navigation`;
-        technique.metadata.warning++;
+        evaluation.resultCode = 'RC4';
       } else {
         evaluation.verdict = 'warning';
         evaluation.description = 'The element contains a rel and an href attribute that should be manually verified';
-        technique.metadata.warning++;
+        evaluation.resultCode = 'RC5';
 
       }
 

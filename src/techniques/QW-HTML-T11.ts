@@ -79,7 +79,7 @@ class QW_HTML_T11 extends Technique {
   if (element.children === undefined) { // fails if the element doesn't contain an image inside it
     evaluation.verdict = 'failed';
     evaluation.description = `The element doesn't contain an image inside the a element`;
-    technique.metadata.failed++;
+    evaluation.resultCode = 'RC1';
   }
 
   let imgs = stew.select(element, 'img');
@@ -101,21 +101,21 @@ class QW_HTML_T11 extends Technique {
   if (!hasImage) {
     evaluation.verdict = 'failed';
     evaluation.description = `The element doesn't contain an image attribute inside the a element`;
-    technique.metadata.failed++;
+    evaluation.resultCode = 'RC2';
   } else if (!hasAlt) {
     //inapplicable
   } else if (!hasNonEmptyAlt) {
     evaluation.verdict = 'passed';
     evaluation.description = `The a element contains an image that has an empty alt attribute`;
-    technique.metadata.passed++;
+    evaluation.resultCode = 'RC3';
   } else if (equalAltText) {
     evaluation.verdict = 'failed';
     evaluation.description = `The element text is equal to img alternative text`;
-    technique.metadata.failed++;
+    evaluation.resultCode = 'RC4';
   } else {
     evaluation.verdict = 'warning';
     evaluation.description = 'The a element contains an image that has an alt attribute that should be manually verified';
-    technique.metadata.warning++;
+    evaluation.resultCode = 'RC5';
   }
 
   evaluation.htmlCode = transform_element_into_html(element);

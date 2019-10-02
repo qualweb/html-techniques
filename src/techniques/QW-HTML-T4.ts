@@ -19,7 +19,7 @@ const technique: HTMLTechnique = {
   name: 'Using the summary attribute of the table element to give an overview of data tables',
   code: 'QW-HTML-T4',
   mapping: 'H73',
-  description: 'This technique checks the correcy use of the summary attribute for table elements',
+  description: 'This technique checks the correct use of the summary attribute for table elements',
   metadata: {
     target: {
       element: 'table'
@@ -67,26 +67,22 @@ class QW_HTML_T4 extends Technique {
       evaluation.verdict = 'failed';
       evaluation.description = 'The summary does not exist in the table element';
       evaluation.resultCode = 'RC1';
-      technique.metadata.failed++;
     }
     if (verifySummaryContent(element)) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The summary is empty';
       evaluation.resultCode = 'RC2';
-      technique.metadata.failed++;
 
     }
     if (verifyCaptionDuplicate(element)) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The caption is a duplicate of the summary';
       evaluation.resultCode = 'RC3';
-      technique.metadata.failed++;
     }
     if (technique.metadata.failed === 0) {
       evaluation.verdict = 'warning';
       evaluation.description = 'Please verify that the summary is a valid description of the table';
       evaluation.resultCode = 'RC4';
-      technique.metadata.warning++;
     }
 
     evaluation.htmlCode = transform_element_into_html(element);

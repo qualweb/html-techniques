@@ -74,15 +74,12 @@ class QW_HTML_T30 extends Technique {
     if (has_td && has_tr && has_th) {
       evaluation.verdict = 'passed';
       evaluation.description = 'There is at least one occurrence of table, tr, td and th';
-      evaluation.resultCode = 'RC1';
-      technique.metadata.passed++;
-    }
+      evaluation.resultCode = 'RC1';}
     // elementos em falta
     else {
       evaluation.verdict = 'failed';
       evaluation.description = 'There are missing table child elements';
       evaluation.resultCode = 'RC2';
-      technique.metadata.failed++;
     }
 
     evaluation.htmlCode = transform_element_into_html(element);

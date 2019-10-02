@@ -69,12 +69,10 @@ class QW_HTML_T32 extends Technique {
       evaluation.verdict = 'passed';
       evaluation.description = `The form contains one of the following elements input[type~="submit image"], button[type="submit"]`;
       evaluation.resultCode = 'RC1';
-      technique.metadata.passed++;
     } else { // fails if none of the following elements was found input[type~='submit image'], button[type='submit']
       evaluation.verdict = 'failed';
       evaluation.description = `Form tag doesn't contain any of the following elements input[type~="submit image"], button[type="submit"]`;
       evaluation.resultCode = 'RC2';
-      technique.metadata.failed++;
     }
 
     evaluation.htmlCode = transform_element_into_html(element);

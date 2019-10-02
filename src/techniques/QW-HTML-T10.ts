@@ -28,17 +28,17 @@ const technique: HTMLTechnique = {
       name: '2.4.1',
       level: 'A',
       principle: 'Operable',
-      url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/navigation-mechanisms-skip.html'
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/bypass-blocks'
     },
       {
         name: '4.1.2',
         level: 'A',
         principle: 'Robust',
-        url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/ensure-compat-rsv.html'
+        url: 'https://www.w3.org/WAI/WCAG21/Understanding/name-role-value'
       }
     ],
     related: [],
-    url: 'https://www.w3.org/TR/WCAG20-TECHS/H64.html',
+    url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H64',
     passed: 0,
     warning: 0,
     failed: 0,
@@ -74,16 +74,16 @@ class QW_HTML_T10 extends Technique {
     if (element.attribs['title'] !== '') {
       evaluation.verdict = 'warning';
       evaluation.description = 'Verify if title attribute contains text that identifies the frame';
-      technique.metadata.warning++;
+      evaluation.resultCode = 'RC1';
     } else {
       evaluation.verdict = 'failed';
       evaluation.description = 'Title attribute is empty';
-      technique.metadata.failed++;
+      evaluation.resultCode = 'RC2';
     }
   } else {
     evaluation.verdict = 'failed';
     evaluation.description = 'frame or iframe doesn\'t have title attribute';
-    technique.metadata.failed++;
+    evaluation.resultCode = 'RC3';
   }
 
   evaluation.htmlCode = transform_element_into_html(element);

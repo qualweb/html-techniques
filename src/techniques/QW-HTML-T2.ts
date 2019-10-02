@@ -19,7 +19,7 @@ const technique: HTMLTechnique = {
 	name: 'Using caption elements to associate data table captions with data tables',
 	code: 'QW-HTML-T2',
 	mapping: 'H39',
-	description: 'This technique checks the caption element is correcly use on tables',
+	description: 'This technique checks the caption element is correctly use on tables',
 	metadata: {
 		target: {
 			element: 'table'
@@ -28,11 +28,11 @@ const technique: HTMLTechnique = {
 				name: '1.3.1',
 				level: 'A',
 				principle: 'Perceivable',
-				url: 'https://www.w3.org/TR/2016/NOTE-UNDERSTANDING-WCAG20-20161007/content-structure-separation-programmatic.html'
+				url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
 			}
 		],
 		related: ['H51', 'H73', 'F46'],
-		url: 'https://www.w3.org/TR/WCAG20-TECHS/H39.html',
+		url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H39',
 		passed: 0,
 		warning: 0,
 		failed: 0,
@@ -64,20 +64,17 @@ class QW_HTML_T2 extends Technique {
 		evaluation.verdict = 'failed';
 		evaluation.description = 'The caption does not exist in the table element';
 		evaluation.resultCode = 'RC1';
-		technique.metadata.failed++;
 
 	}
 	if (verifyCaptionContent(element)){
 		evaluation.verdict = 'failed';
 		evaluation.description = 'The caption is empty';
 		evaluation.resultCode = 'RC2';
-		technique.metadata.failed++;
 	}
 	if(technique.metadata.failed == 0){
 		evaluation.verdict = 'warning';
 		evaluation.description = 'Please verify that the caption element identifies the table correctly.';
 		evaluation.resultCode = 'RC3';
-		technique.metadata.warning++;
 	}
 
 

@@ -102,19 +102,19 @@ class QW_HTML_T9 extends Technique {
     if (!equal) { // fails if the headings aren't in the correct order
       evaluation.verdict = 'failed';
       evaluation.description = `Headings are not in the correct order`;
-      technique.metadata.failed++;
+      evaluation.resultCode = 'RC1';
     } else if (!complete) { // fails if a header number is missing
       evaluation.verdict = 'failed';
       evaluation.description = `Heading number is missing`;
-      technique.metadata.failed++;
+      evaluation.resultCode = 'RC2';
     } else if(!startsWithOne && !hasH1){
       evaluation.verdict = 'failed';
       evaluation.description = 'Headings dont start with h1';
-      technique.metadata.failed++;
+      evaluation.resultCode = 'RC3';
     }else { // the heading elements are correctly used
       evaluation.verdict = 'warning';
       evaluation.description = 'Please verify that headers are used to divide the page correctly';
-      technique.metadata.warning++;
+      evaluation.resultCode = 'RC4';
     }
 
     evaluation.htmlCode = transform_element_into_html(element);

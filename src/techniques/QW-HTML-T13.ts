@@ -29,11 +29,11 @@ const technique: HTMLTechnique = {
         name: '2.4.2',
         level: 'A',
         principle: 'Operable',
-        url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/navigation-mechanisms-title.html'
+        url: 'https://www.w3.org/WAI/WCAG21/Understanding/page-titled'
       }
     ],
     related: ['G88', 'G127'],
-    url: 'https://www.w3.org/TR/WCAG20-TECHS/H25.html',
+    url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H25',
     passed: 0,
     warning: 0,
     failed: 0,
@@ -65,16 +65,16 @@ class QW_HTML_T13 extends Technique {
       if (text['type'] === 'text') { // the title text exists and needs to be verified
         evaluation.verdict = 'warning';
         evaluation.description = `Please verify the title text correlates to the page's content`;
-        technique.metadata.warning++;
+        evaluation.resultCode = 'RC1';
       } else { // fails if inside the title tag exists another element instead of text
         evaluation.verdict = 'failed';
         evaluation.description = `Title tag contains elements instead of text`;
-        technique.metadata.failed++;
+        evaluation.resultCode = 'RC2';
       }
     } else { // fails if the title tag is empty
       evaluation.verdict = 'failed';
       evaluation.description = `Title text is empty`;
-      technique.metadata.failed++;
+      evaluation.resultCode = 'RC3';
     }
 
     evaluation.htmlCode = transform_element_into_html(element);
@@ -83,7 +83,7 @@ class QW_HTML_T13 extends Technique {
   } else { // fails if title element doesn't exist
     evaluation.verdict = 'failed';
     evaluation.description = `Title tag doesn't exist`;
-    technique.metadata.failed++;
+    evaluation.resultCode = 'RC4';
   }
 
     super.addEvaluationResult(evaluation);

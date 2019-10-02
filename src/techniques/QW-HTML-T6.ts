@@ -67,27 +67,27 @@ class QW_HTML_T6 extends Technique {
   if (element.attribs["onmousedown"] !== element.attribs["onkeydown"] && element.attribs["onmousedown"] !== undefined) {
     evaluation.verdict = 'failed';
     evaluation.description = `The mousedown attribute doesnt have a keyboard equivalent`;
-    technique.metadata.failed++;
+    evaluation.resultCode = 'RC1';
   } else if (element.attribs["onmouseup"] !== element.attribs["onkeyup"] && element.attribs["onmouseup"] !== undefined) {
     evaluation.verdict = 'failed';
     evaluation.description = `The mouseup attribute doesnt have a keyboard equivalent`;
-    technique.metadata.failed++;
+    evaluation.resultCode = 'RC2';
   } else if (element.attribs["onclick"] !== element.attribs["onkeypress"] && element.attribs["onclick"] !== undefined) {
     evaluation.verdict = 'failed';
     evaluation.description = `The click attribute doesnt have a keyboard equivalent`;
-    technique.metadata.failed++;
+    evaluation.resultCode = 'RC3';
   } else if (element.attribs["onmouseover"] !== element.attribs["onfocus"] && element.attribs["onmouseover"] !== undefined) {
     evaluation.verdict = 'failed';
     evaluation.description = `The mouseover attribute doesnt have a keyboard equivalent`;
-    technique.metadata.failed++;
+    evaluation.resultCode = 'RC4';
   } else if (element.attribs["onmouseout"] !== element.attribs["onblur"] && element.attribs["onmouseout"] !== undefined) {
     evaluation.verdict = 'failed';
     evaluation.description = `The mouseout attribute doesnt have a keyboard equivalent`;
-    technique.metadata.failed++;
+    evaluation.resultCode = 'RC5';
   } else {
     evaluation.verdict = 'passed';
     evaluation.description = `All the mouse event handlers have a keyboard equivalent`;
-    technique.metadata.passed++;
+    evaluation.resultCode = 'RC6';
 
   }
 
@@ -95,7 +95,7 @@ class QW_HTML_T6 extends Technique {
   evaluation.htmlCode = transform_element_into_html(element);
   evaluation.pointer = getElementSelector(element);
 
-  technique.results.push(_.clone(evaluation));
+  super.addEvaluationResult(evaluation);
 }
 
 }

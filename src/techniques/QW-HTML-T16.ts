@@ -61,13 +61,13 @@ class QW_HTML_T16 extends Technique {
   if (element !== undefined) {
     evaluation.verdict = 'failed';
     evaluation.description = 'Used blink element';
-    technique.metadata.failed++;
+    evaluation.resultCode = 'RC1';
     evaluation.htmlCode = transform_element_into_html(element);
     evaluation.pointer = getElementSelector(element);
   } else { // success if refresh element doesn't exist
     evaluation.verdict = 'passed';
     evaluation.description = `Blink is not used`;
-    technique.metadata.passed++;
+    evaluation.resultCode = 'RC2';
   }
 
   super.addEvaluationResult(evaluation);

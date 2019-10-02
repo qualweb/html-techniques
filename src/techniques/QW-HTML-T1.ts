@@ -30,23 +30,23 @@ const technique: HTMLTechnique = {
             name: '1.1.1',
             level: 'A',
             principle: 'Perceivable',
-            url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/text-equiv-all.html'
+            url: 'https://www.w3.org/WAI/WCAG21/Understanding/non-text-content'
         },
             {
                 name: '2.4.4',
                 level: 'A',
                 principle: 'Operable',
-                url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/navigation-mechanisms-refs.html'
+                url: 'https://www.w3.org/WAI/WCAG21/Understanding/link-purpose-in-context'
             },
             {
                 name: '2.4.9',
                 level: 'AAA',
                 principle: 'Operable',
-                url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/navigation-mechanisms-link.html'
+                url: 'https://www.w3.org/WAI/WCAG21/Understanding/link-purpose-link-only'
             }
         ],
         related: ['G91', 'H30'],
-        url: 'https://www.w3.org/TR/WCAG20-TECHS/H24.html',
+        url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H24',
         passed: 0,
         warning: 0,
         failed: 0,

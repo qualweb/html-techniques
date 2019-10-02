@@ -62,13 +62,14 @@ class QW_HTML_T27 extends Technique {
     } else {
       evaluation.verdict = 'warning';
       evaluation.description = 'Check that each heading identifies its section of the content';
-      technique.metadata.warning++;
+      evaluation.resultCode = 'RC1';
 
       evaluation.htmlCode = transform_element_into_html(element);
       evaluation.pointer = getElementSelector(element);
+      super.addEvaluationResult(evaluation);
+
     }
 
-    super.addEvaluationResult(evaluation);
   }
 }
 

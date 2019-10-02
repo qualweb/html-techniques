@@ -75,23 +75,23 @@ class QW_HTML_T15 extends Technique {
 
       evaluation.verdict = 'failed';
       evaluation.description = 'The table has a non-empty summary - Amend it if it\'s a layout table';
-      technique.metadata.failed++;
+      evaluation.resultCode = 'RC1';
 
     } else if (checks["hasTh"]) {
 
       evaluation.verdict = 'failed';
       evaluation.description = 'The table has a th element - Amend it if it\'s a layout table';
-      technique.metadata.failed++;
+      evaluation.resultCode = 'RC2';
 
     } else if (checks["hasCaption"]) {
 
       evaluation.verdict = 'failed';
       evaluation.description = 'The table has a caption element - Amend it if it\'s a layout table';
-      technique.metadata.failed++;
+      evaluation.resultCode = 'RC3';
     } else {
       evaluation.verdict = 'warning';
       evaluation.description = `No incorrect elements used in layout table`;
-      technique.metadata.warning++;
+      evaluation.resultCode = 'RC4';
 
     }
 

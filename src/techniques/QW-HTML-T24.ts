@@ -65,13 +65,11 @@ class QW_HTML_T24 extends Technique {
 		evaluation.verdict = 'failed';
 		evaluation.description = 'The title is empty';
 		evaluation.resultCode = 'RC1';
-		technique.metadata.failed++;
 	}
 	if(technique.metadata.failed == 0){
 		evaluation.verdict = 'warning';
 		evaluation.description = 'Please verify that the title describes the page correctly.';
 		evaluation.resultCode = 'RC2';
-		technique.metadata.warning++;
 	}
 
 

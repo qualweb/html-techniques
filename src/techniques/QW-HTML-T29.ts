@@ -67,27 +67,27 @@ class QW_HTML_T29 extends Technique {
     if (element.attribs["onmousedown"]) {
       evaluation.verdict = 'warning';
       evaluation.description = `The mousedown attribute is used`;
-      technique.metadata.warning++;
+      evaluation.resultCode = 'RC1';
     } else if (element.attribs["onmouseup"]) {
       evaluation.verdict = 'warning';
       evaluation.description = `The mouseup attribute is used`;
-      technique.metadata.warning++;
+      evaluation.resultCode = 'RC2';
     } else if (element.attribs["onclick"]) {
       evaluation.verdict = 'warning';
       evaluation.description = `The click attribute is used`;
-      technique.metadata.warning++;
+      evaluation.resultCode = 'RC3';
     } else if (element.attribs["onmouseover"] ) {
       evaluation.verdict = 'warning';
       evaluation.description = `The mouseover attribute is used`;
-      technique.metadata.warning++;
+      evaluation.resultCode = 'RC4';
     } else if (element.attribs["onmouseout"] ) {
       evaluation.verdict = 'warning';
       evaluation.description = `The mouseout attribute is used`;
-      technique.metadata.warning++;
+      evaluation.resultCode = 'RC5';
     } else {
       evaluation.verdict = 'passed';
       evaluation.description = `No mouse specific event handlers are used`;
-      technique.metadata.passed++;
+      evaluation.resultCode = 'RC6';
   
     }
 

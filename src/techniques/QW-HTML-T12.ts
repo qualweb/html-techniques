@@ -73,7 +73,6 @@ class QW_HTML_T12 extends Technique {
       resultCode: ''
     };
 
-    if (element !== undefined) {
       if (element.attribs !== undefined) { // always true
         let content = element.attribs["content"];
         let intContent = parseInt(content);
@@ -82,18 +81,16 @@ class QW_HTML_T12 extends Technique {
         } else if (intContent > 0 && intContent <= 72000) {
           evaluation.verdict = 'failed';
           evaluation.description = 'Time interval to refresh is between 1 and 72000 seconds';
-          technique.metadata.failed++;
+          evaluation.resultCode = 'RC1';
         } else {
           evaluation.verdict = 'warning';
           evaluation.description = `Meta refresh time interval is correctly used`;
-          technique.metadata.warning++;
+          evaluation.resultCode = 'RC2';
         }
         evaluation.htmlCode = transform_element_into_html(element);
         evaluation.pointer = getElementSelector(element);
       }
-    } else {
-      // refresh element doesn't exist
-    }
+
     super.addEvaluationResult(evaluation);
   }
 }
