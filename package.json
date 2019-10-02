@@ -15,6 +15,7 @@
     "test-t5": "mocha test/techniques/QW-HTML-T5.spec.js",
     "test-t6": "mocha test/techniques/QW-HTML-T6.spec.js",
     "test-t7": "mocha test/techniques/QW-HTML-T7.spec.js",
+    "test-t8": "mocha test/techniques/QW-HTML-T7.spec.js",
     "test-t9": "mocha test/techniques/QW-HTML-T9.spec.js",
     "test-t10": "mocha test/techniques/QW-HTML-T10.spec.js",
     "test-t11": "mocha test/techniques/QW-HTML-T11.spec.js",

@@ -25,5 +25,6 @@
     "head > title": ["QW-HTML-T26"],
     "h1, h2, h3, h4, h5, h6": ["QW-HTML-T27"],
     "ol,ul,dl": ["QW-HTML-T28"],
-    "img": ["QW-HTML-T31"]
+    "img": ["QW-HTML-T31"],
+    "a[href]": ["QW-HTML-T37"]
   }}
