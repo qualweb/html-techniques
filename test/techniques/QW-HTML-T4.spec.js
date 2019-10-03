@@ -8,7 +8,7 @@ const {
 } = require('@qualweb/get-dom-puppeteer');
 
 
-describe('Technique QW-HTML-T3', function() {
+describe('Technique QW-HTML-T4', function() {
 
   const tests = [
     {
@@ -63,12 +63,12 @@ describe('Technique QW-HTML-T3', function() {
     i++;
     describe(`${test.outcome.charAt(0).toUpperCase() + test.outcome.slice(1)} example ${i}`, function () {
       it(`should have outcome="${test.outcome}"`, async function () {
-        this.timeout(10 * 1000);
+        this.timeout(20 * 1000);
         const { source, processed } = await getDom(test.url);
 
 
-        const report = await executeHTMLT(source.html.parsed, processed.html.parsed);
-        expect(report.techniques['QW-HTML-T3'].metadata.outcome).to.be.equal(test.outcome);
+        const report = await executeHTMLT(test.url, source.html.parsed, processed.html.parsed);
+        expect(report.techniques['QW-HTML-T4'].metadata.outcome).to.be.equal(test.outcome);
       });
     });
   }

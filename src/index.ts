@@ -116,6 +116,8 @@ async function executeHTMLT(url: string, sourceHTML: DomElement[], processedHTML
 
   await executeNotMappedTechniques(report, url);
 
+  resetConfiguration();
+
   return report;
 }
 

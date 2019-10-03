@@ -4,7 +4,7 @@ const { getDom } = require('@qualweb/get-dom-puppeteer');
 
 describe('Technique QW-HTML-T20', function() {
   it('should validate', async function() {
-    this.timeout(10 * 10000);
+    this.timeout(20 * 10000);
     
     const dom = await getDom('https://ciencias.ulisboa.pt');
 
