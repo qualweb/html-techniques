@@ -18,7 +18,7 @@ const technique: HTMLTechnique = {
   description: 'This technique checks that the web page follows the specification',
   metadata: {
     target: {
-      element: 'html',
+      element: '*',
     },
     'success-criteria': [
       {

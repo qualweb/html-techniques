@@ -2,9 +2,9 @@ const { expect } = require('chai');
 const { executeHTMLT, configure } = require('../../dist/index');
 const { getDom } = require('@qualweb/get-dom-puppeteer');
 
-describe('Technique QW-HTML-T1', function() {
+describe('Technique QW-HTML-T20', function() {
   it('should validate', async function() {
-    this.timeout(10 * 1000);
+    this.timeout(10 * 10000);
     
     const dom = await getDom('https://ciencias.ulisboa.pt');
 
