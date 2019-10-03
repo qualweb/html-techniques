@@ -12,10 +12,10 @@ import validator from 'html-validator';
 import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
-  name: 'Validating Web pages',
+  name: 'Using HTML according to spec',
   code: 'QW-HTML-T20',
-  mapping: 'G134',
-  description: 'This technique checks that the web page follows the specification',
+  mapping: 'H88',
+  description: 'This technique checks that the HTML or XHTML web page follows the specification',
   metadata: {
     target: {
       element: '*',
@@ -26,10 +26,15 @@ const technique: HTMLTechnique = {
         level: 'A',
         principle: 'Robust',
         url: 'https://www.w3.org/WAI/WCAG21/Understanding/parsing'
-      }
+      },{
+        name: '4.1.2',
+        level: 'A',
+        principle: 'Robust',
+        url: 'https://www.w3.org/WAI/WCAG21/Understanding/name-role-value'
+      },
     ],
-    related: [],
-    url: 'https://www.w3.org/WAI/WCAG21/Techniques/general/G134',
+    related: ['H74','H75'],
+    url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H88',
     passed: 0,
     warning: 0,
     failed: 0,
