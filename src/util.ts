@@ -92,10 +92,7 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 }
 
 //multiple labels
-//placeholder attribute
-//value attribute
-//For input type=reset: If steps 1 to 2 do not yield a usable text string, the accessible name is a localized string of the word "reset". 
-//fieldset child is a legend
+
 function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean): string {
 
     let isHidden, id, ariaLabelBy, ariaLabel, isWidgetElem, textAlternative, nameFromContent;
@@ -239,35 +236,39 @@ function getElementById(id: string | undefined, processedHTML: DomElement[]): Do
 
 function hasControlWithinLabel(label: DomElement, processedHTML: DomElement[]): boolean {//stew
 
-    let hasControlWithinLabel = stew.select(label, `[role="textbox"],[role="button"],[role="combobox"],[role="listbox"],[role="range"]`);
+    let hasControlWithinLabel = stew.select(label, `[role="textbox"],[role="button"],[role="combobox"],[role="listbox"],[role="range"],button,select,textarea,input[type="text"]`);
 
     return hasControlWithinLabel.length > 0;
 
 
 }
 
-function getTextAlternative(element: DomElement, processedHTML: DomElement[], id: string): string {//alt , title,label, fig capition  se for object procurar params
+function getTextAlternative(element: DomElement, processedHTML: DomElement[], id: string): string {
     if (!element.attribs)
         return "";
 
-    let alt = element.attribs.alt;
+    let alt = element.attribs["alt"];
 
-    let title = element.attribs.title;
+    let title = element.attribs["title"];
+    let value = element.attribs["value"];
+    let placeHolder = element.attribs["placeholder"];
     let labelContent;
-    let caption;
 
-    //('label[for="' + id + '"]');
-    //console.log(id);
+    let caption,figcaption,legend;
 
     if (id) {
         labelContent = stew.select(processedHTML, 'label[for="' + id + '"]');
     }
-
     if (element.name === 'table') {
         caption = stew.select(element, 'caption');
     }
 
-    //console.log(labelContent);
+    if (element.name === 'figure') {
+        figcaption = stew.select(element, 'figcaption');
+    }
+    if (element.name === 'fieldset') {
+        legend = stew.select(element, 'legend');
+    }
 
 
     if (alt !== undefined && _.trim(alt) !== "")
@@ -278,9 +279,16 @@ function getTextAlternative(element: DomElement, processedHTML: DomElement[], id
         return getText(labelContent[0]);
     else if (caption && caption.length !== 0)
         return getText(caption[0]);
+    else if (value && _.trim(value) !== "")
+        return value;
+    else if (figcaption && figcaption.length!== 0)
+        return  getText(figcaption[0]);
+    else if (legend && legend.length!== 0)
+        return getText(legend[0]);
+    else if (placeHolder &&_.trim(placeHolder) !== "")
+        return getText(legend[0]);
     else
         return "";
-
 }
 
 
@@ -308,7 +316,7 @@ function getValueFromLabelWithControl(label: DomElement, processedHTML: DomEleme
 
 }
 
-
+//adidcionar roles filhos e elementos html relacionados. adiconar selected
 function getValueFromEmbededControl(element: DomElement, processedHTML: DomElement[]): string {//stew
     if (!element.attribs)
         return "";
@@ -317,10 +325,13 @@ function getValueFromEmbededControl(element: DomElement, processedHTML: DomEleme
     let value = "";
 
 
-    if (role === "textbox" && element.children !== undefined) {
+    if ((element.name === "textarea"||role === "textbox") && element.children !== undefined) {
         value =  DomUtils.getText(element);
     }
-    else if (role === "button" && element.children !== undefined) {
+    else if ((element.name === "input"&&element.attribs && element.attribs["type"] === "text") {
+        value = element.attribs["value"];
+    }
+    else if ((element.name === "button"||role === "button") && element.children !== undefined) {
         value = DomUtils.getText(element);
     }
     else if (role === "combobox") {
@@ -346,10 +357,11 @@ function getValueFromEmbededControl(element: DomElement, processedHTML: DomEleme
         }
 
     }
-    else if (role === "listbox") {
+    else if (role === "listbox"||element.name==='select') {
         let elementsWithId = stew.select(element, `[id]`);
         let elementWithAriaSelected = stew.select(element, `aria-selected="true"`);
         let selectedElement = [];
+        let optionSelected;
 
         for (let elementWithId of elementsWithId) {
             if (selectedElement.length === 0) {
@@ -358,10 +370,17 @@ function getValueFromEmbededControl(element: DomElement, processedHTML: DomEleme
             }
         }
 
+        if(element.name==='select'){
+            optionSelected = stew.select(element, `[selected]`);
+        }
+
         if (selectedElement.length > 0)
             value = DomUtils.getText(elementsWithId[0]);
         else if (elementWithAriaSelected.length > 0) {
             value = DomUtils.getText(elementWithAriaSelected[0]);
+        }
+        else if (optionSelected.length > 0) {
+            value = DomUtils.getText(optionSelected[0]);
         }
     }
     else if (role === "range") {//range
@@ -471,6 +490,49 @@ function getAccessibleNameFromChildren(element: DomElement, acumulatedText: stri
     }
     return acumulatedText;
 }
+
+//default name
+function getDefaultname(element: DomElement) :string {
+    let name = element.name;
+    let type;
+
+    if(element.attribs){
+        type = element.attribs["type"];
+    }
+    let result = "";
+
+    if(type === "image"){
+        result = "image";
+    }
+    else if(type === "submit"){
+        result = "reset";
+    }
+    else if(type === "reset"){
+        result = "reset";
+    }
+    else if(name === "summary"){
+        result = "details";
+    }
+    
+    return result;
+
+}
+//summary
+function summaryAsChildOfDetails(element: DomElement) :boolean {
+    return !!element.parent&&element.parent.name === "details";
+}
+
+function getAccessibleNameFromAriaLabelBy(araLabelId: string, processedHTML: DomElement[]) :string{
+    let ListIDREFS = araLabelId.split(" ");
+    let result = "";
+
+    for(let id of ListIDREFS){
+        result = result + getAccessibleName(getElementById(id, processedHTML)[0], processedHTML, true);
+    }
+
+    return result;
+}
+
 
 
 export {
