@@ -1,6 +1,5 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
@@ -8,12 +7,8 @@ import {
 import {
   DomElement
 } from 'htmlparser2';
-import * as rp from 'request-promise';
+import validator from 'html-validator';
 
-import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
 import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
@@ -42,7 +37,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult> ()
+  results: new Array<HTMLTechniqueResult>()
 };
 
 class QW_HTML_T20 extends Technique {
@@ -57,17 +52,42 @@ class QW_HTML_T20 extends Technique {
 
   async validate(url: string): Promise<void> {
 
-    const evaluation: HTMLTechniqueResult = {
-      verdict: '',
-      description: '',
-      resultCode: ''
+    const options = {
+      url,
+      format: 'json'
     };
 
-    const validations = await rp.default(`http://validador-html.fccn.pt/check?uri=${encodeURIComponent(url)}&output=json`);
+    const validation = await validator(options);
 
-    //TODO: necessário o validador do Jorge estar a funcionar na nova máquina para testar. Neste momento não está
+    for (const result of validation.messages || []) {
+      const evaluation: HTMLTechniqueResult = {
+        verdict: '',
+        description: '',
+        resultCode: ''
+      };
+      
+      if (result.type === 'error') {
+        evaluation.verdict = 'failed';
+        evaluation.description = result.message;
+        evaluation.resultCode = 'RC2';
+      } else {
+        evaluation.verdict = 'warning';
+        evaluation.description = result.message;
+        evaluation.resultCode = 'RC3';
+      }
 
-    super.addEvaluationResult(evaluation);
+      super.addEvaluationResult(evaluation);
+    }
+
+    if (super.getNumberOfFailedResults() + super.getNumberOfWarningResults() === 0) {
+       const evaluation: HTMLTechniqueResult = {
+        verdict: 'passed',
+        description: `The HTML document doesn't have errors`,
+        resultCode: 'RC1'
+      };
+
+      super.addEvaluationResult(evaluation);
+    }
   }
 }
 

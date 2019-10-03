@@ -40,13 +40,13 @@ function configure(options: HTMLTOptions): void {
     }
     if (!options.principles && !options.levels) {
       if (options.techniques && options.techniques.length !== 0) {
-        if (!options.techniques.includes(technique) && !options.techniques.includes(technique[technique].getTechniqueMapping())) {
+        if (!options.techniques.includes(technique) && !options.techniques.includes(techniques[technique].getTechniqueMapping())) {
           techniquesToExecute[technique] = false;
         }
       }
     } else {
       if (options.techniques && options.techniques.length !== 0) {
-        if (options.techniques.includes(technique) || options.techniques.includes(technique[technique].getTechniqueMapping())) {
+        if (options.techniques.includes(technique) || options.techniques.includes(techniques[technique].getTechniqueMapping())) {
           techniquesToExecute[technique] = true;
         }
       }
@@ -83,7 +83,7 @@ async function executeMappedTechniques(report: HTMLTechniquesReport, html: DomEl
 
 async function executeNotMappedTechniques(report: HTMLTechniquesReport, url: string): Promise<void> {
   if (techniquesToExecute['QW-HTML-T20']) {
-    techniques['QW-HTML-T20'].validate(url);
+    await techniques['QW-HTML-T20'].validate(url);
     report.techniques['QW-HTML-T20'] = techniques['QW-HTML-T20'].getFinalResults();
     report.metadata[report.techniques['QW-HTML-T20'].metadata.outcome]++;
     techniques['QW-HTML-T20'].reset();
