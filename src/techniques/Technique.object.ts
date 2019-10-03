@@ -31,6 +31,10 @@ abstract class Technique {
     return this.technique.metadata.passed;
   }
 
+  protected getNumberOfWarningResults(): number {
+    return this.technique.metadata.warning;
+  }
+
   protected getNumberOfFailedResults(): number {
     return this.technique.metadata.failed;
   }

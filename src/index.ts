@@ -40,13 +40,13 @@ function configure(options: HTMLTOptions): void {
     }
     if (!options.principles && !options.levels) {
       if (options.techniques && options.techniques.length !== 0) {
-        if (!options.techniques.includes(technique) && !options.techniques.includes(technique[technique].getTechniqueMapping())) {
+        if (!options.techniques.includes(technique) && !options.techniques.includes(techniques[technique].getTechniqueMapping())) {
           techniquesToExecute[technique] = false;
         }
       }
     } else {
       if (options.techniques && options.techniques.length !== 0) {
-        if (options.techniques.includes(technique) || options.techniques.includes(technique[technique].getTechniqueMapping())) {
+        if (options.techniques.includes(technique) || options.techniques.includes(techniques[technique].getTechniqueMapping())) {
           techniquesToExecute[technique] = true;
         }
       }
@@ -60,7 +60,7 @@ function resetConfiguration(): void {
   }
 }
 
-async function executeTechniques(report: HTMLTechniquesReport, html: DomElement[], selectors: string[], mappedTechniques: any): Promise<void> {
+async function executeMappedTechniques(report: HTMLTechniquesReport, html: DomElement[], selectors: string[], mappedTechniques: any): Promise<void> {
   for (const selector of selectors || []) {
     for (const technique of mappedTechniques[selector] || []) {
       if (techniquesToExecute[technique]) {
@@ -81,7 +81,16 @@ async function executeTechniques(report: HTMLTechniquesReport, html: DomElement[
   }
 }
 
-async function executeHTMLT(sourceHTML: DomElement[], processedHTML: DomElement[]): Promise<HTMLTechniquesReport> {
+async function executeNotMappedTechniques(report: HTMLTechniquesReport, url: string): Promise<void> {
+  if (techniquesToExecute['QW-HTML-T20']) {
+    await techniques['QW-HTML-T20'].validate(url);
+    report.techniques['QW-HTML-T20'] = techniques['QW-HTML-T20'].getFinalResults();
+    report.metadata[report.techniques['QW-HTML-T20'].metadata.outcome]++;
+    techniques['QW-HTML-T20'].reset();
+  }
+}
+
+async function executeHTMLT(url: string, sourceHTML: DomElement[], processedHTML: DomElement[]): Promise<HTMLTechniquesReport> {
 
   if (sourceHTML === null || sourceHTML === undefined) {
     throw new Error(`Source html can't be null or undefined`);
@@ -102,12 +111,12 @@ async function executeHTMLT(sourceHTML: DomElement[], processedHTML: DomElement[
     techniques: {}
   };
 
-  await executeTechniques(report, sourceHTML, Object.keys(mapping.pre), mapping.pre);
-  await executeTechniques(report, processedHTML, Object.keys(mapping.post), mapping.post);
+  await executeMappedTechniques(report, sourceHTML, Object.keys(mapping.pre), mapping.pre);
+  await executeMappedTechniques(report, processedHTML, Object.keys(mapping.post), mapping.post);
 
-  resetConfiguration();
+  await executeNotMappedTechniques(report, url);
 
   return report;
 }
 
-export { configure, executeHTMLT };
+export { configure, resetConfiguration, executeHTMLT };
