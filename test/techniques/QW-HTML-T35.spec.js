@@ -13,9 +13,9 @@ describe('Technique QW-HTML-T35', function() {
 
   const tests = [
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T31/test1.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T35/test1.html',
       outcome: 'warning'
-    },
+    }/** ,
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T31/test2.html',
       outcome: 'warning'
@@ -27,7 +27,7 @@ describe('Technique QW-HTML-T35', function() {
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T31/test4.html',
       outcome: 'failed'
-    }
+    }*/
   ];
 
   let i = 0;

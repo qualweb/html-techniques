@@ -63,6 +63,7 @@ class QW_HTML_T35 extends Technique {
       resultCode: ''
     };
     let accesibleName = getAccessibleName(element,processedHTML,false);
+    console.log(accesibleName);
     if (accesibleName) { // fails if the element doesn't contain an accessible name
       evaluation.verdict = 'passed';
       evaluation.description = `The element has an accessible name`;
