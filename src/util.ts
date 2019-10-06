@@ -126,7 +126,6 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
     if (isHidden && !reference && !isReferenced) {//A
         return "";
     } else if (ariaLabelBy !== "" && !reference && summaryCheck) {//B
-        // console.log(getElementById(ariaLabelBy, processedHTML)[0]);
         return getAccessibleNameFromAriaLabelBy(ariaLabelBy, processedHTML);
     } else if (ariaLabel && _.trim(ariaLabel) !== "" && !(referencedByWidgetVal && hasControlWithinLabele && reference) && summaryCheck) {//C
         return ariaLabel;
@@ -278,7 +277,6 @@ function hasControlWithinLabel(id:string,element: DomElement, processedHTML: Dom
 
 
     let hasControlWithinLabel = stew.select(label, `[role="spinbutton"],[role="slider"],[role="scrollbar"],role="progressbar"],[role="textbox"],[role="button"],[role="combobox"],[role="listbox"],[role="range"],button,select,textarea,input[type="text"]`);
-    console.log(hasControlWithinLabel.length> 0);
     return hasControlWithinLabel.length > 0;
 
 
@@ -367,7 +365,7 @@ function getValueFromLabelWithControl(id: string,element: DomElement, processedH
         label = element;
        
     let value = "";
-    console.log(element.name);
+
     if (!label.children)
         return "";
     
