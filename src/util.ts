@@ -116,13 +116,14 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         textAlternative = getTextAlternative(element, processedHTML, id);
         hasRolePresentOrNone = hasRolePresentationOrNone(element);
     }
+    referencedByWidgetVal = referencedByWidget(element, id, processedHTML);
+    hasControlWithinLabele = hasControlWithinLabel(id,element, processedHTML);
 
     if (id) {
-        referencedByWidgetVal = referencedByWidget(element, id, processedHTML);
-        hasControlWithinLabele = hasControlWithinLabel(id,element, processedHTML);
         isReferenced = elementIsReferenced(id, processedHTML, element);
     }
     console.log(id+ element.name);
+    console.log(referencedByWidgetVal+ "control"+hasControlWithinLabele);
     //console.log("aria-lblBy"+ariaLabelBy);
     // console.log(isControle + "emb" + isEmbededControl);
 
@@ -147,7 +148,7 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         return title + "I";
     }
     else if (defaultName !== "" && summaryCheck) {//J deafault name
-        return title + "I";
+        return defaultName + "I";
     } else {
         return "";
     }
@@ -218,22 +219,34 @@ function referencedByWidget(element: DomElement, id: string, processedHTML: DomE
     // widget com texto
     let text = DomUtils.getText(element);
     let widget = isWidget(element);
+    let control= isControl(element);
     let forAtt = element.attribs["for"];
-    //let parent = element.parent
-    //let refrencedByLabel = stew.select(processedHTML, `label[for="${id}"]`);
+    let parent = element.parent
+    let refrencedByLabel = stew.select(processedHTML, `label[for="${id}"]`);
     let refrencedByAriaLabel = stew.select(processedHTML, `[aria-labelledby="${id}"]`);
     let result = false;
     let referenced = getElementById(forAtt, processedHTML);
+    let sonIsWidget = false;
+    let sonIsControl = false;
+
+    if(element.children){
+        for(let child of element.children){
+            if(!sonIsWidget)
+            sonIsWidget = isWidget(child);
+            if(!sonIsControl)
+            sonIsControl = isControl(child);
+        }
+    }
     //console.log(element.name);
     //console.log(text);
     //console.log(forAtt);
-   // console.log(referenced)
+   console.log("control"+control);
 
     if (forAtt && referenced) {
         result = isWidget(referenced[0]);
     } else if (refrencedByAriaLabel.length > 0) {
         result = isWidget(refrencedByAriaLabel[0]);
-    } else if (widget && text) {//caso de AN de control dentro de label
+    } else if (widget && text&& sonIsControl || sonIsWidget&&element.name==="label"&&sonIsControl||refrencedByLabel.length>0&&isWidget||parent&&parent.name==="label"&&isWidget&&!control) {//caso de AN de control dentro de label
         result = true;
     }
    // console.log(result)
@@ -242,19 +255,19 @@ function referencedByWidget(element: DomElement, id: string, processedHTML: DomE
 }
 
 
-/** function isControl(element: DomElement): boolean {
+function isControl(element: DomElement): boolean {
 
     let controlRoles = ["textbox", "button", "combobox", "listbox", "range","progressbar","scrollbar","slider","spinbutton"];
 
     if (element.attribs === undefined)
         return false;
 
-    let role = element.attribs.role;
+    let role = element.attribs["role"];
 
     return controlRoles.indexOf(role) >= 0
 
 
-}*/
+}
 
 function getElementById(id: string | undefined, processedHTML: DomElement[]): DomElement[] {
     let element;
@@ -297,7 +310,7 @@ function getTextAlternative(element: DomElement, processedHTML: DomElement[], id
     }
     if (element.name === 'table') {
         caption = stew.select(element, 'caption');
-    }
+    }element.name
 
     if (element.name === 'figure') {
         figcaption = stew.select(element, 'figcaption');
@@ -463,14 +476,18 @@ function getText(element: DomElement): string {
 
 function isWidget(element: DomElement): boolean {
 
+    let widgetElements = ['button', 'input', 'meter', 'output', 'progress', 'select', 'textarea'];
     let widgetRoles = ["button", "checkbox", "gridcell", "link", "menuitem", "menuitemcheckbox", "menuitemradio", "option", "progressbar", "radio", "scrollbar", "searchbox", "separator", "slider", "spinbutton", "switch", "tab", "tabpanel", "textbox", "treeitem"];
 
     if (element.attribs === undefined)
         return false;
 
-    let role = element.attribs.role;
+    let role = element.attribs["role"];
+    let name = '';
+    if(element.name)
+        name= element.name;
 
-    return widgetRoles.indexOf(role) >= 0;
+    return widgetRoles.indexOf(role) >= 0||widgetElements.indexOf(name) >= 0;
 }
 
 
@@ -513,11 +530,12 @@ function getAccessibleNameFromChildren(element: DomElement,processedHTML: DomEle
 function getDefaultname(element: DomElement): string {
     let name = element.name;
     let type;
+    let result = "";
 
-    if (element.attribs) {
+    if (element.attribs&&name==="input") {
         type = element.attribs["type"];
     }
-    let result = "";
+    
 
     if (type === "image") {
         result = "image";
@@ -527,9 +545,6 @@ function getDefaultname(element: DomElement): string {
     }
     else if (type === "reset") {
         result = "reset";
-    }
-    else if (name === "summary") {
-        result = "details";
     }
 
     return result;
