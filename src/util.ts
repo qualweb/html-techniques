@@ -122,33 +122,28 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
     if (id) {
         isReferenced = elementIsReferenced(id, processedHTML, element);
     }
-    console.log(id+ element.name);
-    console.log(referencedByWidgetVal+ "control"+hasControlWithinLabele);
-    //console.log("aria-lblBy"+ariaLabelBy);
-    // console.log(isControle + "emb" + isEmbededControl);
 
     if (isHidden && !reference && !isReferenced) {//A
-        return "" + "A";
+        return "";
     } else if (ariaLabelBy !== "" && !reference && summaryCheck) {//B
         // console.log(getElementById(ariaLabelBy, processedHTML)[0]);
-        return getAccessibleNameFromAriaLabelBy(ariaLabelBy, processedHTML) + "B";
+        return getAccessibleNameFromAriaLabelBy(ariaLabelBy, processedHTML);
     } else if (ariaLabel && _.trim(ariaLabel) !== "" && !(referencedByWidgetVal && hasControlWithinLabele && reference) && summaryCheck) {//C
-        return ariaLabel + "C";
+        return ariaLabel;
     } else if (textAlternative && !hasRolePresentOrNone && summaryCheck&&!(referencedByWidgetVal && hasControlWithinLabele)) {//D
         return textAlternative + "D";
     } else if (referencedByWidgetVal && hasControlWithinLabele) {//E adicionar  a AN do label
-        return getValueFromLabelWithControl(id,element, processedHTML) + "E";
+        return getValueFromLabelWithControl(id,element, processedHTML);
     } else if ((nameFromContent || isReferenced)) {//F
         let textFromCss = getTextFromCss(element, textElement);
-        console.log("css" + textFromCss);
-        return getAccessibleNameFromChildren(element,processedHTML, textFromCss) + "F";
+        return getAccessibleNameFromChildren(element,processedHTML, textFromCss);
     } else if (textElement !== "") {//G
-        return textElement +"G";
+        return textElement;
     } else if (title !== undefined) {//I toolTip
-        return title + "I";
+        return title;
     }
     else if (defaultName !== "" && summaryCheck) {//J deafault name
-        return defaultName + "I";
+        return defaultName ;
     } else {
         return "";
     }
@@ -158,7 +153,8 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
 
 function elementIsHidden(element: DomElement): boolean {
     if (!element.attribs)
-      return false;
+      return false;  
+ 
     let aria_hidden = element.attribs["aria-hidden"] === 'true';
     let hidden = element.attribs["hidden"] !== undefined;
     let cssHidden = elementIsHiddenCSS(element);
@@ -237,10 +233,6 @@ function referencedByWidget(element: DomElement, id: string, processedHTML: DomE
             sonIsControl = isControl(child);
         }
     }
-    //console.log(element.name);
-    //console.log(text);
-    //console.log(forAtt);
-   console.log("control"+control);
 
     if (forAtt && referenced) {
         result = isWidget(referenced[0]);
@@ -249,7 +241,7 @@ function referencedByWidget(element: DomElement, id: string, processedHTML: DomE
     } else if (widget && text&& sonIsControl || sonIsWidget&&element.name==="label"&&sonIsControl||refrencedByLabel.length>0&&isWidget||parent&&parent.name==="label"&&isWidget&&!control) {//caso de AN de control dentro de label
         result = true;
     }
-   // console.log(result)
+
     return result;
 
 }
@@ -280,9 +272,9 @@ function getElementById(id: string | undefined, processedHTML: DomElement[]): Do
 
 function hasControlWithinLabel(id:string,element: DomElement, processedHTML: DomElement[]): boolean {
     let label = element;
-    /** label = getLabel(id,processedHTML,element);
+    label = getLabel(id,processedHTML,element);
     if(!label)
-        label = element;*/
+        label = element;
 
 
     let hasControlWithinLabel = stew.select(label, `[role="spinbutton"],[role="slider"],[role="scrollbar"],role="progressbar"],[role="textbox"],[role="button"],[role="combobox"],[role="listbox"],[role="range"],button,select,textarea,input[type="text"]`);
