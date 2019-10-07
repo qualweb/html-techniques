@@ -1,6 +1,6 @@
 {
   "name": "@qualweb/html-techniques",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "Implementation of the WCAG 2.1 html techniques",
   "main": "dist/index.js",
   "types": "./node_modules/@qualweb/types",
@@ -63,8 +63,8 @@
   },
   "homepage": "https://github.com/qualweb/html-techniques#readme",
   "devDependencies": {
-    "@qualweb/get-dom-puppeteer": "^0.0.5",
-    "@qualweb/types": "0.0.10",
+    "@qualweb/get-dom-puppeteer": "0.0.5",
+    "@qualweb/types": "0.0.27",
     "@types/htmlparser2": "^3.10.1",
     "@types/lodash": "^4.14.141",
     "@types/node": "^12.7.9",

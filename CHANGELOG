@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.0.4] - 07/10/2019
+
+### Fixed
+ - technique QW-HTML-T37
+
+## [0.0.3] - 04/10/2019
+
+### Added
+ - merged all finished techniques
+ - url parameter to main function
+
 ## [0.0.2] - 10/09/2019
 
 ### Added

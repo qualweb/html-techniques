@@ -92,12 +92,12 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 }
 
 function isFocusable(element: DomElement) {
-  if (element.attribs && (element.attribs["disabled"] !== undefined || elementIsHidden(element))){
+  if (element.attribs && (element.attribs['disabled'] !== undefined || elementIsHidden(element))){
     return false;
   } else if (isDefaultFocusable(element)) {
     return true;
   }
-  let tabIndex = element.attribs ? element.attribs["tabindex"] : undefined;
+  let tabIndex = element.attribs ? element.attribs['tabindex'] : undefined;
   return !!(tabIndex && !isNaN(parseInt(tabIndex, 10)));
 }
 
@@ -123,8 +123,11 @@ function isDefaultFocusable(element: DomElement) {
   return false;
 }
 
-function getElementByHRef(processedHTML: DomElement[], element: DomElement) {
-  // @ts-ignore
+function getElementByHRef(processedHTML: DomElement[], element: DomElement): string | null {
+  if (!element.attribs) {
+    return null;
+  }
+
   let href = element.attribs['href'];
   if (!href) {
     return null;
@@ -136,40 +139,41 @@ function getElementByHRef(processedHTML: DomElement[], element: DomElement) {
   } else {
     return null;
   }
-  let results = stew.select(processedHTML, '[id="' + href + '"]');
-  if (results.length) {
-    return results[0];
+  let result = stew.select_first(processedHTML, '#' + href); //'[id='' + href + '']'
+  if (result) {
+    return result;
   }
-  results = stew.select(processedHTML, '[name="' + href + '"]');
-  if (results.length) {
-    return results[0];
+  result = stew.select_first(processedHTML, '[name="' + href + '"]');
+  if (result) {
+    return result;
   }
   return null;
 }
 
 function elementIsHidden(element: DomElement): boolean {
-  if (!element.attribs)
-    return false;
-  let aria_hidden = element.attribs["aria-hidden"] === 'true';
-  let hidden = element.attribs["hidden"] !== undefined;
-  let cssHidden = elementIsHiddenCSS(element);
-  let parent = element.parent;
+  const aria_hidden = element.attribs ? element.attribs['aria-hidden'] === 'true' : false;
+  const hidden = element.attribs ? element.attribs['hidden'] !== undefined : false;
+  const cssHidden = elementIsHiddenCSS(element);
+  const parent = element.parent;
   let parentHidden = false;
 
   if (parent) {
     parentHidden = elementIsHidden(parent);
   }
+
   return cssHidden || hidden || aria_hidden || parentHidden;
 }
 
 function elementIsHiddenCSS(element: DomElement): boolean {
-  if (!element.attribs)
+  if (!element.attribs) {
     return false;
+  }
   let visibility = false;
   let displayNone = false;
+  
   if (element.attribs['computed-style'] !== undefined) {
-    displayNone = _.trim(getComputedStylesAttribute(element, "computed-style", "^ display:")) === 'none';
-    let visibilityATT = _.trim(getComputedStylesAttribute(element, "computed-style", "^ visibility:"));
+    displayNone = _.trim(getComputedStylesAttribute(element, 'computed-style', '^ display:')) === 'none';
+    let visibilityATT = _.trim(getComputedStylesAttribute(element, 'computed-style', '^ visibility:'));
     visibility = visibilityATT === 'collapse' || visibilityATT === 'hidden';
   }
   return visibility || displayNone;
@@ -177,18 +181,19 @@ function elementIsHiddenCSS(element: DomElement): boolean {
 
 function getComputedStylesAttribute(element: DomElement, computedStyle: string, attribute: string): string {
   if (!element.attribs || !element.attribs[computedStyle]) {
-    return "";
+    return '';
   }
-  let computedStyleContent = element.attribs[computedStyle].replace("&quot;", "");
-  let attribs = computedStyleContent.split(";");
-  let isAttr = new RegExp(attribute);
-  let attributeContent = "";
-  for (let attr of attribs) {
+  const computedStyleContent = element.attribs[computedStyle].replace('&quot;', '');
+  const attribs = computedStyleContent.split(';');
+  const isAttr = new RegExp(attribute);
+  let attributeContent = '';
+  for (const attr of attribs || []) {
     if (isAttr.test(attr)){
       attributeContent = attr.split(isAttr)[1];
     }
   }
-  return attributeContent.replace("&quot", "");
+  
+  return attributeContent.replace('&quot', '');
 }
 
 

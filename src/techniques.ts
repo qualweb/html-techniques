@@ -100,7 +100,7 @@ const techniquesToExecute = {
   'QW-HTML-T30': true,
   'QW-HTML-T31': true,
   'QW-HTML-T32': true,
-  'QW-HTML-T37': true,
+  'QW-HTML-T37': false,
 };
 
 export {

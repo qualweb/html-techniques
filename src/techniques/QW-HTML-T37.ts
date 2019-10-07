@@ -63,9 +63,9 @@ class QW_HTML_T37 extends Technique {
       description: '',
       resultCode: ''
     };
-
-    let refElement = getElementByHRef(processedHTML, element);
-    let hidden = elementIsHidden(element);
+    
+    const refElement = getElementByHRef(processedHTML, element);
+    const hidden = elementIsHidden(element);
     if (refElement) {
       if (!hidden) {
         evaluation.verdict = 'warning';
@@ -76,10 +76,15 @@ class QW_HTML_T37 extends Technique {
         evaluation.description = 'This link that skips a content block is not visible';
         evaluation.resultCode = 'RC2';
       }
-      evaluation.htmlCode = transform_element_into_html(element);
-      evaluation.pointer = getElementSelector(element);
-      super.addEvaluationResult(evaluation);
+    } else {
+      evaluation.verdict = 'inapplicable';
+      evaluation.description = `This link doesn't have the 'href' attribute`;
+      evaluation.resultCode = 'RC3';
     }
+
+    evaluation.htmlCode = transform_element_into_html(element);
+    evaluation.pointer = getElementSelector(element);
+    super.addEvaluationResult(evaluation);
   }
 }
 
