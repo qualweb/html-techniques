@@ -66,7 +66,6 @@ class QW_HTML_T37 extends Technique {
 
     let refElement = getElementByHRef(processedHTML, element);
     let hidden = elementIsHidden(element);
-    console.log(hidden);
     if (refElement) {
       if (!hidden) {
         evaluation.verdict = 'warning';

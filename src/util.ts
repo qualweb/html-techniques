@@ -92,13 +92,12 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 }
 
 function isFocusable(element: DomElement) {
-  if (element.attribs && element.attribs["disabled"] !== undefined) { // TODO ainda falta verificar se está escondido por css
+  if (element.attribs && (element.attribs["disabled"] !== undefined || elementIsHidden(element))){
     return false;
   } else if (isDefaultFocusable(element)) {
     return true;
   }
   let tabIndex = element.attribs ? element.attribs["tabindex"] : undefined;
-  console.log(!!(tabIndex && !isNaN(parseInt(tabIndex, 10))));
   return !!(tabIndex && !isNaN(parseInt(tabIndex, 10)));
 }
 
@@ -138,12 +137,10 @@ function getElementByHRef(processedHTML: DomElement[], element: DomElement) {
     return null;
   }
   let results = stew.select(processedHTML, '[id="' + href + '"]');
-  console.log(results.toString());
   if (results.length) {
     return results[0];
   }
   results = stew.select(processedHTML, '[name="' + href + '"]');
-  console.log(results.toString());
   if (results.length) {
     return results[0];
   }

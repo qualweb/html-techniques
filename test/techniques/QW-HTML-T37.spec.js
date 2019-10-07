@@ -12,55 +12,55 @@ describe('Technique QW-HTML-T37', function() {
 
   const tests = [
     /**{
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/failedSummary1.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/failedSummary1.html',
       outcome: 'failed'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/failedTabIndex1.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/failedTabIndex1.html',
       outcome: 'failed'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/failedInput1.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/failedInput1.html',
       outcome: 'failed'
     },*/
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/failed1.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/failed1.html',
       outcome: 'inapplicable'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/failedHidden1.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/failedHidden1.html',
       outcome: 'failed'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/failedHidden2.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/failedHidden2.html',
       outcome: 'failed'
     },
     /**{
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/passedSummary1.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/passedSummary1.html',
       outcome: 'passed'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/passedTabIndex1.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/passedTabIndex1.html',
       outcome: 'passed'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/passedTabIndex2.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/passedTabIndex2.html',
       outcome: 'passed'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/passedTabIndex3.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/passedTabIndex3.html',
       outcome: 'passed'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/passedInput1.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/passedInput1.html',
       outcome: 'passed'
     },*/
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/passed1.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/passed1.html',
       outcome: 'warning'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/focusable/passedHidden1.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/passedHidden1.html',
       outcome: 'warning'
     }
   ];
