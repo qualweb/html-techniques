@@ -4,7 +4,7 @@ import {DomElement} from 'htmlparser2';
 import html from 'htmlparser-to-html';
 import _ from 'lodash';
 
-const stew = new(require('stew-select')).Stew();
+const stew = new (require('stew-select')).Stew();
 
 function getSelfLocationInParent(element: DomElement): string {
   let selector = '';
@@ -156,7 +156,7 @@ function elementIsHidden(element: DomElement): boolean {
   let parent = element.parent;
   let parentHidden = false;
 
-  if(parent){
+  if (parent) {
     parentHidden = elementIsHidden(parent);
   }
   return cssHidden || hidden || aria_hidden || parentHidden;
@@ -167,12 +167,12 @@ function elementIsHiddenCSS(element: DomElement): boolean {
     return false;
   let visibility = false;
   let displayNone = false;
-  if (element.attribs['computed-style'] !== undefined){
+  if (element.attribs['computed-style'] !== undefined) {
     displayNone = _.trim(getComputedStylesAttribute(element, "computed-style", "^ display:")) === 'none';
     let visibilityATT = _.trim(getComputedStylesAttribute(element, "computed-style", "^ visibility:"));
-    visibility = visibilityATT === 'collapse' ||visibilityATT === 'hidden'
+    visibility = visibilityATT === 'collapse' || visibilityATT === 'hidden';
   }
-  return visibility || displayNone ;
+  return visibility || displayNone;
 }
 
 function getComputedStylesAttribute(element: DomElement, computedStyle: string, attribute: string): string {
@@ -184,8 +184,9 @@ function getComputedStylesAttribute(element: DomElement, computedStyle: string, 
   let isAttr = new RegExp(attribute);
   let attributeContent = "";
   for (let attr of attribs) {
-    if (isAttr.test(attr))
-      attributeContent = attr.split(attribute)[0];
+    if (isAttr.test(attr)){
+      attributeContent = attr.split(isAttr)[1];
+      }
   }
   return attributeContent.replace("&quot", "");
 }

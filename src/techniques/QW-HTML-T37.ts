@@ -20,7 +20,7 @@ import Technique from './Technique.object';
 const technique: HTMLTechnique = {
   name: 'Adding a link at the beginning of a block of repeated content to go to the end of the block',
   code: 'QW-HTML-T37',
-  mapping: '',
+  mapping: 'G123',
   description: 'The objective of this technique is to provide a mechanism to bypass a block of material by skipping to the end of the block.',
   metadata: {
     target: {
@@ -70,16 +70,16 @@ class QW_HTML_T37 extends Technique {
       if (!hidden) {
         evaluation.verdict = 'warning';
         evaluation.description = 'This link skips a content block';
-        technique.metadata.warning++;
+        evaluation.resultCode = 'RC1';
       } else {
         evaluation.verdict = 'failed';
         evaluation.description = 'This link that skips a content block is not visible';
-        technique.metadata.failed++;
+        evaluation.resultCode = 'RC2';
       }
       evaluation.htmlCode = transform_element_into_html(element);
       evaluation.pointer = getElementSelector(element);
+      super.addEvaluationResult(evaluation);
     }
-    super.addEvaluationResult(evaluation);
   }
 }
 
