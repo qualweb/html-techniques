@@ -17,4 +17,12 @@ describe('HTML Techniques module', function() {
     
     expect(Object.keys(report.techniques).length).to.be.equal(nTechniques);
   });
+  /*it('test stew select invalid predicate', async function() {
+    this.timeout(20 * 1000);
+    const { source, processed } = await getDom('https://ciencias.ulisboa.pt');
+
+    let report = await executeHTMLT('https://ciencias.ulisboa.pt', source.html.parsed, processed.html.parsed);
+    
+    expect(report.type).to.be.equal('html-techniques');
+  });*/
 });

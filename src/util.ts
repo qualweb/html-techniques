@@ -132,13 +132,15 @@ function getElementByHRef(processedHTML: DomElement[], element: DomElement): str
   if (!href) {
     return null;
   }
-  if (href.charAt(0) === '#') {
+
+  if (href.charAt(0) === '#' && href.length > 1) {
     href = decodeURIComponent(href.substring(1));
-  } else if (href.substr(0, 2) === '/#') {
+  } else if (href.substr(0, 2) === '/#' && href.length > 2) {
     href = decodeURIComponent(href.substring(2));
   } else {
     return null;
   }
+  
   let result = stew.select_first(processedHTML, '#' + href); //'[id='' + href + '']'
   if (result) {
     return result;

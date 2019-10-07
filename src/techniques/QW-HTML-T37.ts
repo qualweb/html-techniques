@@ -53,7 +53,7 @@ class QW_HTML_T37 extends Technique {
   }
 
   async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
-
+    
     if (element === undefined) {
       return;
     }
