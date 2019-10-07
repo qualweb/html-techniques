@@ -17,12 +17,12 @@ describe('HTML Techniques module', function() {
     
     expect(Object.keys(report.techniques).length).to.be.equal(nTechniques);
   });
-  /*it('test stew select invalid predicate', async function() {
+  it('test result html code without custom attributes', async function() {
     this.timeout(20 * 1000);
     const { source, processed } = await getDom('https://ciencias.ulisboa.pt');
 
     let report = await executeHTMLT('https://ciencias.ulisboa.pt', source.html.parsed, processed.html.parsed);
-    
+    console.warn(JSON.stringify(report, null, 2));
     expect(report.type).to.be.equal('html-techniques');
-  });*/
+  });
 });
