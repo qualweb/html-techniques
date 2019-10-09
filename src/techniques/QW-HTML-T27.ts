@@ -10,9 +10,9 @@ import {
 } from 'htmlparser2';
 
 import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
+  DomUtils
+} from '@qualweb/util';
+
 import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
@@ -25,12 +25,11 @@ const technique: HTMLTechnique = {
       element: 'h1, h2, h3, h4, h5, h6'
     },
     'success-criteria': [{
-        name: '2.4.6',
-        level: 'AA',
-        principle: 'Operable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/headings-and-labels'
-      }
-    ],
+      name: '2.4.6',
+      level: 'AA',
+      principle: 'Operable',
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/headings-and-labels'
+    }],
     related: [],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/general/G130',
     passed: 0,
@@ -40,7 +39,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult> ()
+  results: new Array < HTMLTechniqueResult > ()
 };
 
 class QW_HTML_T27 extends Technique {
@@ -49,7 +48,11 @@ class QW_HTML_T27 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: DomElement | undefined): Promise < void > {
+
+    if (!element) {
+      return;
+    }
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -57,19 +60,13 @@ class QW_HTML_T27 extends Technique {
       resultCode: ''
     };
 
-    if (element === undefined) {
-      // This page doesn't have headings
-    } else {
-      evaluation.verdict = 'warning';
-      evaluation.description = 'Check that each heading identifies its section of the content';
-      evaluation.resultCode = 'RC1';
+    evaluation.verdict = 'warning';
+    evaluation.description = 'Check that each heading identifies its section of the content';
+    evaluation.resultCode = 'RC1';
 
-      evaluation.htmlCode = transform_element_into_html(element);
-      evaluation.pointer = getElementSelector(element);
-      super.addEvaluationResult(evaluation);
-
-    }
-
+    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
+    evaluation.pointer = DomUtils.getElementSelector(element);
+    super.addEvaluationResult(evaluation);
   }
 }
 

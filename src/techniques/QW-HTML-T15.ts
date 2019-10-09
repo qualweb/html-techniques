@@ -1,6 +1,5 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
@@ -10,10 +9,10 @@ import {
 } from 'htmlparser2';
 
 import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
-import Technique from "./Technique.object";
+  DomUtils
+} from '@qualweb/util';
+
+import Technique from './Technique.object';
 
 
 const technique: HTMLTechnique = {
@@ -25,14 +24,12 @@ const technique: HTMLTechnique = {
     target: {
       element: 'table'
     },
-    'success-criteria': [
-      {
-        name: '1.3.1',
-        level: 'A',
-        principle: 'Perceivable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
-      }
-    ],
+    'success-criteria': [{
+      name: '1.3.1',
+      level: 'A',
+      principle: 'Perceivable',
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
+    }],
     related: ['H39', 'H51', 'H73'],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/failures/F46',
     passed: 0,
@@ -42,7 +39,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult>()
+  results: new Array < HTMLTechniqueResult > ()
 };
 
 class QW_HTML_T15 extends Technique {
@@ -51,72 +48,61 @@ class QW_HTML_T15 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: DomElement | undefined): Promise < void > {
 
-  const evaluation: HTMLTechniqueResult = {
-    verdict: '',
-    description: '',
-    resultCode:''
-  };
+    if (!element) {
+      return;
+    }
 
-  if (element !== undefined) {
-    let children = element.children;
+    const evaluation: HTMLTechniqueResult = {
+      verdict: '',
+      description: '',
+      resultCode: ''
+    };
+    
+    const checks = {};
+    checks['hasCaption'] = false;
+    checks['hasTh'] = false;
 
-    let summary;
-    if (element.attribs !== undefined)
-      summary = element.attribs["summary"];
-    let checks = {};
-    checks["hasCaption"] = false;
-    checks["hasTh"] = false;
+    if (element.children) {
+      this.checkChildren(element.children, checks);
+    }
 
-    checks = checkChildren(children, checks);
-
-    if (summary !== "" && summary !== undefined) {
-
+    if (DomUtils.elementHasAttribute(element, 'summary') && DomUtils.getElementAttribute(element, 'summary').trim() !== '') {
       evaluation.verdict = 'failed';
-      evaluation.description = 'The table has a non-empty summary - Amend it if it\'s a layout table';
+      evaluation.description = `The table has a non-empty summary - Amend it if it's a layout table`;
       evaluation.resultCode = 'RC1';
-
-    } else if (checks["hasTh"]) {
-
+    } else if (checks['hasTh']) {
       evaluation.verdict = 'failed';
-      evaluation.description = 'The table has a th element - Amend it if it\'s a layout table';
+      evaluation.description = `The table has a th element - Amend it if it's a layout table`;
       evaluation.resultCode = 'RC2';
-
-    } else if (checks["hasCaption"]) {
-
+    } else if (checks['hasCaption']) {
       evaluation.verdict = 'failed';
-      evaluation.description = 'The table has a caption element - Amend it if it\'s a layout table';
+      evaluation.description = `The table has a caption element - Amend it if it's a layout table`;
       evaluation.resultCode = 'RC3';
     } else {
       evaluation.verdict = 'warning';
       evaluation.description = `No incorrect elements used in layout table`;
       evaluation.resultCode = 'RC4';
-
     }
 
-    evaluation.htmlCode = transform_element_into_html(element);
-    evaluation.pointer = getElementSelector(element);
-  }
+    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
+    evaluation.pointer = DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
+  }
+
+  checkChildren(children: DomElement[], checks: any): void {
+    for (const child of children) {
+      if (child['name'] === 'th')
+        checks['hasTh'] = true;
+      if (child['name'] === 'caption')
+        checks['hasCaption'] = true;
+      if (child['children'] !== undefined) {
+        this.checkChildren(child['children'], checks);
+      }
+    }
   }
 }
 
 export = QW_HTML_T15;
-
-function checkChildren(children, checks) {
-
-  for (let child of children) {
-    if (child["name"] === "th")
-      checks["hasTh"] = true;
-    if (child["name"] === "caption")
-      checks["hasCaption"] = true;
-    if (child["children"] !== undefined) {
-      checkChildren(child["children"], checks);
-    }
-
-  }
-  return checks;
-}
-

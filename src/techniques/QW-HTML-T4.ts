@@ -1,6 +1,5 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
@@ -10,9 +9,9 @@ import {
 } from 'htmlparser2';
 
 import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
+  DomUtils
+} from '@qualweb/util';
+
 import Technique from "./Technique.object";
 
 const technique: HTMLTechnique = {
@@ -29,8 +28,7 @@ const technique: HTMLTechnique = {
       level: 'A',
       principle: 'Perceivable',
       url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
-    }
-    ],
+    }],
     related: ['H39', 'H51', 'F46'],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H73',
     passed: 0,
@@ -40,7 +38,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult> ()
+  results: new Array < HTMLTechniqueResult > ()
 };
 
 
@@ -50,74 +48,41 @@ class QW_HTML_T4 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: DomElement | undefined): Promise < void > {
 
-  if (element === undefined) {
-    return;
-  }
-  else{
+    if (!element) {
+      return;
+    }
 
-  const evaluation: HTMLTechniqueResult = {
-    verdict: '',
-    description: '',
-    resultCode: ''
-  };
+    const evaluation: HTMLTechniqueResult = {
+      verdict: '',
+      description: '',
+      resultCode: ''
+    };
 
-    if (verifySummary(element)) {
+    if (!DomUtils.elementHasAttribute(element, 'summary')) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The summary does not exist in the table element';
       evaluation.resultCode = 'RC1';
-    }
-    else if (verifySummaryContent(element)) {
+    } else if (DomUtils.getElementAttribute(element, 'summary').trim() === '') {
       evaluation.verdict = 'failed';
       evaluation.description = 'The summary is empty';
       evaluation.resultCode = 'RC2';
-
-    }
-    else if (verifyCaptionDuplicate(element)) {
+    } else if (DomUtils.getElementAttribute(element, 'summary').trim() === DomUtils.getElementChildTextContent(element, 'caption').trim()) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The caption is a duplicate of the summary';
       evaluation.resultCode = 'RC3';
-    }
-   else {
+    } else {
       evaluation.verdict = 'warning';
       evaluation.description = 'Please verify that the summary is a valid description of the table';
       evaluation.resultCode = 'RC4';
     }
 
-    evaluation.htmlCode = transform_element_into_html(element);
-    evaluation.pointer = getElementSelector(element);
+    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
+    evaluation.pointer = DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }
-
-}}
-
-  function verifySummary(elem){
-    return elem.attribs['summary'] === undefined;
-  }
-
-  function verifySummaryContent(elem){
-    return (elem.attribs['summary'] !== undefined)? elem.attribs['summary'].trim() === '' : true;
-  }
-
-  function verifyCaptionDuplicate(elem){
-    let caption;
-    if (elem.children !== undefined){
-      for (let i = 0; i < elem.children.length; i++){
-        if(elem.children[i].name === 'caption'){
-          caption = elem.children[i];
-        }
-      }
-    }
-    if(caption !== undefined && caption.children.length > 0){
-      return (elem.attribs['summary'] !== undefined)?
-          (elem.attribs['summary']).replace(/\s+/g, '') === caption.children[0].data.replace(/\s+/g, ''): true;
-
-    }
-    else
-      return false;
-
-  }
+}
 
 export = QW_HTML_T4;

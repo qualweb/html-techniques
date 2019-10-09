@@ -1,6 +1,5 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
@@ -10,9 +9,9 @@ import {
 } from 'htmlparser2';
 
 import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
+  DomUtils
+} from '@qualweb/util';
+
 import Technique from "./Technique.object";
 
 const technique: HTMLTechnique = {
@@ -24,14 +23,12 @@ const technique: HTMLTechnique = {
     target: {
       element: 'title'
     },
-    'success-criteria': [
-      {
-        name: '2.4.2',
-        level: 'A',
-        principle: 'Operable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/page-titled'
-      }
-    ],
+    'success-criteria': [{
+      name: '2.4.2',
+      level: 'A',
+      principle: 'Operable',
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/page-titled'
+    }],
     related: ['G88', 'G127'],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H25',
     passed: 0,
@@ -41,9 +38,8 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult> ()
+  results: new Array < HTMLTechniqueResult > ()
 };
-
 
 class QW_HTML_T13 extends Technique {
 
@@ -51,40 +47,40 @@ class QW_HTML_T13 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: DomElement | undefined): Promise < void > {
 
-  const evaluation: HTMLTechniqueResult = {
-    verdict: '',
-    description: '',
-    resultCode:''
-  };
+    const evaluation: HTMLTechniqueResult = {
+      verdict: '',
+      description: '',
+      resultCode: ''
+    };
 
-  if (element !== undefined) {
-    if (element.children !== undefined && _.size(element.children) > 0) {
-      const text = element.children[0];
-      if (text['type'] === 'text') { // the title text exists and needs to be verified
-        evaluation.verdict = 'warning';
-        evaluation.description = `Please verify the title text correlates to the page's content`;
-        evaluation.resultCode = 'RC1';
-      } else { // fails if inside the title tag exists another element instead of text
+    if (element) {
+      if (element.children) {
+        const text = element.children[0];
+        if (text.type === 'text') { // the title text exists and needs to be verified
+          evaluation.verdict = 'warning';
+          evaluation.description = `Please verify the title text correlates to the page's content`;
+          evaluation.resultCode = 'RC1';
+        } else { // fails if inside the title tag exists another element instead of text
+          evaluation.verdict = 'failed';
+          evaluation.description = `Title tag contains elements instead of text`;
+          evaluation.resultCode = 'RC2';
+        }
+      } else { // fails if the title tag is empty
         evaluation.verdict = 'failed';
-        evaluation.description = `Title tag contains elements instead of text`;
-        evaluation.resultCode = 'RC2';
+        evaluation.description = `Title text is empty`;
+        evaluation.resultCode = 'RC3';
       }
-    } else { // fails if the title tag is empty
+
+      evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
+      evaluation.pointer = DomUtils.getElementSelector(element);
+
+    } else { // fails if title element doesn't exist
       evaluation.verdict = 'failed';
-      evaluation.description = `Title text is empty`;
-      evaluation.resultCode = 'RC3';
+      evaluation.description = `Title tag doesn't exist`;
+      evaluation.resultCode = 'RC4';
     }
-
-    evaluation.htmlCode = transform_element_into_html(element);
-    evaluation.pointer = getElementSelector(element);
-
-  } else { // fails if title element doesn't exist
-    evaluation.verdict = 'failed';
-    evaluation.description = `Title tag doesn't exist`;
-    evaluation.resultCode = 'RC4';
-  }
 
     super.addEvaluationResult(evaluation);
   }

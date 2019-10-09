@@ -10,9 +10,9 @@ import {
 } from 'htmlparser2';
 
 import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
+  DomUtils
+} from '@qualweb/util';
+
 import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
@@ -52,7 +52,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult> ()
+  results: new Array < HTMLTechniqueResult > ()
 };
 
 class QW_HTML_T22 extends Technique {
@@ -61,7 +61,7 @@ class QW_HTML_T22 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise<void> {
+  async execute(element: DomElement | undefined): Promise < void > {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -78,8 +78,8 @@ class QW_HTML_T22 extends Technique {
       evaluation.description = `The webpage uses attributes in ${element.name} element to control the visual text presentation`;
       evaluation.resultCode = 'RC2';
 
-      evaluation.htmlCode = transform_element_into_html(element);
-      evaluation.pointer = getElementSelector(element);
+      evaluation.htmlCode = DomUtils.transform_element_into_html(element);
+      evaluation.pointer = DomUtils.getElementSelector(element);
       evaluation.attributes = element.attribs ? _.intersection(Object.keys(element.attribs), ['text', 'vlink', 'alink', 'link']) : undefined;
     }
 

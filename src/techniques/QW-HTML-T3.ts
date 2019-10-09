@@ -1,6 +1,5 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
@@ -10,9 +9,9 @@ import {
 } from 'htmlparser2';
 
 import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
+  DomUtils
+} from '@qualweb/util';
+
 import Technique from "./Technique.object";
 
 const technique: HTMLTechnique = {
@@ -25,17 +24,17 @@ const technique: HTMLTechnique = {
       element: 'fieldset'
     },
     'success-criteria': [{
-      name: '1.3.1',
-      level: 'A',
-      principle: 'Perceivable',
-      url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
-    },
+        name: '1.3.1',
+        level: 'A',
+        principle: 'Perceivable',
+        url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
+      },
       {
-      name: '3.3.2',
-      level: 'A',
-      principle: 'Understandable',
-      url: 'https://www.w3.org/WAI/WCAG21/Understanding/labels-or-instructions'
-    },
+        name: '3.3.2',
+        level: 'A',
+        principle: 'Understandable',
+        url: 'https://www.w3.org/WAI/WCAG21/Understanding/labels-or-instructions'
+      },
     ],
     related: ['H44', 'H65'],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H71',
@@ -46,7 +45,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult> ()
+  results: new Array < HTMLTechniqueResult > ()
 };
 
 class QW_HTML_T3 extends Technique {
@@ -55,11 +54,11 @@ class QW_HTML_T3 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: DomElement | undefined): Promise < void > {
 
-  if (element === undefined) {
-    return;
-  }
+    if (!element) {
+      return;
+    }
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -67,62 +66,29 @@ class QW_HTML_T3 extends Technique {
       resultCode: ''
     };
 
-    if (!verifyFormControl(element)) {
+    if (!DomUtils.elementHasParent(element, 'form')) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The fieldset is not in a form control';
       evaluation.resultCode = 'RC1';
-    }
-    else if (!verifyLegendExistence(element)) {
+    } else if (!DomUtils.elementHasChild(element, 'legend')) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The legend does not exist in the fieldset element';
       evaluation.resultCode = 'RC2';
-
-    }
-    else if (verifyLegendContent(element)) {
+    } else if (DomUtils.getElementChildTextContent(element, 'legend').trim() === '') {
       evaluation.verdict = 'failed';
       evaluation.description = 'The legend is empty';
       evaluation.resultCode = 'RC3';
-    }
-    else {
+    } else {
       evaluation.verdict = 'warning';
       evaluation.description = 'Please verify that the legend description is valid';
       evaluation.resultCode = 'RC4';
     }
 
-
-    evaluation.htmlCode = transform_element_into_html(element);
-    evaluation.pointer = getElementSelector(element);
+    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
+    evaluation.pointer = DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
-
-}}
-
-function verifyFormControl(elem){
-  return elem.parent.name === 'form';
-
-}
-
-function verifyLegendExistence(elem){
-  const childs = elem.children;
-  for (let i = 0; i < childs.length; i++){
-    if(childs[i] !== undefined && childs[i].name !== undefined){
-      return childs[i].name === 'legend'
-    }
   }
-  return false;
 }
 
-function verifyLegendContent(elem){
-  const children = elem.children;
-  if(children !== undefined) {
-    for (let i = 0; i < children.length; i++) {
-      if (children[i] !== undefined && children[i].name === 'legend' && children[i].children.length > 0 && children[i].children[0].data !== undefined) {
-        return children[i].children[0].data.trim() === '';
-      }
-    }
-  }
-  return true;
-}
-
-  export = QW_HTML_T3;
-
+export = QW_HTML_T3;

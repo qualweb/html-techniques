@@ -10,9 +10,9 @@ import {
 } from 'htmlparser2';
 
 import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
+  DomUtils
+} from '@qualweb/util';
+
 import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
@@ -26,21 +26,20 @@ const technique: HTMLTechnique = {
       parent: 'map',
       element: 'area'
     },
-    'success-criteria': [
-    {
-      name: '2.4.5',
-      level: 'AA',
-      principle: 'Operable',
-      url: 'https://www.w3.org/WAI/WCAG21/Understanding/multiple-ways'
-    },
-    {
-      name: '2.4.8',
-      level: 'AAA',
-      principle: 'Operable',
-      url: 'https://www.w3.org/WAI/WCAG21/Understanding/location'
-    }
+    'success-criteria': [{
+        name: '2.4.5',
+        level: 'AA',
+        principle: 'Operable',
+        url: 'https://www.w3.org/WAI/WCAG21/Understanding/multiple-ways'
+      },
+      {
+        name: '2.4.8',
+        level: 'AAA',
+        principle: 'Operable',
+        url: 'https://www.w3.org/WAI/WCAG21/Understanding/location'
+      }
     ],
-    related: ['G1','G63','G64', 'G123'],
+    related: ['G1', 'G63', 'G64', 'G123'],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H59',
     passed: 0,
     warning: 0,
@@ -49,7 +48,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult>()
+  results: new Array < HTMLTechniqueResult > ()
 };
 
 class QW_HTML_T19 extends Technique {
@@ -58,7 +57,7 @@ class QW_HTML_T19 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: DomElement | undefined): Promise < void > {
 
     if (!element || !element.parent) {
       return;
@@ -75,14 +74,13 @@ class QW_HTML_T19 extends Technique {
       evaluation.verdict = 'failed';
       evaluation.description = `The element is not contained in the head element`;
       evaluation.resultCode = 'RC1';
-    }
-    else if (!element.attribs) { // fails if the element doesn't contain an alt attribute
+    } else if (!element.attribs) { // fails if the element doesn't contain an alt attribute
       evaluation.verdict = 'failed';
       evaluation.description = `The element doesn't contain a rel or an href attribute`;
       evaluation.resultCode = 'RC2';
     } else {
-      let rel = element.attribs["rel"];
-      let href = element.attribs["href"];
+      const rel = element.attribs["rel"];
+      const href = element.attribs["href"];
 
       if (!rel) {
         evaluation.verdict = 'warning';
@@ -96,13 +94,11 @@ class QW_HTML_T19 extends Technique {
         evaluation.verdict = 'warning';
         evaluation.description = 'The element contains a rel and an href attribute that should be manually verified';
         evaluation.resultCode = 'RC5';
-
       }
-
     }
-    evaluation.htmlCode = transform_element_into_html(element);
-    evaluation.pointer = getElementSelector(element);
-
+    
+    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
+    evaluation.pointer = DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

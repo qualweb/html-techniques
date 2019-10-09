@@ -1,6 +1,5 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
@@ -10,9 +9,9 @@ import {
 } from 'htmlparser2';
 
 import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
+  DomUtils
+} from '@qualweb/util';
+
 import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
@@ -25,11 +24,11 @@ const technique: HTMLTechnique = {
       element: 'meta'
     },
     'success-criteria': [{
-      name: '2.2.1',
-      level: 'A',
-      principle: 'Operable',
-      url: 'https://www.w3.org/WAI/WCAG21/Understanding/timing-adjustable'
-    },
+        name: '2.2.1',
+        level: 'A',
+        principle: 'Operable',
+        url: 'https://www.w3.org/WAI/WCAG21/Understanding/timing-adjustable'
+      },
       {
         name: '2.2.4',
         level: 'AAA',
@@ -52,7 +51,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult>()
+  results: new Array < HTMLTechniqueResult > ()
 };
 
 class QW_HTML_T12 extends Technique {
@@ -61,9 +60,9 @@ class QW_HTML_T12 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: DomElement | undefined): Promise < void > {
 
-    if (element === undefined) {
+    if (!element) {
       return;
     }
 
@@ -73,23 +72,23 @@ class QW_HTML_T12 extends Technique {
       resultCode: ''
     };
 
-      if (element.attribs !== undefined) { // always true
-        let content = element.attribs["content"];
-        let intContent = parseInt(content);
-        if (content.includes('url')) {
-          // meta refresh with url is a redirect
-        } else if (intContent > 0 && intContent <= 72000) {
-          evaluation.verdict = 'failed';
-          evaluation.description = 'Time interval to refresh is between 1 and 72000 seconds';
-          evaluation.resultCode = 'RC1';
-        } else {
-          evaluation.verdict = 'warning';
-          evaluation.description = `Meta refresh time interval is correctly used`;
-          evaluation.resultCode = 'RC2';
-        }
-        evaluation.htmlCode = transform_element_into_html(element);
-        evaluation.pointer = getElementSelector(element);
+    if (DomUtils.elementHasAttributes(element)) { // always true
+      const content = DomUtils.getElementAttribute(element, 'content');
+      const intContent = parseInt(content);
+      if (content.includes('url')) {
+        // meta refresh with url is a redirect
+      } else if (intContent > 0 && intContent <= 72000) {
+        evaluation.verdict = 'failed';
+        evaluation.description = 'Time interval to refresh is between 1 and 72000 seconds';
+        evaluation.resultCode = 'RC1';
+      } else {
+        evaluation.verdict = 'warning';
+        evaluation.description = `Meta refresh time interval is correctly used`;
+        evaluation.resultCode = 'RC2';
       }
+      evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
+      evaluation.pointer = DomUtils.getElementSelector(element);
+    }
 
     super.addEvaluationResult(evaluation);
   }

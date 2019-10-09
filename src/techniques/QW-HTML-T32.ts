@@ -1,6 +1,5 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
@@ -10,12 +9,12 @@ import {
 } from 'htmlparser2';
 
 import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
+  DomUtils
+} from '@qualweb/util';
+
 import Technique from './Technique.object';
 
-const stew = new (require('stew-select')).Stew();
+const stew = new(require('stew-select')).Stew();
 
 const technique: HTMLTechnique = {
   name: 'Providing submit buttons',
@@ -31,8 +30,7 @@ const technique: HTMLTechnique = {
       level: 'A',
       principle: 'Understandable',
       url: 'https://www.w3.org/WAI/WCAG21/Understanding/on-input'
-    }
-    ],
+    }],
     related: ['G80', 'H36', 'H84'],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H32',
     passed: 0,
@@ -42,7 +40,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult>()
+  results: new Array < HTMLTechniqueResult > ()
 };
 
 class QW_HTML_T32 extends Technique {
@@ -51,7 +49,7 @@ class QW_HTML_T32 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: DomElement | undefined): Promise < void > {
 
     if (element === undefined) {
       return;
@@ -65,7 +63,7 @@ class QW_HTML_T32 extends Technique {
 
     const children = stew.select(element, `input[type="submit"], input[type="image"], button[type="submit"]`);
 
-    if (_.size(children) > 0) { // the element contains one of the following elements input[type~='submit image'], button[type='submit']
+    if (children.length > 0) { // the element contains one of the following elements input[type~='submit image'], button[type='submit']
       evaluation.verdict = 'passed';
       evaluation.description = `The form contains one of the following elements input[type~="submit image"], button[type="submit"]`;
       evaluation.resultCode = 'RC1';
@@ -75,9 +73,8 @@ class QW_HTML_T32 extends Technique {
       evaluation.resultCode = 'RC2';
     }
 
-    evaluation.htmlCode = transform_element_into_html(element);
-    evaluation.pointer = getElementSelector(element);
-
+    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
+    evaluation.pointer = DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

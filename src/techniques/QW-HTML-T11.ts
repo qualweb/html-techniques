@@ -1,21 +1,21 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 import {
-  DomElement, DomUtils
+  DomElement,
+  DomUtils
 } from 'htmlparser2';
 
 import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
-import Technique from "./Technique.object";
+  DomUtils as QWDomUtils
+} from '@qualweb/util';
 
-const stew = new (require('stew-select')).Stew();
+import Technique from './Technique.object';
+
+const stew = new(require('stew-select')).Stew();
 
 const technique: HTMLTechnique = {
   name: 'Combining adjacent image and text links for the same resource',
@@ -26,8 +26,7 @@ const technique: HTMLTechnique = {
     target: {
       element: 'a'
     },
-    'success-criteria': [
-      {
+    'success-criteria': [{
         name: '1.1.1',
         level: 'A',
         principle: 'Perceivable',
@@ -55,7 +54,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult>()
+  results: new Array < HTMLTechniqueResult > ()
 };
 
 class QW_HTML_T11 extends Technique {
@@ -64,65 +63,64 @@ class QW_HTML_T11 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: DomElement | undefined): Promise < void > {
 
-  if (element === undefined) {
-    return;
-  }
-
-  const evaluation: HTMLTechniqueResult = {
-    verdict: '',
-    description: '',
-    resultCode:''
-  };
-
-  if (element.children === undefined) { // fails if the element doesn't contain an image inside it
-    evaluation.verdict = 'failed';
-    evaluation.description = `The element doesn't contain an image inside the a element`;
-    evaluation.resultCode = 'RC1';
-  }
-
-  let imgs = stew.select(element, 'img');
-
-  let hasImage = imgs.length > 0;
-  let hasNonEmptyAlt = false;
-  let hasAlt = false;
-  let equalAltText = false;
-
-  for (const img of imgs) { // fails if the element doesn't contain an alt attribute
-    if (img.attribs && img.attribs["alt"] !== undefined && !hasNonEmptyAlt && !equalAltText) {
-      hasAlt = true;
-      hasNonEmptyAlt = img.attribs["alt"] !== "";
-      equalAltText = img.attribs["alt"] === DomUtils.getText(element);
+    if (!element) {
+      return;
     }
 
-  }
+    const evaluation: HTMLTechniqueResult = {
+      verdict: '',
+      description: '',
+      resultCode: ''
+    };
 
-  if (!hasImage) {
-    evaluation.verdict = 'failed';
-    evaluation.description = `The element doesn't contain an image attribute inside the a element`;
-    evaluation.resultCode = 'RC2';
-  } else if (!hasAlt) {
-    //inapplicable
-  } else if (!hasNonEmptyAlt) {
-    evaluation.verdict = 'passed';
-    evaluation.description = `The a element contains an image that has an empty alt attribute`;
-    evaluation.resultCode = 'RC3';
-  } else if (equalAltText) {
-    evaluation.verdict = 'failed';
-    evaluation.description = `The element text is equal to img alternative text`;
-    evaluation.resultCode = 'RC4';
-  } else {
-    evaluation.verdict = 'warning';
-    evaluation.description = 'The a element contains an image that has an alt attribute that should be manually verified';
-    evaluation.resultCode = 'RC5';
-  }
+    if (!element.children) { // fails if the element doesn't contain an image inside it
+      evaluation.verdict = 'failed';
+      evaluation.description = `The element doesn't contain an image inside the a element`;
+      evaluation.resultCode = 'RC1';
+    }
 
-  evaluation.htmlCode = transform_element_into_html(element);
-  evaluation.pointer = getElementSelector(element);
+    const images = stew.select(element, 'img');
+
+    const hasImage = images.length > 0;
+    let hasNonEmptyAlt = false;
+    let hasAlt = false;
+    let equalAltText = false;
+
+    for (const img of images || []) { // fails if the element doesn't contain an alt attribute
+      if (QWDomUtils.elementHasAttribute(img, 'alt') && !hasNonEmptyAlt && !equalAltText) {
+        hasAlt = true;
+        hasNonEmptyAlt = QWDomUtils.getElementAttribute(img, 'alt').trim() !== '';
+        equalAltText = QWDomUtils.getElementAttribute(img, 'alt') === DomUtils.getText(element);
+      }
+    }
+
+    if (!hasImage) {
+      evaluation.verdict = 'failed';
+      evaluation.description = `The element doesn't contain an image attribute inside the a element`;
+      evaluation.resultCode = 'RC2';
+    } else if (!hasAlt) {
+      //inapplicable
+    } else if (!hasNonEmptyAlt) {
+      evaluation.verdict = 'passed';
+      evaluation.description = `The a element contains an image that has an empty alt attribute`;
+      evaluation.resultCode = 'RC3';
+    } else if (equalAltText) {
+      evaluation.verdict = 'failed';
+      evaluation.description = `The element text is equal to img alternative text`;
+      evaluation.resultCode = 'RC4';
+    } else {
+      evaluation.verdict = 'warning';
+      evaluation.description = 'The a element contains an image that has an alt attribute that should be manually verified';
+      evaluation.resultCode = 'RC5';
+    }
+
+    evaluation.htmlCode = QWDomUtils.transformElementIntoHtml(element);
+    evaluation.pointer = QWDomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
-  }}
+  }
+}
 
 export = QW_HTML_T11;
-

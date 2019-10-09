@@ -1,6 +1,5 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
@@ -10,11 +9,9 @@ import {
 } from 'htmlparser2';
 
 import {
-  elementIsHidden,
-  getElementByHRef,
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
+  DomUtils
+} from '@qualweb/util';
+
 import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
@@ -32,8 +29,7 @@ const technique: HTMLTechnique = {
       level: 'A',
       principle: 'Operable',
       url: 'https://www.w3.org/WAI/WCAG21/Understanding/bypass-blocks'
-    }
-    ],
+    }],
     related: ['G1', 'G124'],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/general/G123',
     passed: 0,
@@ -43,7 +39,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult>()
+  results: new Array < HTMLTechniqueResult > ()
 };
 
 class QW_HTML_T37 extends Technique {
@@ -52,7 +48,7 @@ class QW_HTML_T37 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
     
     if (element === undefined) {
       return;
@@ -63,7 +59,7 @@ class QW_HTML_T37 extends Technique {
       description: '',
       resultCode: ''
     };
-    
+
     const refElement = getElementByHRef(processedHTML, element);
     const hidden = elementIsHidden(element);
     if (refElement) {
@@ -78,12 +74,13 @@ class QW_HTML_T37 extends Technique {
       }
     } else {
       evaluation.verdict = 'inapplicable';
-      evaluation.description = `This link doesn't have the 'href' attribute`;
+      evaluation.description = `This link is not used to skip a content block`;
       evaluation.resultCode = 'RC3';
     }
 
-    evaluation.htmlCode = transform_element_into_html(element);
-    evaluation.pointer = getElementSelector(element);
+    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
+    evaluation.pointer = DomUtils.getElementSelector(element);
+
     super.addEvaluationResult(evaluation);
   }
 }

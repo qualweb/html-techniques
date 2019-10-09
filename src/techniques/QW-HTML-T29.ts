@@ -1,6 +1,5 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
@@ -10,9 +9,9 @@ import {
 } from 'htmlparser2';
 
 import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
+  DomUtils
+} from '@qualweb/util';
+
 import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
@@ -26,15 +25,13 @@ const technique: HTMLTechnique = {
       parent: 'map',
       element: 'area'
     },
-    'success-criteria': [
-      {
-        name: '2.2.1',
-        level: 'A',
-        principle: 'Operable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/keyboard'
-      }
-    ],
-    related: [ 'SCR20'],
+    'success-criteria': [{
+      name: '2.2.1',
+      level: 'A',
+      principle: 'Operable',
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/keyboard'
+    }],
+    related: ['SCR20'],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/failures/F54',
     passed: 0,
     warning: 0,
@@ -43,7 +40,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult> ()
+  results: new Array < HTMLTechniqueResult > ()
 };
 
 class QW_HTML_T29 extends Technique {
@@ -52,9 +49,9 @@ class QW_HTML_T29 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: DomElement | undefined): Promise < void > {
 
-    if (element === undefined||!element.attribs) {
+    if (element === undefined || !element.attribs) {
       return;
     }
 
@@ -64,23 +61,23 @@ class QW_HTML_T29 extends Technique {
       resultCode: ''
     };
 
-    if (element.attribs["onmousedown"]) {
+    if (element.attribs['onmousedown']) {
       evaluation.verdict = 'warning';
       evaluation.description = `The mousedown attribute is used`;
       evaluation.resultCode = 'RC1';
-    } else if (element.attribs["onmouseup"]) {
+    } else if (element.attribs['onmouseup']) {
       evaluation.verdict = 'warning';
       evaluation.description = `The mouseup attribute is used`;
       evaluation.resultCode = 'RC2';
-    } else if (element.attribs["onclick"]) {
+    } else if (element.attribs['onclick']) {
       evaluation.verdict = 'warning';
       evaluation.description = `The click attribute is used`;
       evaluation.resultCode = 'RC3';
-    } else if (element.attribs["onmouseover"] ) {
+    } else if (element.attribs['onmouseover']) {
       evaluation.verdict = 'warning';
       evaluation.description = `The mouseover attribute is used`;
       evaluation.resultCode = 'RC4';
-    } else if (element.attribs["onmouseout"] ) {
+    } else if (element.attribs['onmouseout']) {
       evaluation.verdict = 'warning';
       evaluation.description = `The mouseout attribute is used`;
       evaluation.resultCode = 'RC5';
@@ -88,12 +85,10 @@ class QW_HTML_T29 extends Technique {
       evaluation.verdict = 'passed';
       evaluation.description = `No mouse specific event handlers are used`;
       evaluation.resultCode = 'RC6';
-  
     }
 
-    evaluation.htmlCode = transform_element_into_html(element);
-    evaluation.pointer = getElementSelector(element);
-    
+    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
+    evaluation.pointer = DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

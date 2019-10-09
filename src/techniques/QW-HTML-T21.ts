@@ -1,6 +1,5 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
@@ -10,9 +9,9 @@ import {
 } from 'htmlparser2';
 
 import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
+  DomUtils
+} from '@qualweb/util';
+
 import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
@@ -25,12 +24,11 @@ const technique: HTMLTechnique = {
       element: ['b', 'basefont', 'font', 'i', 's', 'strike', 'u']
     },
     'success-criteria': [{
-        name: '1.3.1',
-        level: 'A',
-        principle: 'Perceivable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
-      }
-    ],
+      name: '1.3.1',
+      level: 'A',
+      principle: 'Perceivable',
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
+    }],
     related: ['H39', 'H42', 'H44', 'H48', 'H49', 'H51', 'H71'],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/general/G115',
     passed: 0,
@@ -40,7 +38,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult> ()
+  results: new Array < HTMLTechniqueResult > ()
 };
 
 class QW_HTML_T21 extends Technique {
@@ -49,7 +47,7 @@ class QW_HTML_T21 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise<void> {
+  async execute(element: DomElement | undefined): Promise < void > {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -66,8 +64,8 @@ class QW_HTML_T21 extends Technique {
       evaluation.description = `The webpage uses the element ${element.name} to control the visual text presentation`;
       evaluation.resultCode = 'RC2';
 
-      evaluation.htmlCode = transform_element_into_html(element);
-      evaluation.pointer = getElementSelector(element);
+      evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
+      evaluation.pointer = DomUtils.getElementSelector(element);
     }
 
     super.addEvaluationResult(evaluation);

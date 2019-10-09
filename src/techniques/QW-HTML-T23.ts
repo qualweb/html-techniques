@@ -1,6 +1,5 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
@@ -10,9 +9,9 @@ import {
 } from 'htmlparser2';
 
 import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
+  DomUtils
+} from '@qualweb/util';
+
 import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
@@ -30,8 +29,7 @@ const technique: HTMLTechnique = {
       level: 'AA',
       principle: 'Operable',
       url: 'https://www.w3.org/WAI/WCAG21/Understanding/multiple-ways'
-    }
-    ],
+    }],
     related: ['G63', 'G64', 'G126', 'G185'],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/general/G125',
     passed: 0,
@@ -41,7 +39,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult>()
+  results: new Array < HTMLTechniqueResult > ()
 };
 
 class QW_HTML_T23 extends Technique {
@@ -50,7 +48,7 @@ class QW_HTML_T23 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: DomElement | undefined): Promise < void > {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -64,8 +62,8 @@ class QW_HTML_T23 extends Technique {
         evaluation.description = `Check whether the link leads to related information`;
         evaluation.resultCode = 'RC1';
 
-        evaluation.htmlCode = transform_element_into_html(element);
-        evaluation.pointer = getElementSelector(element);
+        evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
+        evaluation.pointer = DomUtils.getElementSelector(element);
       }
     }
     super.addEvaluationResult(evaluation);

@@ -1,6 +1,5 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
@@ -10,9 +9,9 @@ import {
 } from 'htmlparser2';
 
 import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
+  DomUtils
+} from '@qualweb/util';
+
 import Technique from "./Technique.object";
 
 const technique: HTMLTechnique = {
@@ -25,11 +24,11 @@ const technique: HTMLTechnique = {
       element: 'frame, iframe'
     },
     'success-criteria': [{
-      name: '2.4.1',
-      level: 'A',
-      principle: 'Operable',
-      url: 'https://www.w3.org/WAI/WCAG21/Understanding/bypass-blocks'
-    },
+        name: '2.4.1',
+        level: 'A',
+        principle: 'Operable',
+        url: 'https://www.w3.org/WAI/WCAG21/Understanding/bypass-blocks'
+      },
       {
         name: '4.1.2',
         level: 'A',
@@ -46,7 +45,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult>()
+  results: new Array < HTMLTechniqueResult > ()
 };
 
 class QW_HTML_T10 extends Technique {
@@ -55,43 +54,42 @@ class QW_HTML_T10 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: DomElement | undefined): Promise < void > {
 
-  if (element === undefined) {
-    return;
-  }
+    if (!element) {
+      return;
+    }
 
-  const evaluation: HTMLTechniqueResult = {
-    verdict: '',
-    description: '',
-    resultCode: ''
-  };
+    const evaluation: HTMLTechniqueResult = {
+      verdict: '',
+      description: '',
+      resultCode: ''
+    };
 
-  //1. Check each frame and iframe element in the HTML or XHTML
-  //source code for the presence of a title attribute.
-  // 2. Check that the title attribute contains text that identifies the frame.
-  if (element.attribs && element.attribs['title'] !== undefined) {
-    if (element.attribs['title'] !== '') {
-      evaluation.verdict = 'warning';
-      evaluation.description = 'Verify if title attribute contains text that identifies the frame';
-      evaluation.resultCode = 'RC1';
+    //1. Check each frame and iframe element in the HTML or XHTML
+    //source code for the presence of a title attribute.
+    // 2. Check that the title attribute contains text that identifies the frame.
+    if (DomUtils.elementHasAttribute(element, 'title')) {
+      if (DomUtils.getElementAttribute(element, 'title').trim() !== '') {
+        evaluation.verdict = 'warning';
+        evaluation.description = 'Verify if title attribute contains text that identifies the frame';
+        evaluation.resultCode = 'RC1';
+      } else {
+        evaluation.verdict = 'failed';
+        evaluation.description = 'Title attribute is empty';
+        evaluation.resultCode = 'RC2';
+      }
     } else {
       evaluation.verdict = 'failed';
-      evaluation.description = 'Title attribute is empty';
-      evaluation.resultCode = 'RC2';
+      evaluation.description = `frame or iframe doesn't have title attribute`;
+      evaluation.resultCode = 'RC3';
     }
-  } else {
-    evaluation.verdict = 'failed';
-    evaluation.description = 'frame or iframe doesn\'t have title attribute';
-    evaluation.resultCode = 'RC3';
+
+    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
+    evaluation.pointer = DomUtils.getElementSelector(element);
+
+    super.addEvaluationResult(evaluation);
   }
-
-  evaluation.htmlCode = transform_element_into_html(element);
-  evaluation.pointer = getElementSelector(element);
-
-  super.addEvaluationResult(evaluation);
-}}
+}
 
 export = QW_HTML_T10;
-
-

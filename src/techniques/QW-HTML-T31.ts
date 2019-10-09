@@ -1,6 +1,5 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
@@ -10,10 +9,10 @@ import {
 } from 'htmlparser2';
 
 import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
-const stew = new (require('stew-select')).Stew();
+  DomUtils
+} from '@qualweb/util';
+
+const stew = new(require('stew-select')).Stew();
 import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
@@ -30,8 +29,7 @@ const technique: HTMLTechnique = {
       level: 'A',
       principle: 'Perceivable',
       url: 'https://www.w3.org/WAI/WCAG21/Understanding/non-text-content'
-    }
-    ],
+    }],
     related: ['G73', 'G74', 'G92', 'G94'],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H45',
     passed: 0,
@@ -41,7 +39,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult>()
+  results: new Array < HTMLTechniqueResult > ()
 };
 
 class QW_HTML_T31 extends Technique {
@@ -50,7 +48,7 @@ class QW_HTML_T31 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
 
     if (element === undefined) {
       return;
@@ -72,8 +70,8 @@ class QW_HTML_T31 extends Technique {
       evaluation.resultCode = 'RC2';
     } else {
       const longdesc = element['attribs']['longdesc'];
-      if (_.includes(longdesc, '#')) {
-        const i = _.indexOf(longdesc, '#');
+      if (longdesc.includes('#')) {
+        const i = longdesc.indexOf('#');
         let id;
 
         if (i > 0) {
@@ -82,7 +80,7 @@ class QW_HTML_T31 extends Technique {
           id = longdesc;
         }
         let exists = stew.select(processedHTML, '[id="' + id + '"]');
-  
+
         if (_.size(exists) > 0) { // the element has a longdesc attribute pointing to a resource in the current page
           evaluation['verdict'] = 'warning';
           evaluation['description'] = 'Please verify that the resource that longdesc is pointing at describes correctly the image';
@@ -101,9 +99,8 @@ class QW_HTML_T31 extends Technique {
 
     }
 
-    evaluation.htmlCode = transform_element_into_html(element);
-    evaluation.pointer = getElementSelector(element);
-
+    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
+    evaluation.pointer = DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

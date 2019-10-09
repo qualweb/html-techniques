@@ -1,6 +1,5 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
@@ -10,9 +9,9 @@ import {
 } from 'htmlparser2';
 
 import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
+  DomUtils
+} from '@qualweb/util';
+
 import Technique from './Technique.object';
 const stew = new(require('stew-select')).Stew();
 
@@ -30,8 +29,7 @@ const technique: HTMLTechnique = {
       level: 'A',
       principle: 'Perceivable',
       url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
-    }
-    ],
+    }],
     related: ['H40'],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H48',
     passed: 0,
@@ -41,7 +39,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult>()
+  results: new Array < HTMLTechniqueResult > ()
 };
 
 class QW_HTML_T28 extends Technique {
@@ -50,7 +48,7 @@ class QW_HTML_T28 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: DomElement | undefined): Promise < void > {
 
     if (element === undefined || !element.parent) {
       return;
@@ -62,19 +60,19 @@ class QW_HTML_T28 extends Technique {
       resultCode: ''
     };
 
-    let hasLi=stew.select(element,"li").length !==0;
-    let hasDd=stew.select(element,"dd").length !==0;
-    let hasDt=stew.select(element,"dt").length !==0;
+    const hasLi = stew.select(element, 'li').length !== 0;
+    const hasDd = stew.select(element, 'dd').length !== 0;
+    const hasDt = stew.select(element, 'dt').length !== 0;
 
-    if (hasLi && element.name === "ul") { // fails if the element doesn't contain an alt attribute
+    if (hasLi && element.name === 'ul') { // fails if the element doesn't contain an alt attribute
       evaluation.verdict = 'warning';
       evaluation.description = 'Check that content that has the visual appearance of a list (with or without bullets) is marked as an unordered list';
       evaluation.resultCode = 'RC1';
-    } else if (hasLi && element.name === "ol") {
+    } else if (hasLi && element.name === 'ol') {
       evaluation.verdict = 'warning';
       evaluation.description = 'Check that content that has the visual appearance of a numbered list is marked as an ordered list.';
       evaluation.resultCode = 'RC2';
-    } else if (element.name === "dl" && (hasDt|| hasDd)) {
+    } else if (element.name === 'dl' && (hasDt || hasDd)) {
       evaluation.verdict = 'warning';
       evaluation.description = 'Check that content is marked as a definition list when terms and their definitions are presented in the form of a list.';
       evaluation.resultCode = 'RC3';
@@ -84,8 +82,8 @@ class QW_HTML_T28 extends Technique {
       evaluation.resultCode = 'RC4';
     }
 
-    evaluation.htmlCode = transform_element_into_html(element);
-    evaluation.pointer = getElementSelector(element);
+    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
+    evaluation.pointer = DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

@@ -1,6 +1,5 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
@@ -10,10 +9,10 @@ import {
 } from 'htmlparser2';
 
 import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
-import Technique from "./Technique.object";
+  DomUtils
+} from '@qualweb/util';
+
+import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
   name: 'Using both keyboard and other device-specific functions',
@@ -23,16 +22,14 @@ const technique: HTMLTechnique = {
   metadata: {
     target: {
       element: '*',
-      attributes: 'onmousedown, onmouseup, onclick, onmouseover, onmouseout'
+      attributes: ['onmousedown', 'onmouseup', 'onclick', 'onmouseover', 'onmouseout']
     },
-    'success-criteria': [
-      {
-        name: '2.1.1',
-        level: 'A',
-        principle: 'Operable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/keyboard'
-      }
-    ],
+    'success-criteria': [{
+      name: '2.1.1',
+      level: 'A',
+      principle: 'Operable',
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/keyboard'
+    }],
     related: ['G90'],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/client-side-script/SCR20',
     passed: 0,
@@ -42,7 +39,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult>()
+  results: new Array < HTMLTechniqueResult > ()
 };
 class QW_HTML_T6 extends Technique {
 
@@ -50,54 +47,49 @@ class QW_HTML_T6 extends Technique {
     super(technique);
   }
 
+  async execute(element: DomElement | undefined): Promise < void > {
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+    if (!element || !DomUtils.elementHasAttributes(element)) {
+      return;
+    }
 
-  if (element === undefined || element.attribs === undefined) {
-    return;
+    let evaluation: HTMLTechniqueResult = {
+      verdict: '',
+      description: '',
+      resultCode: ''
+    };
+
+    if (DomUtils.elementHasAttribute(element, 'onmousedown') && DomUtils.getElementAttribute('onmousedown') !== DomUtils.getElementAttribute('onkeydown')) {
+      evaluation.verdict = 'failed';
+      evaluation.description = `The mousedown attribute doesn't have a keyboard equivalent`;
+      evaluation.resultCode = 'RC1';
+    } else if (DomUtils.elementHasAttribute(element, 'onmouseup') && DomUtils.getElementAttribute('onmouseup') !== DomUtils.getElementAttribute('onkeyup')) {
+      evaluation.verdict = 'failed';
+      evaluation.description = `The mouseup attribute doesn't have a keyboard equivalent`;
+      evaluation.resultCode = 'RC2';
+    } else if (DomUtils.elementHasAttribute(element, 'onclick') && DomUtils.getElementAttribute('onclick') !== DomUtils.getElementAttribute('onkeypress')) {
+      evaluation.verdict = 'failed';
+      evaluation.description = `The click attribute doesn't have a keyboard equivalent`;
+      evaluation.resultCode = 'RC3';
+    } else if (DomUtils.elementHasAttribute(element, 'onmouseover') && DomUtils.getElementAttribute('onmouseover') !== DomUtils.getElementAttribute('onfocus')) {
+      evaluation.verdict = 'failed';
+      evaluation.description = `The mouseover attribute doesn't have a keyboard equivalent`;
+      evaluation.resultCode = 'RC4';
+    } else if (DomUtils.elementHasAttribute(element, 'onmouseout') && DomUtils.getElementAttribute('onmouseout') !== DomUtils.getElementAttribute('onblur')) {
+      evaluation.verdict = 'failed';
+      evaluation.description = `The mouseout attribute doesn't have a keyboard equivalent`;
+      evaluation.resultCode = 'RC5';
+    } else {
+      evaluation.verdict = 'passed';
+      evaluation.description = `All the mouse event handlers have a keyboard equivalent`;
+      evaluation.resultCode = 'RC6';
+    }
+
+    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
+    evaluation.pointer = DomUtils.getElementSelector(element);
+
+    super.addEvaluationResult(evaluation);
   }
-
-  let evaluation: HTMLTechniqueResult = {
-    verdict: '',
-    description: '',
-    resultCode: ''
-  };
-
-
-  if (element.attribs["onmousedown"] !== element.attribs["onkeydown"] && element.attribs["onmousedown"] !== undefined) {
-    evaluation.verdict = 'failed';
-    evaluation.description = `The mousedown attribute doesnt have a keyboard equivalent`;
-    evaluation.resultCode = 'RC1';
-  } else if (element.attribs["onmouseup"] !== element.attribs["onkeyup"] && element.attribs["onmouseup"] !== undefined) {
-    evaluation.verdict = 'failed';
-    evaluation.description = `The mouseup attribute doesnt have a keyboard equivalent`;
-    evaluation.resultCode = 'RC2';
-  } else if (element.attribs["onclick"] !== element.attribs["onkeypress"] && element.attribs["onclick"] !== undefined) {
-    evaluation.verdict = 'failed';
-    evaluation.description = `The click attribute doesnt have a keyboard equivalent`;
-    evaluation.resultCode = 'RC3';
-  } else if (element.attribs["onmouseover"] !== element.attribs["onfocus"] && element.attribs["onmouseover"] !== undefined) {
-    evaluation.verdict = 'failed';
-    evaluation.description = `The mouseover attribute doesnt have a keyboard equivalent`;
-    evaluation.resultCode = 'RC4';
-  } else if (element.attribs["onmouseout"] !== element.attribs["onblur"] && element.attribs["onmouseout"] !== undefined) {
-    evaluation.verdict = 'failed';
-    evaluation.description = `The mouseout attribute doesnt have a keyboard equivalent`;
-    evaluation.resultCode = 'RC5';
-  } else {
-    evaluation.verdict = 'passed';
-    evaluation.description = `All the mouse event handlers have a keyboard equivalent`;
-    evaluation.resultCode = 'RC6';
-
-  }
-
-
-  evaluation.htmlCode = transform_element_into_html(element);
-  evaluation.pointer = getElementSelector(element);
-
-  super.addEvaluationResult(evaluation);
-}
-
 }
 
 export = QW_HTML_T6;

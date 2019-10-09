@@ -1,6 +1,5 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
@@ -9,12 +8,12 @@ import {
   DomElement
 } from 'htmlparser2';
 
-const stew = new (require('stew-select')).Stew();
+const stew = new(require('stew-select')).Stew();
 
 import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
+  DomUtils
+} from '@qualweb/util';
+
 import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
@@ -31,8 +30,7 @@ const technique: HTMLTechnique = {
       level: 'A',
       principle: 'Perceivable',
       url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
-    }
-    ],
+    }],
     related: ['H39', 'H43', 'H63'],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H51',
     passed: 0,
@@ -42,7 +40,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult>()
+  results: new Array < HTMLTechniqueResult > ()
 };
 
 class QW_HTML_T30 extends Technique {
@@ -51,7 +49,7 @@ class QW_HTML_T30 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: DomElement | undefined): Promise < void > {
 
     if (element === undefined) {
       return;
@@ -64,17 +62,18 @@ class QW_HTML_T30 extends Technique {
     };
 
     // verificar se existe pelo menos um th
-    const has_th = _.size(stew.select(element, 'th')) > 0;
+    const has_th = stew.select(element, 'th').length > 0;
     // verificar se existe pelo menos um tr
-    const has_tr = _.size(stew.select(element, 'tr')) > 0;
+    const has_tr = stew.select(element, 'tr').length > 0;
     // verificar se existe pelo menos um td
-    const has_td = _.size(stew.select(element, 'td')) > 0;
+    const has_td = stew.select(element, 'td').length > 0;
 
     // verificar pelo menos uma ocorrencia de cada elemento
     if (has_td && has_tr && has_th) {
       evaluation.verdict = 'passed';
       evaluation.description = 'There is at least one occurrence of table, tr, td and th';
-      evaluation.resultCode = 'RC1';}
+      evaluation.resultCode = 'RC1';
+    }
     // elementos em falta
     else {
       evaluation.verdict = 'failed';
@@ -82,9 +81,8 @@ class QW_HTML_T30 extends Technique {
       evaluation.resultCode = 'RC2';
     }
 
-    evaluation.htmlCode = transform_element_into_html(element);
-    evaluation.pointer = getElementSelector(element);
-
+    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
+    evaluation.pointer = DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

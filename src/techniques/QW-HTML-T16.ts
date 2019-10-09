@@ -10,9 +10,9 @@ import {
 } from 'htmlparser2';
 
 import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
+  DomUtils
+} from '@qualweb/util';
+
 import Technique from "./Technique.object";
 
 const technique: HTMLTechnique = {
@@ -24,14 +24,12 @@ const technique: HTMLTechnique = {
     target: {
       element: 'blink'
     },
-    'success-criteria': [
-      {
-        name: '2.2.2',
-        level: 'A',
-        principle: 'Operable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide'
-      }
-    ],
+    'success-criteria': [{
+      name: '2.2.2',
+      level: 'A',
+      principle: 'Operable',
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide'
+    }],
     related: [],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/failures/F47',
     passed: 0,
@@ -41,7 +39,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult> ()
+  results: new Array < HTMLTechniqueResult > ()
 };
 
 class QW_HTML_T16 extends Technique {
@@ -50,27 +48,27 @@ class QW_HTML_T16 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: DomElement | undefined): Promise < void > {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
       description: '',
-      resultCode:''
+      resultCode: ''
     };
 
-  if (element !== undefined) {
-    evaluation.verdict = 'failed';
-    evaluation.description = 'Used blink element';
-    evaluation.resultCode = 'RC1';
-    evaluation.htmlCode = transform_element_into_html(element);
-    evaluation.pointer = getElementSelector(element);
-  } else { // success if refresh element doesn't exist
-    evaluation.verdict = 'passed';
-    evaluation.description = `Blink is not used`;
-    evaluation.resultCode = 'RC2';
-  }
+    if (element !== undefined) {
+      evaluation.verdict = 'failed';
+      evaluation.description = 'Used blink element';
+      evaluation.resultCode = 'RC1';
+      evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
+      evaluation.pointer = DomUtils.getElementSelector(element);
+    } else { // success if refresh element doesn't exist
+      evaluation.verdict = 'passed';
+      evaluation.description = `Blink is not used`;
+      evaluation.resultCode = 'RC2';
+    }
 
-  super.addEvaluationResult(evaluation);
+    super.addEvaluationResult(evaluation);
   }
 }
 

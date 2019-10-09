@@ -20,20 +20,18 @@ const technique: HTMLTechnique = {
     target: {
       element: '*',
     },
-    'success-criteria': [
-      {
-        name: '4.1.1',
-        level: 'A',
-        principle: 'Robust',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/parsing'
-      },{
-        name: '4.1.2',
-        level: 'A',
-        principle: 'Robust',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/name-role-value'
-      },
-    ],
-    related: ['H74','H75'],
+    'success-criteria': [{
+      name: '4.1.1',
+      level: 'A',
+      principle: 'Robust',
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/parsing'
+    }, {
+      name: '4.1.2',
+      level: 'A',
+      principle: 'Robust',
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/name-role-value'
+    }, ],
+    related: ['H74', 'H75'],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H88',
     passed: 0,
     warning: 0,
@@ -42,20 +40,20 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array<HTMLTechniqueResult>()
+  results: new Array < HTMLTechniqueResult > ()
 };
 
 class QW_HTML_T20 extends Technique {
-  
+
   constructor() {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(): Promise < void > {
     throw new Error('Method not implemented.');
   }
 
-  async validate(url: string): Promise<void> {
+  async validate(url: string): Promise < void > {
 
     const options = {
       url,
@@ -70,7 +68,7 @@ class QW_HTML_T20 extends Technique {
         description: '',
         resultCode: ''
       };
-      
+
       if (result.type === 'error') {
         evaluation.verdict = 'failed';
         evaluation.description = result.message;
@@ -85,7 +83,7 @@ class QW_HTML_T20 extends Technique {
     }
 
     if (super.getNumberOfFailedResults() + super.getNumberOfWarningResults() === 0) {
-       const evaluation: HTMLTechniqueResult = {
+      const evaluation: HTMLTechniqueResult = {
         verdict: 'passed',
         description: `The HTML document doesn't have errors`,
         resultCode: 'RC1'
