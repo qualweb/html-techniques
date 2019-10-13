@@ -5,6 +5,7 @@ import html from 'htmlparser-to-html';
 import _ from 'lodash';
 
 const stew = new (require('stew-select')).Stew();
+import {DomUtils as DomUtil} from "@qualweb/util";
 
 function getSelfLocationInParent(element: DomElement): string {
     let selector = '';
@@ -91,27 +92,34 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
     return html(codeElement);
 }
 
-//multiple labels
-
+//grouping e section refrenced; sem referencia abaixo
+//ver roles em q text conta
+//acrecentar text
 function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean): string | undefined {
-    let AName, ariaLabelBy, ariaLabel, title, alt, type;
+    let AName, ariaLabelBy, ariaLabel, title, alt, attrType;
     let isChildOfDetails = isElementChildOfDetails(element);
     let isSummary = element.name === "summary";
+    let type = element.type;
     let summaryCheck = ((isSummary && isChildOfDetails) || !isSummary);
     if (element.attribs) {
-        ariaLabelBy = element.attribs["aria-labelledby"];
-        ariaLabel = element.attribs["aria-label"]
-        type = element.attribs[type];
+        ariaLabelBy = DomUtil.getElementById(element.attribs["aria-labelledby"], processedHTML).length > 0 ? element.attribs["aria-labelledby"] : "";
+        ariaLabel = element.attribs["aria-label"];
+        attrType = element.attribs["type"];
 
     }
 
-    if (elementIsHidden(element) && !reference) {
+    if (DomUtil.isElementHidden(element) && !reference) {
         //noAName
-    } else if (ariaLabelBy !== "" && !reference && summaryCheck) {
+    } else if (ariaLabelBy && ariaLabelBy !== "" && !reference && summaryCheck) {
         AName = getAccessibleNameFromAriaLabelledBy(ariaLabelBy, processedHTML);
     } else if (ariaLabel && _.trim(ariaLabel) !== "" && summaryCheck) {
         AName = ariaLabel;
-    } else if (element.name === "button" || element.name === "a" || element.name === "span") {
+    } else if (allowsNameFromContent(element)||reference||element.name==="label") {//grouping e section refrenced; sem referencia abaixo
+
+        if (element.attribs)
+            title = element.attribs["title"];
+        AName = getFirstNotUndefined(getTextFromCss(element,processedHTML), title);
+    }else if (element.name === "span") {
 
         if (element.attribs)
             title = element.attribs["title"];
@@ -121,19 +129,18 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         if (element.attribs)
             title = element.attribs["title"];
         AName = getFirstNotUndefined(title);
-    } else if (element.name === "img" || (element.name === "input" && type === "image")) {
+    } else if (element.name === "img" || (element.name === "input" && attrType === "image")) {
 
         if (element.attribs) {
             title = element.attribs["title"];
             alt = element.attribs["alt"];
         }
         AName = getFirstNotUndefined(alt, title);
+    }else if(type==="text"){
+        AName = DomUtils.getText(element);
     }
 
-
     return AName;
-
-
 }
 
 function isElementChildOfDetails(element: DomElement): boolean {
@@ -165,7 +172,7 @@ function getAccessibleNameFromAriaLabelledBy(ariaLabelId: string, processedHTML:
     let accessNameFromId: string | undefined;
 
     for (let id of ListIdRefs) {
-        accessNameFromId = getAccessibleName(getElementById(id, processedHTML)[0], processedHTML, true);
+        accessNameFromId = getAccessibleName(DomUtil.getElementById(id, processedHTML)[0], processedHTML, true);
         if (accessNameFromId) {
             if (result) {
                 result += accessNameFromId;
@@ -178,7 +185,59 @@ function getAccessibleNameFromAriaLabelledBy(ariaLabelId: string, processedHTML:
     return result;
 }
 
+function getTextFromCss(element: DomElement,processedHTML: DomElement[]): string {
 
+    let before = getComputedStylesAttribute(element, "computed-style-before", "^ content:&quot;");
+    let after = getComputedStylesAttribute(element, "computed-style-after", "^ content:&quot;");
+
+
+    return before +  getAccessibleNameFromChildren(element, processedHTML, "") + after;
+
+}
+
+function allowsNameFromContent(element: DomElement): boolean {
+
+    if (element.attribs === undefined)
+        return false;
+
+    let nameFromContentRoles = ["button", "cell", "checkbox", "columnheader", "gridcell", "heading", "link", "menuitem", "menuitemcheckbox", "menuitemradio", "option", "radio", "row", "rowgroup", "rowheader", "switch", "tab", "tooltip", "tree", "treeitem"];
+
+    let role = element.attribs.role;
+
+    return nameFromContentRoles.indexOf(role) >= 0;
+}
+
+
+
+function getAccessibleNameFromChildren(element: DomElement, processedHTML: DomElement[], acumulatedText: string): string {
+
+    if (element.children) {
+        for (let child of element.children) {
+
+            acumulatedText += getAccessibleName(child, processedHTML, false);
+        }
+    }
+    return acumulatedText;
+}
+//fixme
+function getComputedStylesAttribute(element: DomElement, computedStyle: string, attribute: string): string {
+    if (!element.attribs || !element.attribs[computedStyle]) {
+        return "";
+    }
+    let computedStyleContent = element.attribs[computedStyle]
+    let attribs = computedStyleContent.split(";");
+    let isAttr = new RegExp(attribute);
+    let attributeContent = "";
+    for (let attr of attribs) {
+        if (isAttr.test(attr)) {
+            attributeContent = attr.split(isAttr)[1];
+        }
+    }
+    return attributeContent.replace("&quot", "");
+}
+
+
+/*
 function elementIsHidden(element: DomElement): boolean {
     if (!element.attribs)
         return false;
@@ -208,21 +267,6 @@ function elementIsHiddenCSS(element: DomElement): boolean {
     return visibility || displayNone;
 }
 
-function getComputedStylesAttribute(element: DomElement, computedStyle: string, attribute: string): string {
-    if (!element.attribs || !element.attribs[computedStyle]) {
-        return "";
-    }
-    let computedStyleContent = element.attribs[computedStyle]
-    let attribs = computedStyleContent.split(";");
-    let isAttr = new RegExp(attribute);
-    let attributeContent = "";
-    for (let attr of attribs) {
-        if (isAttr.test(attr)) {
-            attributeContent = attr.split(isAttr)[1];
-        }
-    }
-    return attributeContent.replace("&quot", "");
-}
 
 
 function elementIsReferenced(id: string, processedHTML: DomElement[], element: DomElement): boolean {
@@ -506,40 +550,6 @@ function isWidget(element: DomElement): boolean {
 }
 
 
-function allowsNameFromContent(element: DomElement): boolean {
-
-    if (element.attribs === undefined)
-        return false;
-
-    let nameFromContentRoles = ["button", "cell", "checkbox", "columnheader", "gridcell", "heading", "link", "menuitem", "menuitemcheckbox", "menuitemradio", "option", "radio", "row", "rowgroup", "rowheader", "switch", "tab", "tooltip", "tree", "treeitem"];
-
-    let role = element.attribs.role;
-
-    return nameFromContentRoles.indexOf(role) >= 0;
-}
-
-function getTextFromCss(element: DomElement, textContent: string): string {
-
-    let before = getComputedStylesAttribute(element, "computed-style-before", "^ content:&quot;");
-    let after = getComputedStylesAttribute(element, "computed-style-after", "^ content:&quot;");
-
-
-    return before + textContent + after;
-
-}
-
-
-function getAccessibleNameFromChildren(element: DomElement, processedHTML: DomElement[], acumulatedText: string): string {
-
-    if (element.children) {
-        for (let child of element.children) {
-
-            acumulatedText += getAccessibleName(child, processedHTML, false);
-        }
-    }
-    return acumulatedText;
-}
-
 //default name
 function getDefaultname(element: DomElement): string {
     let name = element.name;
@@ -578,7 +588,7 @@ function getAccessibleNameFromAriaLabelBy(araLabelId: string, processedHTML: Dom
 
     return result;
 }
-
+*/
 
 export {
     getAccessibleName,
