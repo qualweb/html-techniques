@@ -94,7 +94,7 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 //multiple labels
 
 function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean): string | undefined {
-    let AName, ariaLabelBy, ariaLabel, title, alt,type;
+    let AName, ariaLabelBy, ariaLabel, title, alt, type;
     let isChildOfDetails = isElementChildOfDetails(element);
     let isSummary = element.name === "summary";
     let summaryCheck = ((isSummary && isChildOfDetails) || !isSummary);
@@ -111,28 +111,27 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         AName = getAccessibleNameFromAriaLabelledBy(ariaLabelBy, processedHTML);
     } else if (ariaLabel && _.trim(ariaLabel) !== "" && summaryCheck) {
         AName = ariaLabel;
-    } else if (element.name === "button"||element.name === "a"||element.name === "span") {
+    } else if (element.name === "button" || element.name === "a" || element.name === "span") {
 
         if (element.attribs)
             title = element.attribs["title"];
         AName = getFirstNotUndefined(DomUtils.getText(element), title);
-    }else if (element.name === "iframe") {
+    } else if (element.name === "iframe") {
 
         if (element.attribs)
             title = element.attribs["title"];
         AName = getFirstNotUndefined(title);
-    }else if (element.name === "img"||(element.name==="input"&& type==="image")) {
+    } else if (element.name === "img" || (element.name === "input" && type === "image")) {
 
-        if (element.attribs){
+        if (element.attribs) {
             title = element.attribs["title"];
             alt = element.attribs["alt"];
         }
-        AName = getFirstNotUndefined(alt,title);
+        AName = getFirstNotUndefined(alt, title);
     }
 
 
     return AName;
-
 
 
 }
@@ -143,11 +142,18 @@ function isElementChildOfDetails(element: DomElement): boolean {
 
 function getFirstNotUndefined(...args: any[]): string | undefined {
     let result;
-    for (let arg of args) {
+    let i = 0;
+    let arg;
+    let end = false;
+    while (i < args.length && !end) {
+        arg = args[i];
         if (arg !== undefined) {
             result = arg;
-            break;
+            if (_.trim(String(args)) !== "") {
+                end = true;
+            }
         }
+        i++;
     }
     return result;
 }
