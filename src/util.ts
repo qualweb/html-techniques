@@ -195,6 +195,8 @@ function getTextFromCss(element: DomElement,processedHTML: DomElement[]): string
 
 }
 
+//fixme falta implicitos
+
 function allowsNameFromContent(element: DomElement): boolean {
 
     if (element.attribs === undefined)
@@ -219,7 +221,7 @@ function getAccessibleNameFromChildren(element: DomElement, processedHTML: DomEl
     }
     return acumulatedText;
 }
-//fixme
+//fixme nao funciona
 function getComputedStylesAttribute(element: DomElement, computedStyle: string, attribute: string): string {
     if (!element.attribs || !element.attribs[computedStyle]) {
         return "";
