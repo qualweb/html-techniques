@@ -46,7 +46,9 @@ describe('Technique QW-HTML-T35', function() {
       it(`should have outcome="${test.outcome}"`, async function () {
         this.timeout(10 * 1000);
         const { source, processed } = await getDom(test.url);
-
+        configure({
+          techniques:[]
+        })
 
         const report = await executeHTMLT(source.html.parsed, processed.html.parsed);
         expect(report.techniques['QW-HTML-T36'].metadata.outcome).to.be.equal(test.outcome);
