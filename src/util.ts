@@ -4,7 +4,7 @@ import {DomElement, DomUtils} from 'htmlparser2';
 import html from 'htmlparser-to-html';
 import _ from 'lodash';
 
-const stew = new (require('stew-select')).Stew();
+//const stew = new (require('stew-select')).Stew();
 import {DomUtils as DomUtil} from "@qualweb/util";
 
 function getSelfLocationInParent(element: DomElement): string {
@@ -134,7 +134,7 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         if (element.attribs) {
             value = element.attribs["value"];
         }
-        AName = getFirstNotUndefined(value, title);
+        AName = getFirstNotUndefined(value, title,getDefaultName(element));
     }
 
     return AName;
@@ -237,6 +237,27 @@ function getComputedStylesAttribute(element: DomElement, computedStyle: string, 
         }
     }
     return attributeContent.replace("&quot", "");
+}
+
+
+function getDefaultName(element: DomElement): string {
+    let name = element.name;
+    let type;
+    let result = "";
+
+    if (element.attribs && name === "input") {
+        type = element.attribs["type"];
+    }
+
+    /*if (type === "image") {
+      result = "image";
+    } */ if (type === "submit") {
+        result = "reset";
+    } else if (type === "reset") {
+        result = "reset";
+    }
+
+    return result;
 }
 
 
