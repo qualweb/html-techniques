@@ -3,8 +3,7 @@
 import {DomElement, DomUtils} from 'htmlparser2';
 import html from 'htmlparser-to-html';
 import _ from 'lodash';
-
-//const stew = new (require('stew-select')).Stew();
+const stew = new (require('stew-select')).Stew();
 import {DomUtils as DomUtil} from "@qualweb/util";
 
 function getSelfLocationInParent(element: DomElement): string {
@@ -93,9 +92,10 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 }
 
 
-
+//todo figure,fieldset e table(sao parecidos)
 function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean): string | undefined {
-    let AName, ariaLabelBy, ariaLabel, title, alt, attrType,value,role;
+    let AName, ariaLabelBy, ariaLabel, title, alt, attrType,value,role,placeholder,id;
+    let typesWithLabel = ["text","password","search","tel","email","url"];
     let isChildOfDetails = isElementChildOfDetails(element);
     let isSummary = element.name === "summary";
     let type = element.type;
@@ -109,6 +109,7 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         title = element.attribs["title"];
         role = element.attribs["role"];
 
+
     }
 
     if (DomUtil.isElementHidden(element) && !reference) {
@@ -119,13 +120,11 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         AName = getAccessibleNameFromAriaLabelledBy(ariaLabelBy, processedHTML);
     } else if (ariaLabel && _.trim(ariaLabel) !== "" && summaryCheck) {
         AName = ariaLabel;
-    } else if (allowNameFromContent||((role&&allowNameFromContent)||(!role))&&reference||element.name==="label") {
+    } else if (allowNameFromContent||((role&&allowNameFromContent)||(!role))&&reference||element.name==="label"||element.name==="legend"||element.name==="figcaption"||element.name==="caption") {
         AName = getFirstNotUndefined(getTextFromCss(element,processedHTML), title);
-    }else if ( sectionAndGrouping.indexOf(String(element.name))>=0) {//section and grouping
+    }else if ( sectionAndGrouping.indexOf(String(element.name))>=0||element.name === "iframe") {//section and grouping
         AName = getFirstNotUndefined( title);
-    } else if (element.name === "iframe") {
-        AName = getFirstNotUndefined(title);
-    } else if (element.name === "img" || (element.name === "input" && attrType === "image")) {
+    }else if (element.name === "area"||element.name === "img" || (element.name === "input" && attrType === "image")) {
         if (element.attribs) {
             alt = element.attribs["alt"];
         }
@@ -135,6 +134,13 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
             value = element.attribs["value"];
         }
         AName = getFirstNotUndefined(value, title,getDefaultName(element));
+    }else if (element.name === "input" && (typesWithLabel.indexOf(attrType)>0)||name==="textarea") {
+        if (element.attribs) {
+            id = element.attribs["id"];
+            value = element.attribs["value"];
+            placeholder = element.attribs["placeholder"];
+        }
+        AName = getFirstNotUndefined(getValueFromLabel(element,id,processedHTML), value,placeholder);
     }
 
     return AName;
@@ -184,8 +190,8 @@ function getAccessibleNameFromAriaLabelledBy(ariaLabelId: string, processedHTML:
 
 function getTextFromCss(element: DomElement,processedHTML: DomElement[]): string {
 
-    let before = getComputedStylesAttribute(element, "computed-style-before", "^ content:&quot;");
-    let after = getComputedStylesAttribute(element, "computed-style-after", "^ content:&quot;");
+    let before = getComputedStylesAttribute(element, "computed-style-before", "^ content: &quot");
+    let after = getComputedStylesAttribute(element, "computed-style-after", "^ content: &quot;");
     let aNameChildren = getAccessibleNameFromChildren(element, processedHTML, "");
 
 
@@ -198,7 +204,7 @@ function allowsNameFromContent(element: DomElement): boolean {
     let role,name;
     name = element.name;
     console.log(name);
-    let nameFromContentElements = ["button","h1","h2","h3","h4","h5","h6","a","link","listitem","option","menuitem","option","tr","text"];
+    let nameFromContentElements = ["button","h1","h2","h3","h4","h5","h6","a","link","listitem","option","menuitem","option","tr","output"];
 
     if (element.attribs !== undefined)
         role = element.attribs["role"];
@@ -212,6 +218,25 @@ function allowsNameFromContent(element: DomElement): boolean {
 
 
 
+function getValueFromLabel(element: DomElement,id:string,processedHTML: DomElement[]): string {
+
+    let refrencedByLabel = stew.select(processedHTML, `label[for="${id}"]`);
+    let result,accessNameFromLabel;
+
+
+    for (let label of refrencedByLabel) {
+        accessNameFromLabel = getAccessibleName(label, processedHTML, true);
+        if (accessNameFromLabel) {
+            if (result) {
+                result += accessNameFromLabel;
+            } else {
+                result = accessNameFromLabel;
+            }
+        }
+        }
+    return result;
+}
+
 function getAccessibleNameFromChildren(element: DomElement, processedHTML: DomElement[], acumulatedText: string): string {
 
     if (element.children) {
@@ -223,6 +248,7 @@ function getAccessibleNameFromChildren(element: DomElement, processedHTML: DomEl
     }
     return acumulatedText;
 }
+
 function getComputedStylesAttribute(element: DomElement, computedStyle: string, attribute: string): string {
     if (!element.attribs || !element.attribs[computedStyle]) {
         return "";
@@ -231,10 +257,13 @@ function getComputedStylesAttribute(element: DomElement, computedStyle: string, 
     let attribs = computedStyleContent.split(";");
     let isAttr = new RegExp(attribute);
     let attributeContent = "";
+    let count = 0;
     for (let attr of attribs) {
+        console.log(attr);
         if (isAttr.test(attr)) {
-            attributeContent = attr.split(isAttr)[1];
+            attributeContent = attribs[count+1];
         }
+        count++;
     }
     return attributeContent.replace("&quot", "");
 }
@@ -254,7 +283,7 @@ function getDefaultName(element: DomElement): string {
     } */ if (type === "submit") {
         result = "reset";
     } else if (type === "reset") {
-        result = "reset";
+        result = "reset//<//a//>";
     }
 
     return result;
@@ -615,6 +644,7 @@ function getAccessibleNameFromAriaLabelBy(araLabelId: string, processedHTML: Dom
 */
 
 export {
+    getComputedStylesAttribute,
     getAccessibleName,
     getElementSelector,
     transform_element_into_html
