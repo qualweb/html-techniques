@@ -92,19 +92,18 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
     return html(codeElement);
 }
 
-//grouping e section refrenced; sem referencia abaixo
-//ver roles em q text conta
-//acrecentar text
 function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean): string | undefined {
-    let AName, ariaLabelBy, ariaLabel, title, alt, attrType;
+    let AName, ariaLabelBy, ariaLabel, title, alt, attrType,value;
     let isChildOfDetails = isElementChildOfDetails(element);
     let isSummary = element.name === "summary";
     let type = element.type;
+    let sectionAndGrouping = ["span"];
     let summaryCheck = ((isSummary && isChildOfDetails) || !isSummary);
     if (element.attribs) {
         ariaLabelBy = DomUtil.getElementById(element.attribs["aria-labelledby"], processedHTML).length > 0 ? element.attribs["aria-labelledby"] : "";
         ariaLabel = element.attribs["aria-label"];
         attrType = element.attribs["type"];
+        title = element.attribs["title"];
 
     }
 
@@ -114,28 +113,23 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         AName = getAccessibleNameFromAriaLabelledBy(ariaLabelBy, processedHTML);
     } else if (ariaLabel && _.trim(ariaLabel) !== "" && summaryCheck) {
         AName = ariaLabel;
-    } else if (allowsNameFromContent(element)||reference||element.name==="label") {//grouping e section refrenced; sem referencia abaixo
+    } else if (allowsNameFromContent(element)||reference||element.name==="label") {
 
-        if (element.attribs)
-            title = element.attribs["title"];
         AName = getFirstNotUndefined(getTextFromCss(element,processedHTML), title);
-    }else if (element.name === "span") {
-
-        if (element.attribs)
-            title = element.attribs["title"];
-        AName = getFirstNotUndefined(DomUtils.getText(element), title);
+    }else if ( sectionAndGrouping.indexOf(String(element.name))) {//section and grouping
+        AName = getFirstNotUndefined( title);
     } else if (element.name === "iframe") {
-
-        if (element.attribs)
-            title = element.attribs["title"];
         AName = getFirstNotUndefined(title);
     } else if (element.name === "img" || (element.name === "input" && attrType === "image")) {
-
         if (element.attribs) {
-            title = element.attribs["title"];
             alt = element.attribs["alt"];
         }
         AName = getFirstNotUndefined(alt, title);
+    }else if (element.name === "input" && (attrType === "button"||attrType === "submit"||attrType === "reset")) {
+        if (element.attribs) {
+            value = element.attribs["value"];
+        }
+        AName = getFirstNotUndefined(value, title);
     }else if(type==="text"){
         AName = DomUtils.getText(element);
     }
@@ -195,18 +189,20 @@ function getTextFromCss(element: DomElement,processedHTML: DomElement[]): string
 
 }
 
-//fixme falta implicitos
-
 function allowsNameFromContent(element: DomElement): boolean {
 
-    if (element.attribs === undefined)
-        return false;
+    let role,name;
+    name = element.name;
+    let nameFromContentElements = ["button","h1","h2","h3","h4","h5","h6","a","link","listitem","option","menuitem","option","tr"]
+
+    if (element.attribs !== undefined)
+    role = element.attribs["role"];
+
 
     let nameFromContentRoles = ["button", "cell", "checkbox", "columnheader", "gridcell", "heading", "link", "menuitem", "menuitemcheckbox", "menuitemradio", "option", "radio", "row", "rowgroup", "rowheader", "switch", "tab", "tooltip", "tree", "treeitem"];
 
-    let role = element.attribs.role;
 
-    return nameFromContentRoles.indexOf(role) >= 0;
+    return nameFromContentRoles.indexOf(role) >= 0&& nameFromContentElements.indexOf(name) >= 0;
 }
 
 
@@ -341,7 +337,7 @@ function getElementById(id: string | undefined, processedHTML: DomElement[]): Do
     if (id)
         element = stew.select(processedHTML, '[id="' + id + '"]');
 
-    return element;
+    return elemelet widgetElements = ['button', 'input', 'meter', 'output', 'progress', 'select', 'textarea'];nt;
 
 }
 
@@ -410,7 +406,7 @@ function getTextAlternative(element: DomElement, processedHTML: DomElement[], id
 
 function hasRolePresentationOrNone(element: DomElement): boolean {
     return !!element.attribs && (element.attribs["role"] === "none" || element.attribs["role"] === "presentation");
-
+let widgetElements = ['button', 'input', 'meter', 'output', 'progress', 'select', 'textarea'];
 }
 
 function getLabel(id: string, processedHTML: DomElement[], element: DomElement): DomElement {
@@ -448,7 +444,7 @@ function getValueFromLabelWithControl(id: string, element: DomElement, processed
     for (let child of label.children) {
         if (child.type === 'text')
             value += child.data;
-        else
+        elselet widgetElements = ['button', 'input', 'meter', 'output', 'progress', 'select', 'textarea'];
             value += getValueFromEmbededControl(child, processedHTML);
 
     }
