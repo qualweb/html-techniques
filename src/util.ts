@@ -92,31 +92,36 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
     return html(codeElement);
 }
 
+
+
 function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean): string | undefined {
-    let AName, ariaLabelBy, ariaLabel, title, alt, attrType,value;
+    let AName, ariaLabelBy, ariaLabel, title, alt, attrType,value,role;
     let isChildOfDetails = isElementChildOfDetails(element);
     let isSummary = element.name === "summary";
     let type = element.type;
     let sectionAndGrouping = ["span"];
+    let allowNameFromContent =allowsNameFromContent(element) ;
     let summaryCheck = ((isSummary && isChildOfDetails) || !isSummary);
     if (element.attribs) {
         ariaLabelBy = DomUtil.getElementById(element.attribs["aria-labelledby"], processedHTML).length > 0 ? element.attribs["aria-labelledby"] : "";
         ariaLabel = element.attribs["aria-label"];
         attrType = element.attribs["type"];
         title = element.attribs["title"];
+        role = element.attribs["role"];
 
     }
 
     if (DomUtil.isElementHidden(element) && !reference) {
         //noAName
-    } else if (ariaLabelBy && ariaLabelBy !== "" && !reference && summaryCheck) {
+    } else if(type==="text"){
+        AName = DomUtils.getText(element);
+    }else if (ariaLabelBy && ariaLabelBy !== "" && !reference && summaryCheck) {
         AName = getAccessibleNameFromAriaLabelledBy(ariaLabelBy, processedHTML);
     } else if (ariaLabel && _.trim(ariaLabel) !== "" && summaryCheck) {
         AName = ariaLabel;
-    } else if (allowsNameFromContent(element)||reference||element.name==="label") {
-
+    } else if (allowNameFromContent||((role&&allowNameFromContent)||(!role))&&reference||element.name==="label") {
         AName = getFirstNotUndefined(getTextFromCss(element,processedHTML), title);
-    }else if ( sectionAndGrouping.indexOf(String(element.name))) {//section and grouping
+    }else if ( sectionAndGrouping.indexOf(String(element.name))>=0) {//section and grouping
         AName = getFirstNotUndefined( title);
     } else if (element.name === "iframe") {
         AName = getFirstNotUndefined(title);
@@ -130,8 +135,6 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
             value = element.attribs["value"];
         }
         AName = getFirstNotUndefined(value, title);
-    }else if(type==="text"){
-        AName = DomUtils.getText(element);
     }
 
     return AName;
@@ -183,9 +186,10 @@ function getTextFromCss(element: DomElement,processedHTML: DomElement[]): string
 
     let before = getComputedStylesAttribute(element, "computed-style-before", "^ content:&quot;");
     let after = getComputedStylesAttribute(element, "computed-style-after", "^ content:&quot;");
+    let aNameChildren = getAccessibleNameFromChildren(element, processedHTML, "");
 
 
-    return before +  getAccessibleNameFromChildren(element, processedHTML, "") + after;
+    return before +  aNameChildren + after;
 
 }
 
@@ -193,16 +197,17 @@ function allowsNameFromContent(element: DomElement): boolean {
 
     let role,name;
     name = element.name;
-    let nameFromContentElements = ["button","h1","h2","h3","h4","h5","h6","a","link","listitem","option","menuitem","option","tr"]
+    console.log(name);
+    let nameFromContentElements = ["button","h1","h2","h3","h4","h5","h6","a","link","listitem","option","menuitem","option","tr","text"];
 
     if (element.attribs !== undefined)
-    role = element.attribs["role"];
+        role = element.attribs["role"];
 
 
     let nameFromContentRoles = ["button", "cell", "checkbox", "columnheader", "gridcell", "heading", "link", "menuitem", "menuitemcheckbox", "menuitemradio", "option", "radio", "row", "rowgroup", "rowheader", "switch", "tab", "tooltip", "tree", "treeitem"];
+    console.log((nameFromContentRoles.indexOf(role) >= 0)+":"+ (nameFromContentElements.indexOf(name) >= 0));
 
-
-    return nameFromContentRoles.indexOf(role) >= 0&& nameFromContentElements.indexOf(name) >= 0;
+    return nameFromContentRoles.indexOf(role) >= 0|| nameFromContentElements.indexOf(name) >= 0;
 }
 
 
@@ -211,13 +216,13 @@ function getAccessibleNameFromChildren(element: DomElement, processedHTML: DomEl
 
     if (element.children) {
         for (let child of element.children) {
-
-            acumulatedText += getAccessibleName(child, processedHTML, false);
+            let aName = getAccessibleName(child, processedHTML, true);
+            if(aName)
+                acumulatedText += aName;
         }
     }
     return acumulatedText;
 }
-//fixme nao funciona
 function getComputedStylesAttribute(element: DomElement, computedStyle: string, attribute: string): string {
     if (!element.attribs || !element.attribs[computedStyle]) {
         return "";
