@@ -93,8 +93,7 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 }
 
 
-//todo figure,fieldset e table(sao parecidos)
-function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean, isWidget: boolean): string | undefined {
+function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean, isWidgete: boolean): string | undefined {
     let AName, ariaLabelBy, ariaLabel, title, alt, attrType, value, role, placeholder, id;
     let typesWithLabel = ["text", "password", "search", "tel", "email", "url"];
     let tabularElements = ["tr", "td", "th"];
@@ -120,7 +119,7 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
     } else if (type === "text") {
         AName = DomUtils.getText(element);
     } else if (ariaLabelBy && ariaLabelBy !== "" && !reference) {
-        AName = getAccessibleNameFromAriaLabelledBy(ariaLabelBy, processedHTML);
+        AName = getAccessibleNameFromAriaLabelledBy(element,ariaLabelBy, processedHTML);
     } else if (ariaLabel && _.trim(ariaLabel) !== "") {
         AName = ariaLabel;
     } else if (name === "area" || name === "img" || (name === "input" && attrType === "image")) {
@@ -160,7 +159,7 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         AName = getFirstNotUndefined(getValueFromSpecialLabel(element, "caption", processedHTML), title);
     } else if (name === "fieldset") {
         AName = getFirstNotUndefined(getValueFromSpecialLabel(element, "legend", processedHTML), title);
-    } else if (isRoleControl(element)) {
+    } else if (isWidgete&&isRoleControl(element)) {
         AName = getFirstNotUndefined(getValueFromEmbededControl(element,processedHTML), title);
     }else if (allowNameFromContent || ((role && allowNameFromContent) || (!role)) && reference || name === "label" || name === "legend" || name === "caption") {
         AName = getFirstNotUndefined(getTextFromCss(element, processedHTML), title);
@@ -186,7 +185,7 @@ function getFirstNotUndefined(...args: any[]): string | undefined {
         arg = args[i];
         if (arg !== undefined) {
             result = arg;
-            if (_.trim(String(args)) !== "") {
+            if (_.trim(String(arg)) !== "") {
                 end = true;
             }
         }
@@ -196,14 +195,14 @@ function getFirstNotUndefined(...args: any[]): string | undefined {
 }
 
 
-function getAccessibleNameFromAriaLabelledBy(ariaLabelId: string, processedHTML: DomElement[]): string | undefined {
+function getAccessibleNameFromAriaLabelledBy(element: DomElement,ariaLabelId: string, processedHTML: DomElement[]): string | undefined {
     let ListIdRefs = ariaLabelId.split(" ");
     let result: string | undefined;
     let accessNameFromId: string | undefined;
-    isWidgete
+    let isWidgete= isWidget(element);
 
     for (let id of ListIdRefs) {
-        accessNameFromId = getAccessibleName(DomUtil.getElementById(id, processedHTML)[0], processedHTML, true);
+        accessNameFromId = getAccessibleName(DomUtil.getElementById(id, processedHTML)[0], processedHTML, true,isWidgete);
         if (accessNameFromId) {
             if (result) {
                 result += accessNameFromId;
@@ -220,7 +219,7 @@ function getTextFromCss(element: DomElement, processedHTML: DomElement[]): strin
 
     let before = getComputedStylesAttribute(element, "computed-style-before", "^ content: &quot");
     let after = getComputedStylesAttribute(element, "computed-style-after", "^ content: &quot;");
-    let aNameChildren = getAccessibleNameFromChildren(element, processedHTML, "");
+    let aNameChildren = getAccessibleNameFromChildren(element, processedHTML);
 
 
     return before + aNameChildren + after;
