@@ -3,6 +3,7 @@
 import {DomElement, DomUtils} from 'htmlparser2';
 import html from 'htmlparser-to-html';
 import _ from 'lodash';
+
 const stew = new (require('stew-select')).Stew();
 import {DomUtils as DomUtil} from "@qualweb/util";
 
@@ -93,65 +94,84 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 
 
 //todo figure,fieldset e table(sao parecidos)
-function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean): string | undefined {
-    let AName, ariaLabelBy, ariaLabel, title, alt, attrType,value,role,placeholder,id;
-    let typesWithLabel = ["text","password","search","tel","email","url"];
-    let tabularElements = ["tr","td","th"];
-   // let isChildOfDetails = isElementChildOfDetails(element);
-   // let isSummary = element.name === "summary";
+function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean, isWidget: boolean): string | undefined {
+    let AName, ariaLabelBy, ariaLabel, title, alt, attrType, value, role, placeholder, id;
+    let typesWithLabel = ["text", "password", "search", "tel", "email", "url"];
+    let tabularElements = ["tr", "td", "th"];
+    let formElements = ["select", "option", "input", "datalist", "optgroup"];
+    // let isChildOfDetails = isElementChildOfDetails(element);
+    // let isSummary = element.name === "summary";
     let type = element.type;
-    let sectionAndGrouping = ["span","article","section","nav","aside","hgroup","header","footer","address","p","hr","blockquote","div"];
-    let allowNameFromContent =allowsNameFromContent(element) ;
-   // let summaryCheck = ((isSummary && isChildOfDetails) || !isSummary);
+    let name = String(element.name);
+    let sectionAndGrouping = ["span", "article", "section", "nav", "aside", "hgroup", "header", "footer", "address", "p", "hr"
+        , "blockquote", "div", "h1", "h2", "h3", "h4", "h5", "h6", "li", "ul", "ol", "dd", "dt", "dl", "figcaption"];
+    let allowNameFromContent = allowsNameFromContent(element);
+    // let summaryCheck = ((isSummary && isChildOfDetails) || !isSummary);
     if (element.attribs) {
         ariaLabelBy = DomUtil.getElementById(element.attribs["aria-labelledby"], processedHTML).length > 0 ? element.attribs["aria-labelledby"] : "";
         ariaLabel = element.attribs["aria-label"];
         attrType = element.attribs["type"];
         title = element.attribs["title"];
         role = element.attribs["role"];
-
-
     }
 
     if (DomUtil.isElementHidden(element) && !reference) {
         //noAName
-    } else if(type==="text"){
+    } else if (type === "text") {
         AName = DomUtils.getText(element);
-    }else if (ariaLabelBy && ariaLabelBy !== "" && !reference ) {
+    } else if (ariaLabelBy && ariaLabelBy !== "" && !reference) {
         AName = getAccessibleNameFromAriaLabelledBy(ariaLabelBy, processedHTML);
-    } else if (ariaLabel && _.trim(ariaLabel) !== "" ) {
+    } else if (ariaLabel && _.trim(ariaLabel) !== "") {
         AName = ariaLabel;
-    } else if (allowNameFromContent||((role&&allowNameFromContent)||(!role))&&reference||element.name==="label"||element.name==="legend"||element.name==="figcaption"||element.name==="caption") {
-        AName = getFirstNotUndefined(getTextFromCss(element,processedHTML), title);
-    }else if ( sectionAndGrouping.indexOf(String(element.name))>=0||element.name === "iframe"||tabularElements.indexOf(String(element.name))>=0) {//section and grouping
-        AName = getFirstNotUndefined( title);
-    }else if (element.name === "area"||element.name === "img" || (element.name === "input" && attrType === "image")) {
+    } else if (name === "area" || name === "img" || (name === "input" && attrType === "image")) {
         if (element.attribs) {
             alt = element.attribs["alt"];
         }
         AName = getFirstNotUndefined(alt, title);
-    }else if (element.name === "input" && (attrType === "button"||attrType === "submit"||attrType === "reset")) {
+    } else if (name === "input" && (attrType === "button" || attrType === "submit" || attrType === "reset")) {
         if (element.attribs) {
             value = element.attribs["value"];
         }
-        AName = getFirstNotUndefined(value, title,getDefaultName(element));
-    }else if (element.name === "input" && (typesWithLabel.indexOf(attrType)>0)||name==="textarea") {
+        AName = getFirstNotUndefined(value, title, getDefaultName(element));
+    } else if (formElements.indexOf(name) > 0 && !type) {
+        if (element.attribs) {
+            id = element.attribs["id"];
+        }
+        AName = getFirstNotUndefined(getValueFromLabel(element, id, processedHTML), title);
+    } else if (name === "input" && (typesWithLabel.indexOf(attrType) > 0)) {
         if (element.attribs) {
             id = element.attribs["id"];
             placeholder = element.attribs["placeholder"];
         }
-        AName = getFirstNotUndefined(getValueFromLabel(element,id,processedHTML), title,placeholder);
-    }else if (element.name === "figure") {
-        AName = getFirstNotUndefined(getValueFromSpecialLabel(element,"figcaption",processedHTML),title);
-    }else if (element.name === "table") {
-        AName = getFirstNotUndefined(getValueFromSpecialLabel(element,"caption",processedHTML),title);
-    }else if (element.name === "fieldset") {
-        AName = getFirstNotUndefined(getValueFromSpecialLabel(element,"legend",processedHTML),title);
+        AName = getFirstNotUndefined(getValueFromLabel(element, id, processedHTML), title, placeholder);
+    } else if (name === "textarea") {
+        if (element.attribs) {
+            id = element.attribs["id"];
+            placeholder = element.attribs["placeholder"];
+        }
+        if (reference) {
+            AName = getFirstNotUndefined(getValueFromLabel(element, id, processedHTML), title, placeholder);
+        } else {
+            AName = getFirstNotUndefined(getTextFromCss(element, processedHTML), title, placeholder);
+        }
+    } else if (name === "figure") {
+        AName = getFirstNotUndefined(getValueFromSpecialLabel(element, "figcaption", processedHTML), title);
+    } else if (name === "table") {
+        AName = getFirstNotUndefined(getValueFromSpecialLabel(element, "caption", processedHTML), title);
+    } else if (name === "fieldset") {
+        AName = getFirstNotUndefined(getValueFromSpecialLabel(element, "legend", processedHTML), title);
+    } else if (isRoleControl(element)) {
+        AName = getFirstNotUndefined(getValueFromEmbededControl(element,processedHTML), title);
+    }else if (allowNameFromContent || ((role && allowNameFromContent) || (!role)) && reference || name === "label" || name === "legend" || name === "caption") {
+        AName = getFirstNotUndefined(getTextFromCss(element, processedHTML), title);
+    } else if (sectionAndGrouping.indexOf(String(element.name)) >= 0 || element.name === "iframe" || tabularElements.indexOf(String(name)) >= 0) {//section and grouping
+        AName = getFirstNotUndefined(title);
     }
 
 
     return AName;
 }
+
 /*
 function isElementChildOfDetails(element: DomElement): boolean {
     return !!element.parent && element.parent.name === "details";
@@ -180,6 +200,7 @@ function getAccessibleNameFromAriaLabelledBy(ariaLabelId: string, processedHTML:
     let ListIdRefs = ariaLabelId.split(" ");
     let result: string | undefined;
     let accessNameFromId: string | undefined;
+    isWidgete
 
     for (let id of ListIdRefs) {
         accessNameFromId = getAccessibleName(DomUtil.getElementById(id, processedHTML)[0], processedHTML, true);
@@ -195,26 +216,24 @@ function getAccessibleNameFromAriaLabelledBy(ariaLabelId: string, processedHTML:
     return result;
 }
 
-function getTextFromCss(element: DomElement,processedHTML: DomElement[]): string {
+function getTextFromCss(element: DomElement, processedHTML: DomElement[]): string {
 
     let before = getComputedStylesAttribute(element, "computed-style-before", "^ content: &quot");
     let after = getComputedStylesAttribute(element, "computed-style-after", "^ content: &quot;");
     let aNameChildren = getAccessibleNameFromChildren(element, processedHTML, "");
 
 
-    return before +  aNameChildren + after;
+    return before + aNameChildren + after;
 
 }
 
 function allowsNameFromContent(element: DomElement): boolean {
 
-    let role,name;
+    let role, name;
     name = element.name;
     console.log(name);
-    let nameFromContentElements = ["button","h1","h2","h3","h4","h5","h6","a","link","listitem","option","menuitem"
-        ,"option","tr","output","summary","abbr", "b", "bdi", "bdo", "br", "cite", "code", "dfn", "em", "i", "kbd"
-        , "mark", "q", "rp", "rt", "ruby","s", "samp", "small", "strong", "sub","and", "sup", "time", "u","var", "wbr"];
-
+    let nameFromContentElements = ["button", "a", "link", "output", "summary", "abbr", "b", "bdi", "bdo", "br", "cite", "code", "dfn", "em", "i", "kbd"
+        , "mark", "q", "rp", "rt", "ruby", "s", "samp", "small", "strong", "sub", "and", "sup", "time", "u", "var", "wbr"];
     if (element.attribs !== undefined)
         role = element.attribs["role"];
 
@@ -222,29 +241,50 @@ function allowsNameFromContent(element: DomElement): boolean {
     let nameFromContentRoles = ["button", "cell", "checkbox", "columnheader", "gridcell", "heading", "link", "menuitem",
         "menuitemcheckbox", "menuitemradio", "option", "radio", "row", "rowgroup", "rowheader", "switch", "tab",
         "tooltip", "tree", "treeitem"];
-    console.log((nameFromContentRoles.indexOf(role) >= 0)+":"+ (nameFromContentElements.indexOf(name) >= 0));
+    console.log((nameFromContentRoles.indexOf(role) >= 0) + ":" + (nameFromContentElements.indexOf(name) >= 0));
 
-    return nameFromContentRoles.indexOf(role) >= 0|| nameFromContentElements.indexOf(name) >= 0;
+    return nameFromContentRoles.indexOf(role) >= 0 || nameFromContentElements.indexOf(name) >= 0;
 }
 
-function getValueFromSpecialLabel(element: DomElement,label:string,processedHTML: DomElement[]): string {
+function isWidget(element: DomElement): boolean {
+
+    let widgetElements = ['button', 'input', 'meter', 'output', 'progress', 'select', 'textarea'];
+    let widgetRoles = ["button", "checkbox", "gridcell", "link", "menuitem", "menuitemcheckbox", "menuitemradio", "option", "progressbar", "radio", "scrollbar", "searchbox", "separator", "slider", "spinbutton", "switch", "tab", "tabpanel", "textbox", "treeitem"];
+
+    if (element.attribs === undefined)
+        return false;
+
+    let role = element.attribs["role"];
+    let name = '';
+    if (element.name)
+        name = element.name;
+
+    return widgetRoles.indexOf(role) >= 0 || widgetElements.indexOf(name) >= 0;
+}
+
+
+function getValueFromSpecialLabel(element: DomElement, label: string, processedHTML: DomElement[]): string {
 
     let labelElement = stew.select(element, label);
     let accessNameFromLabel;
-    accessNameFromLabel = getAccessibleName(labelElement[0], processedHTML, true);
+    accessNameFromLabel = getAccessibleName(labelElement[0], processedHTML, true,false);
 
 
     return accessNameFromLabel;
 }
 
-function getValueFromLabel(element: DomElement,id:string,processedHTML: DomElement[]): string {
+function getValueFromLabel(element: DomElement, id: string, processedHTML: DomElement[]): string {
 
     let refrencedByLabel = stew.select(processedHTML, `label[for="${id}"]`);
-    let result,accessNameFromLabel;
-
+    let parent = element.parent;
+    if(parent && parent.name === "label"){
+        refrencedByLabel.push(parent);
+    }
+    let result, accessNameFromLabel;
+    let isWidgete= isWidget(element);
 
     for (let label of refrencedByLabel) {
-        accessNameFromLabel = getAccessibleName(label, processedHTML, true);
+        accessNameFromLabel = getAccessibleName(label, processedHTML, true,isWidgete);
         if (accessNameFromLabel) {
             if (result) {
                 result += accessNameFromLabel;
@@ -252,20 +292,27 @@ function getValueFromLabel(element: DomElement,id:string,processedHTML: DomEleme
                 result = accessNameFromLabel;
             }
         }
-        }
+    }
     return result;
 }
 
-function getAccessibleNameFromChildren(element: DomElement, processedHTML: DomElement[], acumulatedText: string): string {
+function getAccessibleNameFromChildren(element: DomElement, processedHTML: DomElement[]): string {
+    let isWidgete= isWidget(element);
+    let result,aName;
 
     if (element.children) {
         for (let child of element.children) {
-            let aName = getAccessibleName(child, processedHTML, true);
-            if(aName)
-                acumulatedText += aName;
+            aName = getAccessibleName(child, processedHTML, true,isWidgete);
+            if (aName) {
+                if (result) {
+                    result += aName;
+                } else {
+                    result = aName;
+                }
+            }
         }
     }
-    return acumulatedText;
+    return result;
 }
 
 function getComputedStylesAttribute(element: DomElement, computedStyle: string, attribute: string): string {
@@ -280,7 +327,7 @@ function getComputedStylesAttribute(element: DomElement, computedStyle: string, 
     for (let attr of attribs) {
         console.log(attr);
         if (isAttr.test(attr)) {
-            attributeContent = attribs[count+1];
+            attributeContent = attribs[count + 1];
         }
         count++;
     }
@@ -299,13 +346,96 @@ function getDefaultName(element: DomElement): string {
 
     /*if (type === "image") {
       result = "image";
-    } */ if (type === "submit") {
+    } */
+    if (type === "submit") {
         result = "reset";
     } else if (type === "reset") {
         result = "reset//<//a//>";
     }
 
     return result;
+}
+
+function isRoleControl(element: DomElement): boolean {
+
+    let controlRoles = ["textbox", "button", "combobox", "listbox", "range", "progressbar", "scrollbar", "slider", "spinbutton"];
+
+    if (element.attribs === undefined)
+        return false;
+
+    let role = element.attribs["role"];
+
+    return controlRoles.indexOf(role) >= 0
+
+
+}
+
+function getValueFromEmbededControl(element: DomElement, processedHTML: DomElement[]): string {//stew
+    if (!element.attribs)
+        return "";
+
+    let role = element.attribs.role;
+    let value = "";
+
+
+    if ((role === "textbox") && element.children !== undefined) {
+        value = DomUtils.getText(element);
+    } else if (role === "combobox") {
+        let refrencedByLabel = stew.select(element, `[aria-activedescendant]`);
+        let aria_descendendant, selectedElement;
+        if (refrencedByLabel.length > 0) {
+            aria_descendendant = refrencedByLabel[0].attribs["aria-activedescendant"];
+            selectedElement = stew.select(element, `[id="${aria_descendendant}"]`);
+        }
+
+        let aria_owns = element.attribs["aria-owns"];
+        let elementasToSelect = stew.select(processedHTML, `[id="${aria_owns}"]`);
+
+        let elementWithAriaSelected;
+        if (elementasToSelect.length > 0)
+            elementWithAriaSelected = stew.select(elementasToSelect[0], `aria-selected="true"`);
+
+
+        if (selectedElement.length > 0) {
+            value = DomUtils.getText(selectedElement[0]);
+        } else if (elementWithAriaSelected.length > 0) {
+            value = DomUtils.getText(elementWithAriaSelected[0]);
+        }
+
+    } else if (role === "listbox" || element.name === 'select') {
+        let elementsWithId = stew.select(element, `[id]`);
+        let elementWithAriaSelected = stew.select(element, `aria-selected="true"`);
+        let selectedElement = [];
+        let optionSelected;
+
+        for (let elementWithId of elementsWithId) {
+            if (selectedElement.length === 0) {
+                let id = elementWithId.attribs.id;
+                selectedElement = stew.select(element, `[aria-activedescendant="${id}"]`);
+            }
+        }
+
+        if (element.name === 'select') {
+            optionSelected = stew.select(element, `[selected]`);
+        }
+
+        if (selectedElement.length > 0)
+            value = DomUtils.getText(elementsWithId[0]);
+        else if (elementWithAriaSelected.length > 0) {
+            value = DomUtils.getText(elementWithAriaSelected[0]);
+        } else if (optionSelected.length > 0) {
+            value = DomUtils.getText(optionSelected[0]);
+        }
+    } else if (role === "range" || role === "progressbar" || role === "scrollbar" || role === "slider" || role === "spinbutton") {
+        if (element.attribs["aria-valuetext"] !== undefined)
+            value = element.attribs["aria-valuetext"];
+        else if (element.attribs["aria-valuenow"] !== undefined)
+            value = element.attribs["aria-valuenow"];
+    }
+
+    return value;
+
+
 }
 
 
@@ -392,19 +522,7 @@ function referencedByWidget(element: DomElement, id: string, processedHTML: DomE
 }
 
 
-function isControl(element: DomElement): boolean {
 
-    let controlRoles = ["textbox", "button", "combobox", "listbox", "range", "progressbar", "scrollbar", "slider", "spinbutton"];
-
-    if (element.attribs === undefined)
-        return false;
-
-    let role = element.attribs["role"];
-
-    return controlRoles.indexOf(role) >= 0
-
-
-}
 
 function getElementById(id: string | undefined, processedHTML: DomElement[]): DomElement[] {
     let element;
@@ -528,98 +646,13 @@ function getValueFromLabelWithControl(id: string, element: DomElement, processed
 }
 
 //adidcionar roles filhos e elementos html relacionados. adiconar selected
-function getValueFromEmbededControl(element: DomElement, processedHTML: DomElement[]): string {//stew
-    if (!element.attribs)
-        return "";
 
-    let role = element.attribs.role;
-    let value = "";
-
-
-    if ((element.name === "textarea" || role === "textbox") && element.children !== undefined) {
-        value = DomUtils.getText(element);
-    } else if (element.name === "input" && element.attribs && element.attribs["type"] === "text") {
-        value = element.attribs["value"];
-    } else if ((element.name === "button" || role === "button") && element.children !== undefined) {
-        value = DomUtils.getText(element);
-    } else if (role === "combobox") {
-        let refrencedByLabel = stew.select(element, `[aria-activedescendant]`);
-        let aria_descendendant, selectedElement;
-        if (refrencedByLabel.length > 0) {
-            aria_descendendant = refrencedByLabel[0].attribs["aria-activedescendant"];
-            selectedElement = stew.select(element, `[id="${aria_descendendant}"]`);
-        }
-
-        let aria_owns = element.attribs["aria-owns"];
-        let elementasToSelect = stew.select(processedHTML, `[id="${aria_owns}"]`);
-
-        let elementWithAriaSelected;
-        if (elementasToSelect.length > 0)
-            elementWithAriaSelected = stew.select(elementasToSelect[0], `aria-selected="true"`);
-
-
-        if (selectedElement.length > 0) {
-            value = DomUtils.getText(selectedElement[0]);
-        } else if (elementWithAriaSelected.length > 0) {
-            value = DomUtils.getText(elementWithAriaSelected[0]);
-        }
-
-    } else if (role === "listbox" || element.name === 'select') {
-        let elementsWithId = stew.select(element, `[id]`);
-        let elementWithAriaSelected = stew.select(element, `aria-selected="true"`);
-        let selectedElement = [];
-        let optionSelected;
-
-        for (let elementWithId of elementsWithId) {
-            if (selectedElement.length === 0) {
-                let id = elementWithId.attribs.id;
-                selectedElement = stew.select(element, `[aria-activedescendant="${id}"]`);
-            }
-        }
-
-        if (element.name === 'select') {
-            optionSelected = stew.select(element, `[selected]`);
-        }
-
-        if (selectedElement.length > 0)
-            value = DomUtils.getText(elementsWithId[0]);
-        else if (elementWithAriaSelected.length > 0) {
-            value = DomUtils.getText(elementWithAriaSelected[0]);
-        } else if (optionSelected.length > 0) {
-            value = DomUtils.getText(optionSelected[0]);
-        }
-    } else if (role === "range" || role === "progressbar" || role === "scrollbar" || role === "slider" || role === "spinbutton") {
-        if (element.attribs["aria-valuetext"] !== undefined)
-            value = element.attribs["aria-valuetext"];
-        else if (element.attribs["aria-valuenow"] !== undefined)
-            value = element.attribs["aria-valuenow"];
-    }
-
-    return value;
-
-
-}
 
 function getText(element: DomElement): string {
 
     return _.trim(DomUtils.getText(element));
 }
 
-function isWidget(element: DomElement): boolean {
-
-    let widgetElements = ['button', 'input', 'meter', 'output', 'progress', 'select', 'textarea'];
-    let widgetRoles = ["button", "checkbox", "gridcell", "link", "menuitem", "menuitemcheckbox", "menuitemradio", "option", "progressbar", "radio", "scrollbar", "searchbox", "separator", "slider", "spinbutton", "switch", "tab", "tabpanel", "textbox", "treeitem"];
-
-    if (element.attribs === undefined)
-        return false;
-
-    let role = element.attribs["role"];
-    let name = '';
-    if (element.name)
-        name = element.name;
-
-    return widgetRoles.indexOf(role) >= 0 || widgetElements.indexOf(name) >= 0;
-}
 
 
 //default name
