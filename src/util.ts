@@ -93,7 +93,7 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 }
 
 
-function getAccessibleName(element: DomElement, processedHTML: DomElement[], reference: boolean, isWidgete: boolean): string | undefined {
+function getAccessibleName(element: DomElement, processedHTML: DomElement[], recursion: boolean, isWidgete: boolean): string | undefined {
     let AName, ariaLabelBy, ariaLabel, title, alt, attrType, value, role, placeholder, id;
     let typesWithLabel = ["text", "password", "search", "tel", "email", "url"];
     let tabularElements = ["tr", "td", "th"];
@@ -112,13 +112,15 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         attrType = element.attribs["type"];
         title = element.attribs["title"];
         role = element.attribs["role"];
+        id = element.attribs["id"];
     }
+    let refrencedByAriaLabel =elementIsReferencedByAriaLabel(id, processedHTML, element);;
 
-    if (DomUtil.isElementHidden(element) && !reference) {
+    if (DomUtil.isElementHidden(element) && !recursion) {
         //noAName
     } else if (type === "text") {
         AName = DomUtils.getText(element);
-    } else if (ariaLabelBy && ariaLabelBy !== "" && !reference) {
+    } else if (ariaLabelBy && ariaLabelBy !== "" && !refrencedByAriaLabel) {
         AName = getAccessibleNameFromAriaLabelledBy(element,ariaLabelBy, processedHTML);
     } else if (ariaLabel && _.trim(ariaLabel) !== "") {
         AName = ariaLabel;
@@ -133,22 +135,18 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         }
         AName = getFirstNotUndefined(value, title, getDefaultName(element));
     } else if (formElements.indexOf(name) > 0 && !type) {
-        if (element.attribs) {
-            id = element.attribs["id"];
-        }
         AName = getFirstNotUndefined(getValueFromLabel(element, id, processedHTML), title);
     } else if (name === "input" && (typesWithLabel.indexOf(attrType) > 0)) {
         if (element.attribs) {
-            id = element.attribs["id"];
             placeholder = element.attribs["placeholder"];
         }
         AName = getFirstNotUndefined(getValueFromLabel(element, id, processedHTML), title, placeholder);
     } else if (name === "textarea") {
         if (element.attribs) {
-            id = element.attribs["id"];
+
             placeholder = element.attribs["placeholder"];
         }
-        if (reference) {
+        if (recursion) {
             AName = getFirstNotUndefined(getValueFromLabel(element, id, processedHTML), title, placeholder);
         } else {
             AName = getFirstNotUndefined(getTextFromCss(element, processedHTML), title, placeholder);
@@ -161,7 +159,7 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], ref
         AName = getFirstNotUndefined(getValueFromSpecialLabel(element, "legend", processedHTML), title);
     } else if (isWidgete&&isRoleControl(element)) {
         AName = getFirstNotUndefined(getValueFromEmbededControl(element,processedHTML), title);
-    }else if (allowNameFromContent || ((role && allowNameFromContent) || (!role)) && reference || name === "label" || name === "legend" || name === "caption") {
+    }else if (allowNameFromContent || ((role && allowNameFromContent) || (!role)) && recursion || name === "label" || name === "legend" || name === "caption") {
         AName = getFirstNotUndefined(getTextFromCss(element, processedHTML), title);
     } else if (sectionAndGrouping.indexOf(String(element.name)) >= 0 || element.name === "iframe" || tabularElements.indexOf(String(name)) >= 0) {//section and grouping
         AName = getFirstNotUndefined(title);
@@ -437,6 +435,14 @@ function getValueFromEmbededControl(element: DomElement, processedHTML: DomEleme
 
 }
 
+function elementIsReferencedByAriaLabel(id: string, processedHTML: DomElement[], element: DomElement): boolean {
+
+    let refrencedByAriaLabel = stew.select(processedHTML, `[aria-labelledby="${id}"]`);
+
+    return refrencedByAriaLabel.length !== 0;
+
+}
+
 
 /*
 function elementIsHidden(element: DomElement): boolean {
@@ -470,15 +476,6 @@ function elementIsHiddenCSS(element: DomElement): boolean {
 
 
 
-function elementIsReferenced(id: string, processedHTML: DomElement[], element: DomElement): boolean {
-
-    let refrencedByAriaLabel = stew.select(processedHTML, `[aria-labelledby="${id}"]`);
-    let refrencedByLabel = stew.select(processedHTML, `label[for="${id}"]`);
-    let parent = element.parent;
-
-    return (parent && parent.name === "label") || refrencedByAriaLabel.length !== 0 || refrencedByLabel.length !== 0;
-
-}
 
 
 function referencedByWidget(element: DomElement, id: string, processedHTML: DomElement[]): boolean {
