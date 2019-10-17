@@ -12,7 +12,7 @@ import {
 import {
   getElementSelector,
   transform_element_into_html,
-   getComputedStylesAttribute
+   getAccessibleName
 } from '../util';
 import Technique from './Technique.object';
 
@@ -62,7 +62,8 @@ class QW_HTML_T35 extends Technique {
       description: '',
       resultCode: ''
     };
-    let accesibleName = getComputedStylesAttribute(element, "computed-style-after", "^ content: &quot");
+    console.log(element.name);
+    let accesibleName = getAccessibleName(element, processedHTML,false,false);
     console.log(accesibleName);
     if (accesibleName) { // fails if the element doesn't contain an accessible name
       evaluation.verdict = 'passed';

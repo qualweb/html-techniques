@@ -114,29 +114,36 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], rec
         role = element.attribs["role"];
         id = element.attribs["id"];
     }
-    let refrencedByAriaLabel =elementIsReferencedByAriaLabel(id, processedHTML, element);
+    let refrencedByAriaLabel = elementIsReferencedByAriaLabel(id, processedHTML, element);
 
     if (DomUtil.isElementHidden(element) && !recursion) {
         //noAName
     } else if (type === "text") {
         AName = DomUtils.getText(element);
-    } else if (ariaLabelBy && ariaLabelBy !== "" && !(refrencedByAriaLabel&&recursion)) {
-        AName = getAccessibleNameFromAriaLabelledBy(element,ariaLabelBy, processedHTML);
+    } else if (ariaLabelBy && ariaLabelBy !== "" && !(refrencedByAriaLabel && recursion)) {
+        AName = getAccessibleNameFromAriaLabelledBy(element, ariaLabelBy, processedHTML);
     } else if (ariaLabel && _.trim(ariaLabel) !== "") {
         AName = ariaLabel;
-    } else if (name === "area" || name === "img" || (name === "input" && attrType === "image")) {
+    } else if (name === "area" || (name === "input" && attrType === "image")) {
         if (element.attribs) {
             alt = element.attribs["alt"];
         }
         AName = getFirstNotUndefined(alt, title);
+    } else if (name === "img") {
+        if (element.attribs) {
+            alt = element.attribs["alt"];
+        }
+        if (!hasRolePresentationOrNone(element)) {
+            AName = getFirstNotUndefined(alt, title);
+        }
     } else if (name === "input" && (attrType === "button" || attrType === "submit" || attrType === "reset")) {
         if (element.attribs) {
             value = element.attribs["value"];
         }
-        AName = getFirstNotUndefined(value, title, getDefaultName(element));
+        AName = getFirstNotUndefined(value, getDefaultName(element), title);
     } else if (formElements.indexOf(name) > 0 && !type) {
         AName = getFirstNotUndefined(getValueFromLabel(element, id, processedHTML), title);
-    } else if (name === "input" && (typesWithLabel.indexOf(attrType) > 0)) {
+    } else if (name === "input" && (typesWithLabel.indexOf(attrType) >= 0)) {
         if (element.attribs) {
             placeholder = element.attribs["placeholder"];
         }
@@ -146,7 +153,7 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], rec
 
             placeholder = element.attribs["placeholder"];
         }
-        if (recursion) {
+        if (!recursion) {
             AName = getFirstNotUndefined(getValueFromLabel(element, id, processedHTML), title, placeholder);
         } else {
             AName = getFirstNotUndefined(getTextFromCss(element, processedHTML), title, placeholder);
@@ -157,11 +164,11 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], rec
         AName = getFirstNotUndefined(getValueFromSpecialLabel(element, "caption", processedHTML), title);
     } else if (name === "fieldset") {
         AName = getFirstNotUndefined(getValueFromSpecialLabel(element, "legend", processedHTML), title);
-    } else if (isWidgete&&isRoleControl(element)) {
-        AName = getFirstNotUndefined(getValueFromEmbededControl(element,processedHTML), title);
-    }else if (allowNameFromContent || ((role && allowNameFromContent) || (!role)) && recursion || name === "label" || name === "legend" || name === "caption") {
+    } else if (isWidgete && isRoleControl(element)) {
+        AName = getFirstNotUndefined(getValueFromEmbededControl(element, processedHTML), title);
+    } else if (allowNameFromContent || ((role && allowNameFromContent) || (!role)) && recursion || name === "label") {
         AName = getFirstNotUndefined(getTextFromCss(element, processedHTML), title);
-    } else if (sectionAndGrouping.indexOf(String(element.name)) >= 0 || element.name === "iframe" || tabularElements.indexOf(String(name)) >= 0) {//section and grouping
+    } else if (sectionAndGrouping.indexOf(String(element.name)) >= 0 || element.name === "iframe" || tabularElements.indexOf(String(name)) >= 0) {
         AName = getFirstNotUndefined(title);
     }
 
@@ -193,14 +200,14 @@ function getFirstNotUndefined(...args: any[]): string | undefined {
 }
 
 
-function getAccessibleNameFromAriaLabelledBy(element: DomElement,ariaLabelId: string, processedHTML: DomElement[]): string | undefined {
+function getAccessibleNameFromAriaLabelledBy(element: DomElement, ariaLabelId: string, processedHTML: DomElement[]): string | undefined {
     let ListIdRefs = ariaLabelId.split(" ");
     let result: string | undefined;
     let accessNameFromId: string | undefined;
-    let isWidgete= isWidget(element);
+    let isWidgete = isWidget(element);
 
     for (let id of ListIdRefs) {
-        accessNameFromId = getAccessibleName(DomUtil.getElementById(id, processedHTML)[0], processedHTML, true,isWidgete);
+        accessNameFromId = getAccessibleName(DomUtil.getElementById(id, processedHTML)[0], processedHTML, true, isWidgete);
         if (accessNameFromId) {
             if (result) {
                 result += accessNameFromId;
@@ -219,8 +226,8 @@ function getTextFromCss(element: DomElement, processedHTML: DomElement[]): strin
     let after = getComputedStylesAttribute(element, "computed-style-after", "^ content: &quot");
     let aNameChildren = getAccessibleNameFromChildren(element, processedHTML);
 
-    if(!aNameChildren){
-        aNameChildren="";
+    if (!aNameChildren) {
+        aNameChildren = "";
     }
 
 
@@ -266,7 +273,8 @@ function getValueFromSpecialLabel(element: DomElement, label: string, processedH
 
     let labelElement = stew.select(element, label);
     let accessNameFromLabel;
-    accessNameFromLabel = getAccessibleName(labelElement[0], processedHTML, true,false);
+    if(labelElement.length > 0)
+    accessNameFromLabel = getAccessibleName(labelElement[0], processedHTML, true, false);
 
 
     return accessNameFromLabel;
@@ -276,14 +284,14 @@ function getValueFromLabel(element: DomElement, id: string, processedHTML: DomEl
 
     let refrencedByLabel = stew.select(processedHTML, `label[for="${id}"]`);
     let parent = element.parent;
-    if(parent && parent.name === "label"){
+    if (parent && parent.name === "label") {
         refrencedByLabel.push(parent);
     }
     let result, accessNameFromLabel;
-    let isWidgete= isWidget(element);
+    let isWidgete = isWidget(element);
 
     for (let label of refrencedByLabel) {
-        accessNameFromLabel = getAccessibleName(label, processedHTML, true,isWidgete);
+        accessNameFromLabel = getAccessibleName(label, processedHTML, true, isWidgete);
         if (accessNameFromLabel) {
             if (result) {
                 result += accessNameFromLabel;
@@ -296,12 +304,12 @@ function getValueFromLabel(element: DomElement, id: string, processedHTML: DomEl
 }
 
 function getAccessibleNameFromChildren(element: DomElement, processedHTML: DomElement[]): string {
-    let isWidgete= isWidget(element);
-    let result,aName;
+    let isWidgete = isWidget(element);
+    let result, aName;
 
     if (element.children) {
         for (let child of element.children) {
-            aName = getAccessibleName(child, processedHTML, true,isWidgete);
+            aName = getAccessibleName(child, processedHTML, true, isWidgete);
             if (aName) {
                 if (result) {
                     result += aName;
@@ -442,6 +450,10 @@ function elementIsReferencedByAriaLabel(id: string, processedHTML: DomElement[],
 
     return refrencedByAriaLabel.length !== 0;
 
+}
+
+function hasRolePresentationOrNone(element: DomElement): boolean {
+    return !!element.attribs && (element.attribs["role"] === "none" || element.attribs["role"] === "presentation");
 }
 
 
@@ -593,10 +605,6 @@ function getTextAlternative(element: DomElement, processedHTML: DomElement[], id
 }
 
 
-function hasRolePresentationOrNone(element: DomElement): boolean {
-    return !!element.attribs && (element.attribs["role"] === "none" || element.attribs["role"] === "presentation");
-let widgetElements = ['button', 'input', 'meter', 'output', 'progress', 'select', 'textarea'];
-}
 
 function getLabel(id: string, processedHTML: DomElement[], element: DomElement): DomElement {
 

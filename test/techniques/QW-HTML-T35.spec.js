@@ -13,7 +13,7 @@ describe('Technique QW-HTML-T35', function() {
 
   const tests = [
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T35/test1.html',
       outcome: 'warning'
     }/** ,
     {
