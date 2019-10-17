@@ -114,13 +114,13 @@ function getAccessibleName(element: DomElement, processedHTML: DomElement[], rec
         role = element.attribs["role"];
         id = element.attribs["id"];
     }
-    let refrencedByAriaLabel =elementIsReferencedByAriaLabel(id, processedHTML, element);;
+    let refrencedByAriaLabel =elementIsReferencedByAriaLabel(id, processedHTML, element);
 
     if (DomUtil.isElementHidden(element) && !recursion) {
         //noAName
     } else if (type === "text") {
         AName = DomUtils.getText(element);
-    } else if (ariaLabelBy && ariaLabelBy !== "" && !refrencedByAriaLabel) {
+    } else if (ariaLabelBy && ariaLabelBy !== "" && !(refrencedByAriaLabel&&recursion)) {
         AName = getAccessibleNameFromAriaLabelledBy(element,ariaLabelBy, processedHTML);
     } else if (ariaLabel && _.trim(ariaLabel) !== "") {
         AName = ariaLabel;
@@ -216,8 +216,12 @@ function getAccessibleNameFromAriaLabelledBy(element: DomElement,ariaLabelId: st
 function getTextFromCss(element: DomElement, processedHTML: DomElement[]): string {
 
     let before = getComputedStylesAttribute(element, "computed-style-before", "^ content: &quot");
-    let after = getComputedStylesAttribute(element, "computed-style-after", "^ content: &quot;");
+    let after = getComputedStylesAttribute(element, "computed-style-after", "^ content: &quot");
     let aNameChildren = getAccessibleNameFromChildren(element, processedHTML);
+
+    if(!aNameChildren){
+        aNameChildren="";
+    }
 
 
     return before + aNameChildren + after;
@@ -228,7 +232,6 @@ function allowsNameFromContent(element: DomElement): boolean {
 
     let role, name;
     name = element.name;
-    console.log(name);
     let nameFromContentElements = ["button", "a", "link", "output", "summary", "abbr", "b", "bdi", "bdo", "br", "cite", "code", "dfn", "em", "i", "kbd"
         , "mark", "q", "rp", "rt", "ruby", "s", "samp", "small", "strong", "sub", "and", "sup", "time", "u", "var", "wbr"];
     if (element.attribs !== undefined)
@@ -238,7 +241,6 @@ function allowsNameFromContent(element: DomElement): boolean {
     let nameFromContentRoles = ["button", "cell", "checkbox", "columnheader", "gridcell", "heading", "link", "menuitem",
         "menuitemcheckbox", "menuitemradio", "option", "radio", "row", "rowgroup", "rowheader", "switch", "tab",
         "tooltip", "tree", "treeitem"];
-    console.log((nameFromContentRoles.indexOf(role) >= 0) + ":" + (nameFromContentElements.indexOf(name) >= 0));
 
     return nameFromContentRoles.indexOf(role) >= 0 || nameFromContentElements.indexOf(name) >= 0;
 }
@@ -322,7 +324,6 @@ function getComputedStylesAttribute(element: DomElement, computedStyle: string, 
     let attributeContent = "";
     let count = 0;
     for (let attr of attribs) {
-        console.log(attr);
         if (isAttr.test(attr)) {
             attributeContent = attribs[count + 1];
         }
@@ -347,7 +348,7 @@ function getDefaultName(element: DomElement): string {
     if (type === "submit") {
         result = "reset";
     } else if (type === "reset") {
-        result = "reset//<//a//>";
+        result = "reset";
     }
 
     return result;
