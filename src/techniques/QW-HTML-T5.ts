@@ -21,7 +21,7 @@ const technique: HTMLTechnique = {
   description: 'This technique checks all input elements that are buttons use alt text',
   metadata: {
     target: {
-      element: 'input '
+      element: 'input'
     },
     'success-criteria': [{
       name: '1.1.1',
@@ -80,4 +80,4 @@ class QW_HTML_T5 extends Technique {
   }
 }
 
-export = QW_HTML_T5;()
+export = QW_HTML_T5;

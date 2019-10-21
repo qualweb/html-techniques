@@ -18,7 +18,7 @@ const technique: HTMLTechnique = {
   name: 'Failure of Success Criterion 1.1.1 and 1.2.1 due to using text alternatives that are not alternatives',
   code: 'QW-HTML-T8',
   mapping: 'F30',
-  description: 'This describes a failure condition for all techniques involving text alternatives. If the text in the 'text alternative' cannot be used in place of the non-text content without losing information or function then it fails because it is not, in fact, an alternative to the non-text content.',
+  description: 'This describes a failure condition for all techniques involving text alternatives. If the text in the \'text alternative\' cannot be used in place of the non-text content without losing information or function then it fails because it is not, in fact, an alternative to the non-text content.',
   metadata: {
     target: {
       attributes: 'alt'
