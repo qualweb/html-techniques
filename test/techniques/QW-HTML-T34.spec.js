@@ -26,7 +26,7 @@ describe('Technique QW-HTML-T34', function() {
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T34/test4.html',
-      outcome: 'passed'
+      outcome: 'failed'
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T34/test5.html',

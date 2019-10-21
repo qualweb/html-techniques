@@ -1,4 +1,5 @@
 'use strict';
+import { AccessibilityTreeUtils} from '@qualweb/util';
 
 import _ from 'lodash';
 import {
@@ -11,8 +12,7 @@ import {
 
 import {
   getElementSelector,
-  transform_element_into_html,
-  getAccessibleName
+  transform_element_into_html
 } from '../util';
 import Technique from './Technique.object';
 
@@ -23,9 +23,8 @@ const technique: HTMLTechnique = {
   description: 'This technique checks the text alternative of images which are the only content of a link',
   metadata: {
     target: {
-      'parent-sibling': 'img',
-      parent: 'map',
-      element: 'area'
+      parent: 'a',
+      element: 'img'
     },
     'success-criteria': [
       {
@@ -92,12 +91,12 @@ class QW_HTML_T34 extends Technique {
 
     if (aText !== undefined&&_.trim(aText)!=="") {
 
-    } else if (getAccessibleName(img,processedHTML,false)) {
+    } else if (AccessibilityTreeUtils.getAccessibleName(img,processedHTML,false,false)) {
         evaluation.verdict = 'passed';
         evaluation.description = `The image has an accessible name`;
         technique.metadata['passed']++;
 
-    } else if (getAccessibleName(element,processedHTML,false)) {
+    } else if (AccessibilityTreeUtils.getAccessibleName(element,processedHTML,false,false)) {
         evaluation['verdict'] = 'passed';
         evaluation['description'] = `The link has an accessible name`;
         technique['metadata']['passed']++;
