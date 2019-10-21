@@ -15,10 +15,10 @@ import {
 import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
-  name: 'Providing text alternatives for the area elements of image maps',
-  code: 'QW-HTML-T1',
-  mapping: 'H24',
-  description: 'This technique checks the text alternative of area elements of images maps',
+  name: 'Failure of Success Criterion 2.1.1 due to using only pointing-device-specific event handlers (including gesture) for a function ',
+  code: 'QW-HTML-T29',
+  mapping: 'F54',
+  description: 'This technique counts the number of mouse specific events',
   metadata: {
     target: {
       'parent-sibling': 'img',
