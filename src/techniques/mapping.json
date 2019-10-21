@@ -15,6 +15,7 @@
     "input[type=\"image\"]": ["QW-HTML-T5"],
     "b, basefont, font, i, s, strike, u": ["QW-HTML-T21"],
     "table": ["QW-HTML-T30","QW-HTML-T2","QW-HTML-T4","QW-HTML-T15"],
+    "table th": ["QW-HTML-T41"],
     "*[onmousedown], *[onmouseup], *[onclick], *[onmouseover], *[onmouseout]": ["QW-HTML-T6", "QW-HTML-T29"],
     "abbr": ["QW-HTML-T7"],
     "blink": ["QW-HTML-T16"],
