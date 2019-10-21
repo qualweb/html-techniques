@@ -60,8 +60,8 @@ class QW_HTML_T37 extends Technique {
       resultCode: ''
     };
 
-    const refElement = getElementByHRef(processedHTML, element);
-    const hidden = elementIsHidden(element);
+    const refElement = DomUtils.getElementReferencedByHREF(processedHTML, element);
+    const hidden = DomUtils.isElementHidden(element);
     if (refElement) {
       if (!hidden) {
         evaluation.verdict = 'warning';

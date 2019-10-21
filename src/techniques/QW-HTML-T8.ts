@@ -4,6 +4,8 @@ import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
+
+import { AccessibilityTreeUtils} from '@qualweb/util';
 import {
   DomElement
 } from 'htmlparser2';
@@ -18,7 +20,7 @@ const technique: HTMLTechnique = {
   name: 'Failure of Success Criterion 1.1.1 and 1.2.1 due to using text alternatives that are not alternatives',
   code: 'QW-HTML-T8',
   mapping: 'F30',
-  description: 'This describes a failure condition for all techniques involving text alternatives. If the text in the 'text alternative' cannot be used in place of the non-text content without losing information or function then it fails because it is not, in fact, an alternative to the non-text content.',
+  description: 'This describes a failure condition for all techniques involving text alternatives. If the text in the text alternative cannot be used in place of the non-text content without losing information or function then it fails because it is not, in fact, an alternative to the non-text content.',
   metadata: {
     target: {
       attributes: 'alt'
@@ -54,7 +56,7 @@ class QW_HTML_T8 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
 
     if (!element || !DomUtils.elementHasAttributes(element)) {
       return;
@@ -74,7 +76,7 @@ class QW_HTML_T8 extends Technique {
     const pattern3 = new RegExp('^Intro#[0-9]+');
     const pattern4 = new RegExp('^imagem/s[0-9]+');
 
-    const altText = DomUtils.getElementAttribute(element, 'alt').toLocaleLowerCase();
+    const altText = AccessibilityTreeUtils.getAccessibleName(element, processedHTML,false,false).toLocaleLowerCase();
 
     if (altText !== '' && !pattern4.test(altText) && !pattern3.test(altText) && !pattern2.test(altText) && !pattern1.test(altText) && !pattern.test(altText) && !default_title.includes(altText)) {
       evaluation.verdict = 'warning';
