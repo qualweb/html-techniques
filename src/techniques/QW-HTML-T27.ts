@@ -13,6 +13,8 @@ import {
   DomUtils
 } from '@qualweb/util';
 
+
+
 import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
@@ -59,6 +61,7 @@ class QW_HTML_T27 extends Technique {
       description: '',
       resultCode: ''
     };
+
 
     evaluation.verdict = 'warning';
     evaluation.description = 'Check that each heading identifies its section of the content';

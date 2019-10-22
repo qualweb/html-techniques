@@ -11,7 +11,7 @@ const {
 describe('Technique QW-HTML-T3', function() {
 
   const tests = [
-    {
+    /*{
       url: 'https://accessible-serv.lasige.di.fc.ul.pt/~fcaeiro/H71/H71fail.html',
       outcome: 'failed'
     },
@@ -57,6 +57,10 @@ describe('Technique QW-HTML-T3', function() {
     },
     {
       url: 'https://accessible-serv.lasige.di.fc.ul.pt/~fcaeiro/H71/H71warning4.html',
+      outcome: 'warning'
+    },*/
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h71/fieldsetFormAttribute.html',
       outcome: 'warning'
     }
   ];

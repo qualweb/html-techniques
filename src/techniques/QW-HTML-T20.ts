@@ -4,9 +4,7 @@ import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
-import {
-  DomElement
-} from 'htmlparser2';
+
 import validator from 'html-validator';
 
 import Technique from './Technique.object';
