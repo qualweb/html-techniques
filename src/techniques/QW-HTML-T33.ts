@@ -71,7 +71,7 @@ class QW_HTML_T32 extends Technique {
       trimTitle = trim(title)
     let text = AccessibilityTreeUtils.getTrimmedText(element);
 
-    if (trimTitle && trimTitle !== "") {
+    if (!trimTitle || trimTitle === "") {
       evaluation.verdict = 'failed';
       evaluation.description = `The element's title attribute is empty`;
       evaluation.resultCode = 'RC1';

@@ -39,6 +39,7 @@
     "test-t30": "mocha test/techniques/QW-HTML-T30.spec.js",
     "test-t31": "mocha test/techniques/QW-HTML-T31.spec.js",
     "test-t32": "mocha test/techniques/QW-HTML-T32.spec.js",
+    "test-t33": "mocha test/techniques/QW-HTML-T33.spec.js",
     "test-t37": "mocha test/techniques/QW-HTML-T37.spec.js",
     "clean": "node clean.js",
     "build": "npm run clean && tsc --build",

@@ -11,7 +11,7 @@
     "frame, iframe": ["QW-HTML-T10"],
     "title": ["QW-HTML-T13","QW-HTML-T24"],
     "form": ["QW-HTML-T32"],
-    "a": ["QW-HTML-T11"],
+    "a": ["QW-HTML-T11","QW-HTML-T33"],
     "input[type=\"image\"]": ["QW-HTML-T5"],
     "b, basefont, font, i, s, strike, u": ["QW-HTML-T21"],
     "table": ["QW-HTML-T30","QW-HTML-T2","QW-HTML-T4","QW-HTML-T15"],
