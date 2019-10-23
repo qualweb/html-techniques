@@ -7,7 +7,7 @@ import {
 import {
   DomElement
 } from 'htmlparser2';
-
+import {size} from 'lodash';
 import {
   DomUtils
 } from '@qualweb/util';
@@ -81,7 +81,7 @@ class QW_HTML_T31 extends Technique {
         }
         let exists = stew.select(processedHTML, '[id="' + id + '"]');
 
-        if (_.size(exists) > 0) { // the element has a longdesc attribute pointing to a resource in the current page
+        if (size(exists) > 0) { // the element has a longdesc attribute pointing to a resource in the current page
           evaluation['verdict'] = 'warning';
           evaluation['description'] = 'Please verify that the resource that longdesc is pointing at describes correctly the image';
           evaluation.resultCode = 'RC3';

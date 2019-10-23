@@ -80,4 +80,4 @@ class QW_HTML_T5 extends Technique {
   }
 }
 
-export = QW_HTML_T5;()
+export = QW_HTML_T5;
