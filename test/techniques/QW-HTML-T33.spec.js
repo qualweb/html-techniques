@@ -17,7 +17,7 @@ describe('Technique QW-HTML-T33', function() {
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T33/test2.html',
-      outcome: 'failed'
+      outcome: 'warning'
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T33/test3.html',
