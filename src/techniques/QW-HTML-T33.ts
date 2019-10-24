@@ -69,20 +69,15 @@ class QW_HTML_T32 extends Technique {
     let title = DomUtils.getElementAttribute(element, 'title');
     if (title)
       trimTitle = trim(title)
-    let text = AccessibilityTreeUtils.getTrimmedText(element);
 
     if (!trimTitle || trimTitle === "") {
       evaluation.verdict = 'failed';
       evaluation.description = `The element's title attribute is empty`;
       evaluation.resultCode = 'RC1';
-    } else if (text && trimTitle === text) {
-      evaluation.verdict = 'failed';
-      evaluation.description = `The element contains a title attribute equal to the text in the link`;
-      evaluation.resultCode = 'RC2';
-    } else {
+    }  else {
       evaluation.verdict = 'warning';
       evaluation.description = `Please verify that the element's title attribute describes correctly the link`;
-      evaluation.resultCode = 'RC3';
+      evaluation.resultCode = 'RC2';
     }
 
     evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
