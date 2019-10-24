@@ -100,7 +100,7 @@ class QW_HTML_T17 extends Technique {
         evaluation.description = 'id and headers attributes are correctly used';
         evaluation.resultCode = 'RC4';
       } else {
-        //todo se nao tiver ids, eh suposto dar fail? de certeza?
+        //todo se nao tiver ids, eh suposto dar inapplicable
         evaluation.verdict = 'failed';
         evaluation.description = 'id and headers attributes are not correctly used';
         evaluation.resultCode = 'RC5';
