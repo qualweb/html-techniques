@@ -5,6 +5,7 @@ import html from 'htmlparser-to-html';
 import clone from 'lodash/clone';
 
 const stew = new (require('stew-select')).Stew();
+const puppeteer = require('puppeteer');
 
 function getSelfLocationInParent(element: DomElement): string {
   let selector = '';
@@ -204,8 +205,18 @@ function getComputedStylesAttribute(element: DomElement, computedStyle: string, 
   return attributeContent.replace('&quot', '');
 }
 
+async function getNumberOfOpenPages(url: string) {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto(url, { 'waitUntil': 'networkidle0', timeout: 60000 });
+  let pages = await browser.pages();
+  await browser.close();
+  return pages.length;
+}
+
 
 export {
+  getNumberOfOpenPages,
   getElementSelector,
   transform_element_into_html,
   isFocusable,

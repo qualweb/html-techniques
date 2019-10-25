@@ -88,6 +88,13 @@ async function executeNotMappedTechniques(report: HTMLTechniquesReport, url: str
     report.metadata[report.techniques['QW-HTML-T20'].metadata.outcome]++;
     techniques['QW-HTML-T20'].reset();
   }
+
+  if (techniquesToExecute['QW-HTML-T35']) {
+    await techniques['QW-HTML-T35'].validate(url);
+    report.techniques['QW-HTML-T35'] = techniques['QW-HTML-T35'].getFinalResults();
+    report.metadata[report.techniques['QW-HTML-T35'].metadata.outcome]++;
+    techniques['QW-HTML-T35'].reset();
+  }
 }
 
 async function executeHTMLT(url: string, sourceHTML: DomElement[], processedHTML: DomElement[]): Promise<HTMLTechniquesReport> {
