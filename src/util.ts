@@ -1,8 +1,9 @@
 'use strict';
 
-import {DomElement} from 'htmlparser2';
+import { DomElement } from 'htmlparser2';
 import html from 'htmlparser-to-html';
 import clone from 'lodash/clone';
+const puppeteer = require('puppeteer');
 
 const stew = new (require('stew-select')).Stew();
 
@@ -98,7 +99,7 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 }
 
 function isFocusable(element: DomElement) {
-  if (element.attribs && (element.attribs['disabled'] !== undefined || elementIsHidden(element))){
+  if (element.attribs && (element.attribs['disabled'] !== undefined || elementIsHidden(element))) {
     return false;
   } else if (isDefaultFocusable(element)) {
     return true;
@@ -146,7 +147,7 @@ function getElementByHRef(processedHTML: DomElement[], element: DomElement): str
   } else {
     return null;
   }
-  
+
   let result = stew.select_first(processedHTML, '#' + href); //'[id='' + href + '']'
   if (result) {
     return result;
@@ -178,7 +179,7 @@ function elementIsHiddenCSS(element: DomElement): boolean {
   }
   let visibility = false;
   let displayNone = false;
-  
+
   if (element.attribs['computed-style'] !== undefined) {
     displayNone = getComputedStylesAttribute(element, 'computed-style', '^ display:').trim() === 'none';
     let visibilityATT = getComputedStylesAttribute(element, 'computed-style', '^ visibility:').trim();
@@ -196,12 +197,37 @@ function getComputedStylesAttribute(element: DomElement, computedStyle: string, 
   const isAttr = new RegExp(attribute);
   let attributeContent = '';
   for (const attr of attribs || []) {
-    if (isAttr.test(attr)){
+    if (isAttr.test(attr)) {
       attributeContent = attr.split(isAttr)[1];
     }
   }
-  
+
   return attributeContent.replace('&quot', '');
+}
+
+
+async function isFocusableBrowser(url: string, selector: string) {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto(url, { 'waitUntil': 'networkidle0', timeout: 60000 });
+  await page.focus(selector);
+
+  const snapshot = await page.accessibility.snapshot();
+  const node = findFocusedNode(snapshot);
+  console.log(node && node.name);
+
+  await browser.close();
+  return
+}
+
+function findFocusedNode(node) {
+  if (node.focused)
+    return node;
+  for (const child of node.children || []) {
+    const foundNode = findFocusedNode(child);
+    return foundNode;
+  }
+  return null;
 }
 
 
