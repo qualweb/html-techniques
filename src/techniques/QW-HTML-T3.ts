@@ -11,6 +11,7 @@ import {
 import {
   DomUtils
 } from '@qualweb/util';
+const stew = new(require('stew-select')).Stew();
 
 import Technique from "./Technique.object";
 
@@ -54,7 +55,7 @@ class QW_HTML_T3 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
 
     if (!element) {
       return;
@@ -65,10 +66,16 @@ class QW_HTML_T3 extends Technique {
       description: '',
       resultCode: ''
     };
+    let formATT = DomUtils.getElementAttribute(element,"form");
+    let validFormAtt=[];
 
-    if (!DomUtils.elementHasParent(element, 'form')) {
+    if(formATT){
+      validFormAtt = stew.select(processedHTML,'form[id="'+formATT+'"]');
+    }
+
+    if (!DomUtils.elementHasParent(element, 'form')&&validFormAtt.length===0) {
       evaluation.verdict = 'failed';
-      evaluation.description = 'The fieldset is not in a form control';
+      evaluation.description = 'The fieldset is not in a form and is not referencing a form';
       evaluation.resultCode = 'RC1';
     } else if (!DomUtils.elementHasChild(element, 'legend')) {
       evaluation.verdict = 'failed';
@@ -83,6 +90,7 @@ class QW_HTML_T3 extends Technique {
       evaluation.description = 'Please verify that the legend description is valid';
       evaluation.resultCode = 'RC4';
     }
+
 
     evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
     evaluation.pointer = DomUtils.getElementSelector(element);

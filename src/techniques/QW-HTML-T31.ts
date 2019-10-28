@@ -14,6 +14,7 @@ import {
 const stew = new(require('stew-select')).Stew();
 import Technique from './Technique.object';
 
+
 const technique: HTMLTechnique = {
   name: 'Using longdesc',
   code: 'QW-HTML-T31',
