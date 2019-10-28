@@ -4,6 +4,8 @@ import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
+
+import { AccessibilityTreeUtils} from '@qualweb/util';
 import {
   DomElement
 } from 'htmlparser2';
@@ -54,7 +56,7 @@ class QW_HTML_T8 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
 
     if (!element || !DomUtils.elementHasAttributes(element)) {
       return;
@@ -74,7 +76,7 @@ class QW_HTML_T8 extends Technique {
     const pattern3 = new RegExp('^Intro#[0-9]+');
     const pattern4 = new RegExp('^imagem/s[0-9]+');
 
-    const altText = DomUtils.getElementAttribute(element, 'alt').toLocaleLowerCase();
+    const altText = AccessibilityTreeUtils.getAccessibleName(element, processedHTML,false,false).toLocaleLowerCase();
 
     if (altText !== '' && !pattern4.test(altText) && !pattern3.test(altText) && !pattern2.test(altText) && !pattern1.test(altText) && !pattern.test(altText) && !default_title.includes(altText)) {
       evaluation.verdict = 'warning';

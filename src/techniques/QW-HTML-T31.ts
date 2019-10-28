@@ -11,7 +11,6 @@ import {size} from 'lodash';
 import {
   DomUtils
 } from '@qualweb/util';
-
 const stew = new(require('stew-select')).Stew();
 import Technique from './Technique.object';
 
