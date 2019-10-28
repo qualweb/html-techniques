@@ -48,7 +48,7 @@ describe('Technique QW-HTML-T34', function() {
         const { source, processed } = await getDom(test.url);
 
 
-        const report = await executeHTMLT(source.html.parsed, processed.html.parsed);
+        const report = await executeHTMLT(test.url,source.html.parsed, processed.html.parsed);
         expect(report.techniques['QW-HTML-T34'].metadata.outcome).to.be.equal(test.outcome);
       });
     });
