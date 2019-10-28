@@ -208,10 +208,11 @@ function getComputedStylesAttribute(element: DomElement, computedStyle: string, 
 async function getNumberOfOpenPages(url: string) {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-  await page.goto(url, { 'waitUntil': 'networkidle0', timeout: 60000 });
+  await page.goto(url, { 'waitUntil': 'networkidle0', timeout: 5000 });
   let pages = await browser.pages();
+  console.log(pages.length);
   await browser.close();
-  return pages.length;
+  return pages.length-1;
 }
 
 

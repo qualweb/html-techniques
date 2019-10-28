@@ -4,18 +4,11 @@ import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
-import {
-  DomElement
-} from 'htmlparser2';
 
-import {
-  DomUtils
-} from '@qualweb/util';
 
 import Technique from './Technique.object';
 import { getNumberOfOpenPages } from '../util';
 
-const stew = new(require('stew-select')).Stew();
 
 const technique: HTMLTechnique = {
   name: 'Failure of Success Criterion 3.2.1 and 3.2.5 due to opening a new window as soon as a new page is loaded ',
@@ -56,6 +49,7 @@ class QW_HTML_T35 extends Technique {
   }
 
   async validate(url: string): Promise < void > {
+    console.log(url);
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -64,13 +58,13 @@ class QW_HTML_T35 extends Technique {
     };
 
     const numberOfPages =  await getNumberOfOpenPages(url);
-    if (numberOfPages < 2) { // the element contains one of the following elements input[type~='submit image'], button[type='submit']
+    if (numberOfPages < 2) { 
       evaluation.verdict = 'passed';
-      evaluation.description = `The form contains one of the following elements input[type~="submit image"], button[type="submit"]`;
+      evaluation.description = `Browser didnt open new tab`;
       evaluation.resultCode = 'RC1';
-    } else { // fails if none of the following elements was found input[type~='submit image'], button[type='submit']
+    } else { 
       evaluation.verdict = 'failed';
-      evaluation.description = `Form tag doesn't contain any of the following elements input[type~="submit image"], button[type="submit"]`;
+      evaluation.description = `Browser opened a new tab`;
       evaluation.resultCode = 'RC2';
     }
 
