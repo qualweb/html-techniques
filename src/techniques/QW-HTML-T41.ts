@@ -19,7 +19,8 @@ const technique: HTMLTechnique = {
   description: 'The objective of this technique is to associate header cells with data cells in complex tables using the scope attribute.',
   metadata: {
     target: {
-      element: 'table th'
+      parent: 'table',
+      element: 'th'
     },
     'success-criteria': [{
       name: '1.3.1',
