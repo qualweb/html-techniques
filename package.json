@@ -40,6 +40,7 @@
     "test-t31": "mocha test/techniques/QW-HTML-T31.spec.js",
     "test-t32": "mocha test/techniques/QW-HTML-T32.spec.js",
     "test-t37": "mocha test/techniques/QW-HTML-T37.spec.js",
+    "test-t40": "mocha test/techniques/QW-HTML-T40.spec.js",
     "clean": "node clean.js",
     "build": "npm run clean && tsc --build",
     "pub": "npm run build && npm publish --access=public"

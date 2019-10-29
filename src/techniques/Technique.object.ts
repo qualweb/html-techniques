@@ -48,7 +48,7 @@ abstract class Technique {
     this.technique.metadata[result.verdict]++;
   }
 
-  abstract async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void>;
+  abstract async execute(element: DomElement | undefined, processedHTML: DomElement[],url ?:string): Promise<void>;
 
   getFinalResults() {
     this.outcomeTechnique();

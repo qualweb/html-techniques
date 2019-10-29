@@ -13,25 +13,35 @@ import {
 } from '@qualweb/util';
 
 import Technique from './Technique.object';
+import { isFocusableBrowser } from '../util';
 
 const technique: HTMLTechnique = {
-  name: 'Adding a link at the beginning of a block of repeated content to go to the end of the block',
-  code: 'QW-HTML-T37',
-  mapping: 'G123',
-  description: 'The objective of this technique is to provide a mechanism to bypass a block of material by skipping to the end of the block.',
+  name: ' Failure of Success Criteria 2.1.1, 2.4.7, and 3.2.1 due to using script to remove focus when focus is received ',
+  code: 'QW-HTML-T40',
+  mapping: 'F55',
+  description: 'Content that normally receives focus when the content is accessed by keyboard may have this focus removed by scripting.',
   metadata: {
     target: {
-      element: 'a',
-      attributes: 'href'
+      element: '*'
     },
     'success-criteria': [{
-      name: '2.4.1',
+      name: '2.1.1',
       level: 'A',
       principle: 'Operable',
-      url: 'https://www.w3.org/WAI/WCAG21/Understanding/bypass-blocks'
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/keyboard'
+    },{
+      name: '2.4.7',
+      level: 'A',
+      principle: 'Operable',
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/focus-visible'
+    },{
+      name: '3.2.1',
+      level: 'A',
+      principle: 'Understandable',
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/on-focus'
     }],
-    related: ['G1', 'G124'],
-    url: 'https://www.w3.org/WAI/WCAG21/Techniques/general/G123',
+    related: [],
+    url: 'https://www.w3.org/WAI/WCAG21/Techniques/failures/F55',
     passed: 0,
     warning: 0,
     failed: 0,
@@ -42,13 +52,13 @@ const technique: HTMLTechnique = {
   results: new Array < HTMLTechniqueResult > ()
 };
 
-class QW_HTML_T37 extends Technique {
+class QW_HTML_T40 extends Technique {
 
   constructor() {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
+  async execute(element: DomElement | undefined, processedHTML: DomElement[],url:string): Promise < void > {
     
     if (element === undefined) {
       return;
@@ -60,29 +70,29 @@ class QW_HTML_T37 extends Technique {
       resultCode: ''
     };
 
-    const refElement = DomUtils.getElementReferencedByHREF(processedHTML, element);
-    const hidden = DomUtils.isElementHidden(element);
-    if (refElement) {
-      if (!hidden) {
-        evaluation.verdict = 'warning';
-        evaluation.description = 'This link skips a content block';
+    const isFocusable = DomUtils.isElementFocusable(element);
+    let selector = DomUtils.getElementSelector(element);
+    let keepsFocus;
+
+    if(isFocusable){
+      keepsFocus = await isFocusableBrowser(url, selector);
+      if (keepsFocus) { 
+        evaluation.verdict = 'passed';
+        evaluation.description = `Element kept focus`;
         evaluation.resultCode = 'RC1';
-      } else {
+      }else{  
         evaluation.verdict = 'failed';
-        evaluation.description = 'This link that skips a content block is not visible';
+        evaluation.description = `Element didnt keep focus`;
         evaluation.resultCode = 'RC2';
       }
-    } else {
-      evaluation.verdict = 'inapplicable';
-      evaluation.description = `This link is not used to skip a content block`;
-      evaluation.resultCode = 'RC3';
-    }
 
     evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
     evaluation.pointer = DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
+
+    }  
   }
 }
 
-export = QW_HTML_T37;
+export = QW_HTML_T40;

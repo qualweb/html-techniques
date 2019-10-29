@@ -211,27 +211,34 @@ async function isFocusableBrowser(url: string, selector: string) {
   const page = await browser.newPage();
   await page.goto(url, { 'waitUntil': 'networkidle0', timeout: 60000 });
   await page.focus(selector);
+  const hrefElement = await page.$(selector);
 
-  const snapshot = await page.accessibility.snapshot();
-  const node = findFocusedNode(snapshot);
-  console.log(node && node.name);
+  let options = {
+    root:hrefElement
+  }
 
+  const snapshot = await page.accessibility.snapshot(options);
+ 
   await browser.close();
-  return
-}
 
-function findFocusedNode(node) {
+  return snapshot.focused!== undefined;
+}
+/*
+function findFocusedNode(node,i:string) {
+  let l = 0;
   if (node.focused)
-    return node;
+    return i+l;
   for (const child of node.children || []) {
-    const foundNode = findFocusedNode(child);
+    console.log(child);
+    const foundNode = findFocusedNode(child,);
     return foundNode;
   }
   return null;
-}
+}*/
 
 
 export {
+  isFocusableBrowser,
   getElementSelector,
   transform_element_into_html,
   isFocusable,
