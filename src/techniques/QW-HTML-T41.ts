@@ -19,8 +19,7 @@ const technique: HTMLTechnique = {
   description: 'The objective of this technique is to associate header cells with data cells in complex tables using the scope attribute.',
   metadata: {
     target: {
-      parent: 'table',
-      element: 'th'
+      element: ['th', 'td[scope]']
     },
     'success-criteria': [{
       name: '1.3.1',
@@ -59,11 +58,11 @@ class QW_HTML_T41 extends Technique {
       resultCode: ''
     };
 
-    if (!DomUtils.elementHasAttribute(element, 'scope')) {
+    if (element.name === 'th' && !DomUtils.elementHasAttribute(element, 'scope')) {
       evaluation.verdict = 'failed';
       evaluation.description = `The element doesn't contain a scope attribute`;
       evaluation.resultCode = 'RC1';
-    } else if (DomUtils.getElementAttribute(element, 'scope') === '') {
+    } else if (element.name === 'th' && DomUtils.getElementAttribute(element, 'scope') === '') {
       evaluation.verdict = 'failed';
       evaluation.description = `The element's scope attribute is empty`;
       evaluation.resultCode = 'RC2';
@@ -71,11 +70,11 @@ class QW_HTML_T41 extends Technique {
       let scope = DomUtils.getElementAttribute(element, 'scope');
       if (includes(['col', 'row', 'colgroup', 'rowgroup'], scope)) {
         evaluation.verdict = 'passed';
-        evaluation.description = 'The element contains one of the following: col, row, colgroup, rowgroup';
+        evaluation.description = 'The element\'s scope attribute matches the following values: col, row, colgroup, rowgroup';
         evaluation.resultCode = 'RC3';
       } else {
         evaluation.verdict = 'failed';
-        evaluation.description = 'The element\'s scope attribute doesn\'t match any of the following: col, row, colgroup, rowgroup';
+        evaluation.description = 'The element\'s scope attribute doesn\'t match any of the following values: col, row, colgroup, rowgroup';
         evaluation.resultCode = 'RC3';
       }
     }

@@ -20,6 +20,10 @@ describe('Technique QW-HTML-T41', function () {
       outcome: 'passed'
     },
     {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h63/passed3.html',
+      outcome: 'passed'
+    },
+    {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h63/failed1.html',
       outcome: 'failed'
     },
@@ -29,6 +33,10 @@ describe('Technique QW-HTML-T41', function () {
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h63/failed3.html',
+      outcome: 'failed'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h63/failed4.html',
       outcome: 'failed'
     },
     {
