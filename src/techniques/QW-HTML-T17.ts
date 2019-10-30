@@ -73,11 +73,14 @@ class QW_HTML_T17 extends Technique {
       console.log(id["attribs"]["id"]);
     }
 
-    //todo entao mas uma tabela com "ola" num tr, nao tem ids? o que se passa no puppeteer?
     if (hasIds.length <= 0 && hasHeaders.length <= 0) {
       evaluation.verdict = 'inapplicable';
       evaluation.description = 'Neither id or header attributes are used in this table';
       evaluation.resultCode = 'RC1';
+    } else if (hasIds <= 0) {
+      evaluation.verdict = 'inapplicable';
+      evaluation.description = 'id attributes aren\'t used in this table';
+      evaluation.resultCode = 'RC2';
     } else if (doesTableHaveDuplicateIds(element)) {
       evaluation.verdict = 'failed';
       evaluation.description = 'There are duplicate ids in the table';
@@ -85,7 +88,7 @@ class QW_HTML_T17 extends Technique {
     } else if (!AccessibilityTreeUtils.isDataTable(element, processedHTML)) {
       evaluation.verdict = 'inapplicable';
       evaluation.description = 'This table is a layout table';
-      evaluation.resultCode = 'RC2';
+      evaluation.resultCode = 'RC4';
     } else {
       let headersElements = stew.select(element, "[headers]");
       let headersMatchId = true;
@@ -95,15 +98,15 @@ class QW_HTML_T17 extends Technique {
         }
       }
 
+      //todo failed example 3 - se nao tiver headers, mas tiver ids, é inapplicable?
       if (headersMatchId) {
         evaluation.verdict = 'passed';
         evaluation.description = 'id and headers attributes are correctly used';
-        evaluation.resultCode = 'RC4';
+        evaluation.resultCode = 'RC5';
       } else {
-        //todo se nao tiver ids, eh suposto dar inapplicable
         evaluation.verdict = 'failed';
         evaluation.description = 'id and headers attributes are not correctly used';
-        evaluation.resultCode = 'RC5';
+        evaluation.resultCode = 'RC6';
       }
     }
     evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);

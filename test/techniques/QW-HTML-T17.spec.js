@@ -2,13 +2,13 @@ const {
   configure,
   executeHTMLT
 } = require('../../dist/index');
-const { expect } = require('chai');
+const {expect} = require('chai');
 const {
   getDom
 } = require('@qualweb/get-dom-puppeteer');
 
 
-describe('Technique QW-HTML-T17', function() {
+describe('Technique QW-HTML-T17', function () {
 
   const tests = [
     {
@@ -17,10 +17,6 @@ describe('Technique QW-HTML-T17', function() {
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h43/passed2.html',
-      outcome: 'passed'
-    },
-    {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h43/tabelaData2.html',
       outcome: 'passed'
     },
     {
@@ -37,6 +33,10 @@ describe('Technique QW-HTML-T17', function() {
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h43/tabelaData.html',
+      outcome: 'inapplicable'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h43/tabelaData2.html',
       outcome: 'inapplicable'
     },
     {
@@ -64,7 +64,7 @@ describe('Technique QW-HTML-T17', function() {
     describe(`${test.outcome.charAt(0).toUpperCase() + test.outcome.slice(1)} example ${i}`, function () {
       it(`should have outcome="${test.outcome}"`, async function () {
         this.timeout(20 * 1000);
-        const { source, processed } = await getDom(test.url);
+        const {source, processed} = await getDom(test.url);
 
 
         const report = await executeHTMLT(test.url, source.html.parsed, processed.html.parsed);
