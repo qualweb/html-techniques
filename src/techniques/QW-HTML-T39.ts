@@ -63,15 +63,16 @@ class QW_HTML_T39 extends Technique {
     };
 
     let AName, alt, role;
-    if (element.name = "img") {
+    if (element.name === "img") {
       alt = DomUtils.getElementAttribute(element, 'alt');
       role = DomUtils.getElementAttribute(element, 'role');
       AName = AccessibilityTreeUtils.getAccessibleName(element, processedHTML);
     }
     else {
-      AName = AccessibilityTreeUtils.getAcessibleNameSVG(url, DomUtils.getElementSelector(element));
+      console.log("svg"+ DomUtils.getElementSelector(element) )
+      AName =  await AccessibilityTreeUtils.getAcessibleNameSVG(url, DomUtils.getElementSelector(element));
     }
-
+    console.log(url+" "+AName);
     if (element.name === "img" && role === "none" || role === "presentation" || alt === "") {
       //inaplicable(presentation)
     } else {
@@ -96,6 +97,4 @@ class QW_HTML_T39 extends Technique {
 
 
 }
-}
-
 export = QW_HTML_T39;
