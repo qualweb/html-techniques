@@ -10,7 +10,7 @@ import {
 } from 'htmlparser2';
 import {AccessibilityTreeUtils, DomUtils} from '@qualweb/util';
 import Technique from "./Technique.object";
-import {remove} from 'lodash';
+import {remove, trim} from 'lodash';
 
 const stew = new (require('stew-select')).Stew();
 
@@ -61,54 +61,51 @@ class QW_HTML_T17 extends Technique {
     let hasHeaders = stew.select(element, "[headers]");
     let genId = RegExp("qw-generated-id-");
 
-    for (let id of hasIds) {
-      console.log(id["attribs"]["id"]);
-    }
     remove(hasIds, function (idElem: DomElement) {
       // @ts-ignore
       return genId.test(idElem["attribs"]["id"])
     });
-    console.log("---");
-    for (let id of hasIds) {
-      console.log(id["attribs"]["id"]);
-    }
 
-    if (hasIds.length <= 0 && hasHeaders.length <= 0) {
-      evaluation.verdict = 'inapplicable';
-      evaluation.description = 'Neither id or header attributes are used in this table';
-      evaluation.resultCode = 'RC1';
-    } else if (hasIds <= 0) {
-      evaluation.verdict = 'inapplicable';
-      evaluation.description = 'id attributes aren\'t used in this table';
-      evaluation.resultCode = 'RC2';
-    } else if (doesTableHaveDuplicateIds(element)) {
-      evaluation.verdict = 'failed';
-      evaluation.description = 'There are duplicate ids in the table';
-      evaluation.resultCode = 'RC3';
-    } else if (!AccessibilityTreeUtils.isDataTable(element, processedHTML)) {
-      evaluation.verdict = 'inapplicable';
-      evaluation.description = 'This table is a layout table';
-      evaluation.resultCode = 'RC4';
+    if (!AccessibilityTreeUtils.isDataTable(element, processedHTML)) {
+      if (hasIds.length > 0 || hasHeaders.length > 0) {
+        evaluation.verdict = 'failed';
+        evaluation.description = 'This table is a layout table with id or headers attributes';
+        evaluation.resultCode = 'RC1';
+      } else {
+        evaluation.verdict = 'inapplicable';
+        evaluation.description = 'This table is a layout table';
+        evaluation.resultCode = 'RC2';
+      }
     } else {
-      let headersElements = stew.select(element, "[headers]");
-      let headersMatchId = true;
-      for (let headerElem of headersElements) {
+      if (doesTableHaveDuplicateIds(element)) {
+        evaluation.verdict = 'failed';
+        evaluation.description = 'There are duplicate ids in this data table';
+        evaluation.resultCode = 'RC3';
+      } else if (hasHeaders.length <= 0) {
+        evaluation.verdict = 'inapplicable';
+        evaluation.description = 'No header attributes are used in this data table';
+        evaluation.resultCode = 'RC4';
+      } else {
+        let headersElements = stew.select(element, "[headers]");
+        let headersMatchId = true;
+        for (let headerElem of headersElements) {
+          if (headersMatchId) {
+            headersMatchId = doesHeadersMatchId(element, headerElem.attribs.headers);
+          }
+        }
+
         if (headersMatchId) {
-          headersMatchId = doesHeadersMatchId(element, headerElem.attribs.headers);
+          evaluation.verdict = 'passed';
+          evaluation.description = 'id and headers attributes are correctly used';
+          evaluation.resultCode = 'RC5';
+        } else {
+          evaluation.verdict = 'failed';
+          evaluation.description = 'id and headers attributes are not correctly used';
+          evaluation.resultCode = 'RC6';
         }
       }
-
-      //todo failed example 3 - se nao tiver headers, mas tiver ids, é inapplicable?
-      if (headersMatchId) {
-        evaluation.verdict = 'passed';
-        evaluation.description = 'id and headers attributes are correctly used';
-        evaluation.resultCode = 'RC5';
-      } else {
-        evaluation.verdict = 'failed';
-        evaluation.description = 'id and headers attributes are not correctly used';
-        evaluation.resultCode = 'RC6';
-      }
     }
+
     evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
     evaluation.pointer = DomUtils.getElementSelector(element);
 
@@ -130,6 +127,7 @@ function doesTableHaveDuplicateIds(table: DomElement) {
       }
       if (counter > 1) {
         duplicate = true;
+        break;
       }
     }
   }
@@ -139,6 +137,9 @@ function doesTableHaveDuplicateIds(table: DomElement) {
 function doesHeadersMatchId(table, headers) {
   let outcome = false;
   let result = 0;
+  if (trim(headers) === '') {
+    return true;
+  }
   let splitHeaders = headers.split(" ");
 
   for (let header of splitHeaders) {

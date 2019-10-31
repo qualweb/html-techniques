@@ -20,6 +20,10 @@ describe('Technique QW-HTML-T17', function () {
       outcome: 'passed'
     },
     {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h43/emptyHeaders.html',
+      outcome: 'passed'
+    },
+    {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h43/failed1.html',
       outcome: 'failed'
     },
@@ -29,7 +33,7 @@ describe('Technique QW-HTML-T17', function () {
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h43/onlyId.html',
-      outcome: 'failed'
+      outcome: 'inapplicable'
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h43/tabelaData.html',
