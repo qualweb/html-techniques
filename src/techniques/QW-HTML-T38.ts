@@ -7,12 +7,13 @@ import {
 import {
   DomElement
 } from 'htmlparser2';
-
 import {
   DomUtils
 } from '@qualweb/util';
-
+import {trim} from 'lodash';
 import Technique from './Technique.object';
+
+const stew = new (require('stew-select')).Stew();
 
 const technique: HTMLTechnique = {
   name: 'Adding a link at the top of each page that goes directly to the main content area',
@@ -62,37 +63,52 @@ class QW_HTML_T38 extends Technique {
     //todo ainda por fazer
     let isVisible = true;
 
-    if(element.children) {
+    if (element.children) {
       let firstFocusableElem = findFirstFocusableElement(element);
       if (firstFocusableElem !== undefined) {
-        if (firstFocusableElem.name === 'a' && firstFocusableElem.attribs && firstFocusableElem.attribs["href"]) {
-          if (firstFocusableElem.attribs["href"]) {
-            // todo tenho de ver a src (para saber se eh local)
-            if (isVisible){
-              evaluation.verdict = 'warning';
-              evaluation.description = 'The first focusable control is a visible link to some content in the Web Page. Verify if it links to the main content.';
-              evaluation.resultCode = 'RC';
+        if (isVisible) {
+          if (firstFocusableElem.name === 'a' && firstFocusableElem.attribs && firstFocusableElem.attribs["href"]) {
+            //todo pode ser o caminho absoluto no link... estudar isso...
+            if (trim(firstFocusableElem.attribs["href"]).startsWith('#')) {
+              let idSymbol = firstFocusableElem.attribs["href"].indexOf('#');
+              let idReferenced = firstFocusableElem.attribs["href"].substring(idSymbol + 1);
+              let idElementReferenced = stew.select(element, ["id=\"" + idReferenced + "\""])[0];
+              if (idElementReferenced !== undefined) {
+                if (hasMainElementAsParent(idElementReferenced)) {
+                  evaluation.verdict = 'warning';
+                  evaluation.description = 'The first focusable control is a visible link to a <main> element.';
+                  evaluation.resultCode = 'RC';
+                } else {
+                  evaluation.verdict = 'warning';
+                  evaluation.description = 'The first focusable control is a visible link to some content in the Web Page. Verify if it links to the main content.';
+                  evaluation.resultCode = 'RC';
+                }
+              } else {
+                evaluation.verdict = 'failed';
+                evaluation.description = 'The first focusable control on the Web page links to an inexistent element';
+                evaluation.resultCode = 'RC';
+              }
             } else {
               evaluation.verdict = 'failed';
-              evaluation.description = 'The first focusable control on the Web page is not visible';
+              evaluation.description = 'The first focusable control on the Web page does not links to local content';
               evaluation.resultCode = 'RC';
             }
           } else {
-            // para ver se a description esta correta.. vejo o accessible name para tapar o buraco?
+            evaluation.verdict = 'failed';
+            evaluation.description = 'The first focusable control on the Web page is not a link';
+            evaluation.resultCode = 'RC';
           }
         } else {
           evaluation.verdict = 'failed';
-          evaluation.description = 'The first focusable control on the Web page is not a link';
+          evaluation.description = 'The first focusable control on the Web page is not visible when focused';
           evaluation.resultCode = 'RC';
         }
       } else {
-        //todo ou inapplicable?
         evaluation.verdict = 'failed';
         evaluation.description = 'This Web page does not have focusable controls';
         evaluation.resultCode = 'RC';
       }
     } else {
-      //todo ou failed?
       evaluation.verdict = 'inapplicable';
       evaluation.description = 'This Web page is empty';
       evaluation.resultCode = 'RC';
@@ -105,7 +121,7 @@ class QW_HTML_T38 extends Technique {
   }
 }
 
-function findFirstFocusableElement(element: DomElement): DomElement | undefined{
+function findFirstFocusableElement(element: DomElement): DomElement | undefined {
   let foundFirstFocusableElem = false;
   let firstFocusableElem: DomElement | undefined;
 
@@ -122,6 +138,18 @@ function findFirstFocusableElement(element: DomElement): DomElement | undefined{
     }
   }
   return firstFocusableElem;
+}
+
+function hasMainElementAsParent(element: DomElement): boolean {
+  let result = false;
+  while (!result && element.parent) {
+    if (element.parent.name === 'main') {
+      result = true;
+    } else {
+      hasMainElementAsParent(element.parent);
+    }
+  }
+  return result;
 }
 
 export = QW_HTML_T38;
