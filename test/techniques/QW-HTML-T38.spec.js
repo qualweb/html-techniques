@@ -32,11 +32,31 @@ describe('Technique QW-HTML-T38', function() {
       outcome: 'failed'
     },
     {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g1/emptyHref.html',
+      outcome: 'failed'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g1/wrongAbsolutePath.html',
+      outcome: 'failed'
+    },
+    {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g1/withoutMain.html',
       outcome: 'warning'
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g1/withMain.html',
+      outcome: 'warning'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g1/withFarAwayMain.html',
+      outcome: 'warning'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g1/absolutePath.html',
+      outcome: 'warning'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g1/fullAbsolutePath.html',
       outcome: 'warning'
     }
   ];
@@ -55,11 +75,11 @@ describe('Technique QW-HTML-T38', function() {
         const { source, processed } = await getDom(test.url);
 
         configure({
-          techniques: ['QW-HTML-T37']
+          techniques: ['QW-HTML-T38']
         });
 
         const report = await executeHTMLT(test.url, source.html.parsed, processed.html.parsed);
-        expect(report.techniques['QW-HTML-T37'].metadata.outcome).to.be.equal(test.outcome);
+        expect(report.techniques['QW-HTML-T38'].metadata.outcome).to.be.equal(test.outcome);
       });
     });
   }

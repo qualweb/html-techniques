@@ -10,7 +10,7 @@ import {
 import {
   DomUtils
 } from '@qualweb/util';
-import {trim} from 'lodash';
+import {trim, indexOf} from 'lodash';
 import Technique from './Technique.object';
 
 const stew = new (require('stew-select')).Stew();
@@ -48,7 +48,7 @@ class QW_HTML_T38 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: DomElement | undefined, processedHTML: DomElement[], url: string): Promise<void> {
 
     if (element === undefined) {
       return;
@@ -63,55 +63,66 @@ class QW_HTML_T38 extends Technique {
     //todo ainda por fazer
     let isVisible = true;
 
-    if (element.children) {
+    if (element.children && element.children.length > 0) {
       let firstFocusableElem = findFirstFocusableElement(element);
       if (firstFocusableElem !== undefined) {
         if (isVisible) {
           if (firstFocusableElem.name === 'a' && firstFocusableElem.attribs && firstFocusableElem.attribs["href"]) {
-            //todo pode ser o caminho absoluto no link... estudar isso...
-            if (trim(firstFocusableElem.attribs["href"]).startsWith('#')) {
-              let idSymbol = firstFocusableElem.attribs["href"].indexOf('#');
-              let idReferenced = firstFocusableElem.attribs["href"].substring(idSymbol + 1);
-              let idElementReferenced = stew.select(element, ["id=\"" + idReferenced + "\""])[0];
-              if (idElementReferenced !== undefined) {
-                if (hasMainElementAsParent(idElementReferenced)) {
-                  evaluation.verdict = 'warning';
-                  evaluation.description = 'The first focusable control is a visible link to a <main> element.';
-                  evaluation.resultCode = 'RC';
+            let urlConcatWithId = url + '#';
+            let lastSlash = url.lastIndexOf('/');
+            let filename = url.substring(lastSlash + 1);
+            let firstFocusableElemHREF = trim(firstFocusableElem.attribs['href']);
+            if (firstFocusableElemHREF.startsWith('#') || firstFocusableElemHREF.startsWith(urlConcatWithId) ||
+              firstFocusableElemHREF.startsWith(filename)) {
+              let idSymbol = firstFocusableElemHREF.indexOf('#');
+              let idReferenced = firstFocusableElemHREF.substring(idSymbol + 1);
+              if (idReferenced.length > 0) {
+                let idElementReferenced = stew.select(element, '[id="' + idReferenced + '"]')[0];
+                if (idElementReferenced !== undefined) {
+                  if (hasMainElementAsParent(idElementReferenced)) {
+                    evaluation.verdict = 'warning';
+                    evaluation.description = 'The first focusable control is a visible link to a <main> element.';
+                    evaluation.resultCode = 'RC1';
+                  } else {
+                    evaluation.verdict = 'warning';
+                    evaluation.description = 'The first focusable control is a visible link to some content in the Web Page. Verify if it links to the main content.';
+                    evaluation.resultCode = 'RC2';
+                  }
                 } else {
-                  evaluation.verdict = 'warning';
-                  evaluation.description = 'The first focusable control is a visible link to some content in the Web Page. Verify if it links to the main content.';
-                  evaluation.resultCode = 'RC';
+                  evaluation.verdict = 'failed';
+                  evaluation.description = 'The first focusable control on the Web page links to an inexistent element';
+                  evaluation.resultCode = 'RC3';
                 }
               } else {
+                //todo failed ou inapplicable?
                 evaluation.verdict = 'failed';
-                evaluation.description = 'The first focusable control on the Web page links to an inexistent element';
-                evaluation.resultCode = 'RC';
+                evaluation.description = 'The first focusable control on the Web page links to the top of the page';
+                evaluation.resultCode = 'RC4';
               }
             } else {
               evaluation.verdict = 'failed';
               evaluation.description = 'The first focusable control on the Web page does not links to local content';
-              evaluation.resultCode = 'RC';
+              evaluation.resultCode = 'RC5';
             }
           } else {
             evaluation.verdict = 'failed';
             evaluation.description = 'The first focusable control on the Web page is not a link';
-            evaluation.resultCode = 'RC';
+            evaluation.resultCode = 'RC6';
           }
         } else {
           evaluation.verdict = 'failed';
           evaluation.description = 'The first focusable control on the Web page is not visible when focused';
-          evaluation.resultCode = 'RC';
+          evaluation.resultCode = 'RC7';
         }
       } else {
         evaluation.verdict = 'failed';
         evaluation.description = 'This Web page does not have focusable controls';
-        evaluation.resultCode = 'RC';
+        evaluation.resultCode = 'RC8';
       }
     } else {
       evaluation.verdict = 'inapplicable';
       evaluation.description = 'This Web page is empty';
-      evaluation.resultCode = 'RC';
+      evaluation.resultCode = 'RC9';
     }
 
     evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
@@ -125,31 +136,28 @@ function findFirstFocusableElement(element: DomElement): DomElement | undefined 
   let foundFirstFocusableElem = false;
   let firstFocusableElem: DomElement | undefined;
 
-  if (element.children) {
+  if (element.children && element.children.length > 0) {
     let i = 0;
     while (!foundFirstFocusableElem) {
-      if (DomUtils.isElementFocusable(element.children[i])) {
-        firstFocusableElem = element.children[i];
-        foundFirstFocusableElem = true;
+      if (element.children[i] !== undefined) {
+        if (DomUtils.isElementFocusable(element.children[i])) {
+          firstFocusableElem = element.children[i];
+          foundFirstFocusableElem = true;
+        } else {
+          findFirstFocusableElement(element.children[i]);
+        }
+        i++;
       } else {
-        findFirstFocusableElement(element.children[i]);
+        return undefined;
       }
-      i++;
     }
   }
   return firstFocusableElem;
 }
 
 function hasMainElementAsParent(element: DomElement): boolean {
-  let result = false;
-  while (!result && element.parent) {
-    if (element.parent.name === 'main') {
-      result = true;
-    } else {
-      hasMainElementAsParent(element.parent);
-    }
-  }
-  return result;
+  let pointer = DomUtils.getElementSelector(element);
+  return indexOf(pointer, 'main:') > 0;
 }
 
 export = QW_HTML_T38;

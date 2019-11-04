@@ -7,6 +7,7 @@
     "img + map > area": ["QW-HTML-T1"],
     "fieldset": ["QW-HTML-T3"],
     "*": ["QW-HTML-T9"],
+    "img, svg": ["QW-HTML-T39"],
     "applet": ["QW-HTML-T14"],
     "frame, iframe": ["QW-HTML-T10"],
     "title": ["QW-HTML-T13","QW-HTML-T24"],

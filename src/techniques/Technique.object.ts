@@ -2,8 +2,8 @@
 
 import clone from 'lodash/clone';
 import cloneDeep from 'lodash/cloneDeep';
-import { HTMLTechnique, HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { DomElement } from 'htmlparser2';
+import {HTMLTechnique, HTMLTechniqueResult} from '@qualweb/html-techniques';
+import {DomElement} from 'htmlparser2';
 
 abstract class Technique {
 
@@ -48,7 +48,7 @@ abstract class Technique {
     this.technique.metadata[result.verdict]++;
   }
 
-  abstract async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void>;
+  abstract async execute(element: DomElement | undefined, processedHTML: DomElement[], url?: string): Promise<void>;
 
   getFinalResults() {
     this.outcomeTechnique();
@@ -82,7 +82,7 @@ abstract class Technique {
   private addDescription(): void {
     for (const result of this.technique.results || []) {
       if (result.verdict === this.technique.metadata.outcome) {
-        this.technique.metadata.description = <string> result.description;
+        this.technique.metadata.description = <string>result.description;
         break;
       }
     }
