@@ -13,7 +13,7 @@ import {
 } from '@qualweb/util';
 
 import Technique from './Technique.object';
-const stew = new(require('stew-select')).Stew();
+const stew = new (require('stew-select')).Stew();
 
 const technique: HTMLTechnique = {
   name: 'Organizing a page using headings',
@@ -25,17 +25,17 @@ const technique: HTMLTechnique = {
       element: 'h1,h2,h3,h4,h5,h6'
     },
     'success-criteria': [{
-        name: '1.3.1',
-        level: 'A',
-        principle: 'Perceivable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
-      },
-      {
-        name: '2.4.10',
-        level: 'AAA',
-        principle: 'Operable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/section-headings'
-      }
+      name: '1.3.1',
+      level: 'A',
+      principle: 'Perceivable',
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
+    },
+    {
+      name: '2.4.10',
+      level: 'AAA',
+      principle: 'Operable',
+      url: 'https://www.w3.org/WAI/WCAG21/Understanding/section-headings'
+    }
     ],
     related: ['G91', 'H30'],
     url: 'https://www.w3.org/WAI/WCAG21/Techniques/general/G141',
@@ -46,7 +46,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array < HTMLTechniqueResult > ()
+  results: new Array<HTMLTechniqueResult>()
 };
 
 class QW_HTML_T9 extends Technique {
@@ -55,9 +55,9 @@ class QW_HTML_T9 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
+  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
 
-    if (!element || !element.children) {
+    if (!element || stew.select(processedHTML, 'h1,h2,h3,h4,h5,h6').length === 0) {
       return;
     }
 
@@ -69,34 +69,45 @@ class QW_HTML_T9 extends Technique {
 
     const regexp = new RegExp('^h[1-6]$');
     let name: string | undefined;
-    let list = new Array<number>();
-    let split = new Array<string>();
-
-    for (const child of element.children || []) {
-      name = child['name'];
-      if (name !== undefined && regexp.test(name)) {
-        split = name.split('h');
-        list.push(parseInt(split[1]));
-      }
-    }
-
-    if (list.length === 0) {
-      return; // no heading elements
-    }
-
-    const sortedArray = list.sort((n1, n2) => n1 - n2);
     let equal = true;
     let complete = true;
-    const startsWithOne = (sortedArray[0] - 1) === 0;
-    const hasH1 = stew.select(processedHTML, 'h1').length > 0;
+    let errorElem = element;
+    let hasH1 = stew.select(processedHTML, 'h1').length > 0;
+    let counter = 0;
+    let htmlList = stew.select(processedHTML, '*');
 
-    for (let i = 0; i < list.length; i++) {
-      if (list[i] !== sortedArray[i]) {
-        equal = false;
+    let elem;
+
+    while(equal && complete && hasH1 && counter<htmlList.length){
+      elem = htmlList[counter];
+      let list = new Array<number>();
+      let split = new Array<string>();
+
+
+      for (const child of elem.children || []) {
+        name = child['name'];
+        if (name !== undefined && regexp.test(name)) {
+          split = name.split('h');
+          list.push(parseInt(split[1]));
+        }
       }
-      if (i > 0 && i - 1 < list.length && sortedArray[i] - sortedArray[i - 1] > 1) {
-        complete = false;
+
+      if (list.length !== 0) {
+
+        const sortedArray = list.sort((n1, n2) => n1 - n2);
+
+        for (let i = 0; i < list.length; i++) {
+          if (list[i] !== sortedArray[i]) {
+            equal = false;
+            errorElem = elem;
+          }
+          if (i > 0 && i - 1 < list.length && sortedArray[i] - sortedArray[i - 1] > 1) {
+            complete = false;
+            errorElem = elem;
+          }
+        }
       }
+      counter++;
     }
 
     if (!equal) { // fails if the headings aren't in the correct order
@@ -107,7 +118,7 @@ class QW_HTML_T9 extends Technique {
       evaluation.verdict = 'failed';
       evaluation.description = `Heading number is missing`;
       evaluation.resultCode = 'RC2';
-    } else if (!startsWithOne && !hasH1) {
+    } else if (!hasH1) {
       evaluation.verdict = 'failed';
       evaluation.description = `Headings don't start with h1`;
       evaluation.resultCode = 'RC3';
@@ -117,8 +128,8 @@ class QW_HTML_T9 extends Technique {
       evaluation.resultCode = 'RC4';
     }
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = DomUtils.transformElementIntoHtml(errorElem);
+    evaluation.pointer = DomUtils.getElementSelector(errorElem);
 
     super.addEvaluationResult(evaluation);
   }
