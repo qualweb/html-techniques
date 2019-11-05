@@ -21,11 +21,11 @@ describe('Technique QW-HTML-T11', function() {
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h2/failed1.html',
-      outcome: 'failed'
+      outcome: 'warning'
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h2/failed2.html',
-      outcome: 'failed'
+      outcome: 'passed'
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h2/failed3.html',
@@ -33,7 +33,7 @@ describe('Technique QW-HTML-T11', function() {
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h2/failed4.html',
-      outcome: 'failed'
+      outcome: 'inapplicable'
     }
   ];
 
@@ -49,6 +49,9 @@ describe('Technique QW-HTML-T11', function() {
       it(`should have outcome="${test.outcome}"`, async function () {
         this.timeout(20 * 1000);
         const { source, processed } = await getDom(test.url);
+        configure({
+          techniques: ['QW-HTML-T11']
+        });
 
 
         const report = await executeHTMLT(test.url, source.html.parsed, processed.html.parsed);

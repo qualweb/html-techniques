@@ -15,7 +15,7 @@ import {
 
 import Technique from './Technique.object';
 
-const stew = new(require('stew-select')).Stew();
+const stew = new (require('stew-select')).Stew();
 
 const technique: HTMLTechnique = {
   name: 'Combining adjacent image and text links for the same resource',
@@ -27,23 +27,23 @@ const technique: HTMLTechnique = {
       element: 'a'
     },
     'success-criteria': [{
-        name: '1.1.1',
-        level: 'A',
-        principle: 'Perceivable',
-        url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/text-equiv-all.html'
-      },
-      {
-        name: '2.4.4',
-        level: 'A',
-        principle: 'Operable',
-        url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/navigation-mechanisms-refs.html'
-      },
-      {
-        name: '2.4.9',
-        level: 'AAA',
-        principle: 'Operable',
-        url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/navigation-mechanisms-link.html'
-      }
+      name: '1.1.1',
+      level: 'A',
+      principle: 'Perceivable',
+      url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/text-equiv-all.html'
+    },
+    {
+      name: '2.4.4',
+      level: 'A',
+      principle: 'Operable',
+      url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/navigation-mechanisms-refs.html'
+    },
+    {
+      name: '2.4.9',
+      level: 'AAA',
+      principle: 'Operable',
+      url: 'https://www.w3.org/TR/UNDERSTANDING-WCAG20/navigation-mechanisms-link.html'
+    }
     ],
     related: ['G91', 'G94', 'H30', 'C9', 'F89'],
     url: 'https://www.w3.org/TR/WCAG20-TECHS/H2.html',
@@ -54,7 +54,7 @@ const technique: HTMLTechnique = {
     outcome: '',
     description: ''
   },
-  results: new Array < HTMLTechniqueResult > ()
+  results: new Array<HTMLTechniqueResult>()
 };
 
 class QW_HTML_T11 extends Technique {
@@ -63,7 +63,7 @@ class QW_HTML_T11 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: DomElement | undefined): Promise<void> {
 
     if (!element) {
       return;
@@ -74,12 +74,6 @@ class QW_HTML_T11 extends Technique {
       description: '',
       resultCode: ''
     };
-
-    if (!element.children) { // fails if the element doesn't contain an image inside it
-      evaluation.verdict = 'failed';
-      evaluation.description = `The element doesn't contain an image inside the a element`;
-      evaluation.resultCode = 'RC1';
-    }
 
     const images = stew.select(element, 'img');
 
@@ -97,23 +91,21 @@ class QW_HTML_T11 extends Technique {
     }
 
     if (!hasImage) {
-      evaluation.verdict = 'failed';
-      evaluation.description = `The element doesn't contain an image attribute inside the a element`;
-      evaluation.resultCode = 'RC2';
+      //inapplicable
     } else if (!hasAlt) {
       //inapplicable
     } else if (!hasNonEmptyAlt) {
       evaluation.verdict = 'passed';
       evaluation.description = `The a element contains an image that has an empty alt attribute`;
-      evaluation.resultCode = 'RC3';
+      evaluation.resultCode = 'RC1';
     } else if (equalAltText) {
       evaluation.verdict = 'failed';
       evaluation.description = `The element text is equal to img alternative text`;
-      evaluation.resultCode = 'RC4';
+      evaluation.resultCode = 'RC2';
     } else {
       evaluation.verdict = 'warning';
       evaluation.description = 'The a element contains an image that has an alt attribute that should be manually verified';
-      evaluation.resultCode = 'RC5';
+      evaluation.resultCode = 'RC3';
     }
 
     evaluation.htmlCode = QWDomUtils.transformElementIntoHtml(element);

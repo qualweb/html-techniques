@@ -91,12 +91,12 @@ class QW_HTML_T34 extends Technique {
 
     if (aText !== undefined&&_.trim(aText)!=="") {
 
-    } else if (AccessibilityTreeUtils.getAccessibleName(img,processedHTML,false,false)) {
+    } else if (AccessibilityTreeUtils.getAccessibleName(img,processedHTML)) {
         evaluation.verdict = 'passed';
         evaluation.description = `The image has an accessible name`;
         technique.metadata['passed']++;
 
-    } else if (AccessibilityTreeUtils.getAccessibleName(element,processedHTML,false,false)) {
+    } else if (AccessibilityTreeUtils.getAccessibleName(element,processedHTML)) {
         evaluation['verdict'] = 'passed';
         evaluation['description'] = `The link has an accessible name`;
         technique['metadata']['passed']++;
