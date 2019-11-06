@@ -13,7 +13,7 @@
     "form": ["QW-HTML-T32"],
     "a": ["QW-HTML-T11","QW-HTML-T34","QW-HTML-T33"],
     "input[type=\"image\"]": ["QW-HTML-T5"],
-    "table": ["QW-HTML-T30","QW-HTML-T2","QW-HTML-T4","QW-HTML-T15"],
+    "table": ["QW-HTML-T30","QW-HTML-T2","QW-HTML-T4","QW-HTML-T15","QW-HTML-T17"],
     "th, td[scope]": ["QW-HTML-T41"],
     "*[onmousedown], *[onmouseup], *[onclick], *[onmouseover], *[onmouseout]": ["QW-HTML-T6", "QW-HTML-T29"],
     "abbr": ["QW-HTML-T7"],

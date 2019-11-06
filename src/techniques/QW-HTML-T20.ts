@@ -4,6 +4,7 @@ import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
+
 import validator from 'html-validator';
 
 import Technique from './Technique.object';
