@@ -4,7 +4,7 @@ import { DomElement } from 'htmlparser2';
 import html from 'htmlparser-to-html';
 import clone from 'lodash/clone';
 
-
+const puppeteer = require('puppeteer');
 
 function getSelfLocationInParent(element: DomElement): string {
   let selector = '';
@@ -100,8 +100,18 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 
 
 
+async function getNumberOfOpenPages(url: string) {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto(url, { 'waitUntil': 'networkidle0', timeout: 5000 });
+  let pages = await browser.pages();
+  await browser.close();
+  return pages.length-1;
+}
+
 
 export {
+  getNumberOfOpenPages,
   getElementSelector,
   transform_element_into_html
 };
