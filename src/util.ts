@@ -3,7 +3,6 @@
 import { DomElement } from 'htmlparser2';
 import html from 'htmlparser-to-html';
 import clone from 'lodash/clone';
-
 const puppeteer = require('puppeteer');
 
 function getSelfLocationInParent(element: DomElement): string {
@@ -110,8 +109,40 @@ async function getNumberOfOpenPages(url: string) {
 }
 
 
+async function isFocusableBrowser(url: string, selector: string) {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto(url, { 'waitUntil': 'networkidle0', timeout: 60000 });
+  await page.focus(selector);
+  const hrefElement = await page.$(selector);
+
+  let options = {
+    root:hrefElement
+  }
+
+  const snapshot = await page.accessibility.snapshot(options);
+ 
+  await browser.close();
+
+  return snapshot.focused!== undefined;
+}
+/*
+function findFocusedNode(node,i:string) {
+  let l = 0;
+  if (node.focused)
+    return i+l;
+  for (const child of node.children || []) {
+    console.log(child);
+    const foundNode = findFocusedNode(child,);
+    return foundNode;
+  }
+  return null;
+}*/
+
+
 export {
   getNumberOfOpenPages,
+  isFocusableBrowser,
   getElementSelector,
   transform_element_into_html
 };

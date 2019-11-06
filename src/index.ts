@@ -60,7 +60,7 @@ function resetConfiguration(): void {
   }
 }
 
-async function executeMappedTechniques(report: HTMLTechniquesReport, html: DomElement[], selectors: string[], mappedTechniques: any): Promise<void> {
+async function executeMappedTechniques(url:string,report: HTMLTechniquesReport, html: DomElement[], selectors: string[], mappedTechniques: any): Promise<void> {
   for (const selector of selectors || []) {
     for (const technique of mappedTechniques[selector] || []) {
       if (techniquesToExecute[technique]) {
@@ -68,10 +68,10 @@ async function executeMappedTechniques(report: HTMLTechniquesReport, html: DomEl
 
         if (elements.length > 0) {
           for (const elem of elements || []) {
-            await techniques[technique].execute(elem, html);
+            await techniques[technique].execute(elem, html,url);
           }
         } else {
-          await techniques[technique].execute(undefined, html);
+          await techniques[technique].execute(undefined, html,url);
         }
         report.techniques[technique] = techniques[technique].getFinalResults();
         report.metadata[report.techniques[technique].metadata.outcome]++;
@@ -118,8 +118,8 @@ async function executeHTMLT(url: string, sourceHTML: DomElement[], processedHTML
     techniques: {}
   };
 
-  await executeMappedTechniques(report, sourceHTML, Object.keys(mapping.pre), mapping.pre);
-  await executeMappedTechniques(report, processedHTML, Object.keys(mapping.post), mapping.post);
+  await executeMappedTechniques(url,report, sourceHTML, Object.keys(mapping.pre), mapping.pre);
+  await executeMappedTechniques(url, report, processedHTML, Object.keys(mapping.post), mapping.post);
 
   await executeNotMappedTechniques(report, url);
 
