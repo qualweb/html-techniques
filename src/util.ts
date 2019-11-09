@@ -124,7 +124,7 @@ async function isFocusableBrowser(url: string, selector: string) {
  
   await browser.close();
 
-  return snapshot.focused!== undefined;
+  return snapshot &&  snapshot.focused!== undefined;
 }
 /*
 function findFocusedNode(node,i:string) {

@@ -81,10 +81,6 @@ class QW_HTML_T29 extends Technique {
       evaluation.verdict = 'warning';
       evaluation.description = `The mouseout attribute is used`;
       evaluation.resultCode = 'RC5';
-    } else {
-      evaluation.verdict = 'passed';
-      evaluation.description = `No mouse specific event handlers are used`;
-      evaluation.resultCode = 'RC6';
     }
 
     evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);

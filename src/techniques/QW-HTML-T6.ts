@@ -59,23 +59,23 @@ class QW_HTML_T6 extends Technique {
       resultCode: ''
     };
 
-    if (DomUtils.elementHasAttribute(element, 'onmousedown') && DomUtils.getElementAttribute('onmousedown') !== DomUtils.getElementAttribute('onkeydown')) {
+    if (DomUtils.elementHasAttribute(element, 'onmousedown') && DomUtils.getElementAttribute(element,'onmousedown') !== DomUtils.getElementAttribute(element,'onkeydown')) {
       evaluation.verdict = 'failed';
       evaluation.description = `The mousedown attribute doesn't have a keyboard equivalent`;
       evaluation.resultCode = 'RC1';
-    } else if (DomUtils.elementHasAttribute(element, 'onmouseup') && DomUtils.getElementAttribute('onmouseup') !== DomUtils.getElementAttribute('onkeyup')) {
+    } else if (DomUtils.elementHasAttribute(element, 'onmouseup') && DomUtils.getElementAttribute(element,'onmouseup') !== DomUtils.getElementAttribute(element,'onkeyup')) {
       evaluation.verdict = 'failed';
       evaluation.description = `The mouseup attribute doesn't have a keyboard equivalent`;
       evaluation.resultCode = 'RC2';
-    } else if (DomUtils.elementHasAttribute(element, 'onclick') && DomUtils.getElementAttribute('onclick') !== DomUtils.getElementAttribute('onkeypress')) {
+    } else if (DomUtils.elementHasAttribute(element, 'onclick') && DomUtils.getElementAttribute(element,'onclick') !== DomUtils.getElementAttribute(element,'onkeypress')) {
       evaluation.verdict = 'failed';
       evaluation.description = `The click attribute doesn't have a keyboard equivalent`;
       evaluation.resultCode = 'RC3';
-    } else if (DomUtils.elementHasAttribute(element, 'onmouseover') && DomUtils.getElementAttribute('onmouseover') !== DomUtils.getElementAttribute('onfocus')) {
+    } else if (DomUtils.elementHasAttribute(element, 'onmouseover') && DomUtils.getElementAttribute(element,'onmouseover') !== DomUtils.getElementAttribute(element,'onfocus')) {
       evaluation.verdict = 'failed';
       evaluation.description = `The mouseover attribute doesn't have a keyboard equivalent`;
       evaluation.resultCode = 'RC4';
-    } else if (DomUtils.elementHasAttribute(element, 'onmouseout') && DomUtils.getElementAttribute('onmouseout') !== DomUtils.getElementAttribute('onblur')) {
+    } else if (DomUtils.elementHasAttribute(element, 'onmouseout') && DomUtils.getElementAttribute(element,'onmouseout') !== DomUtils.getElementAttribute(element,'onblur')) {
       evaluation.verdict = 'failed';
       evaluation.description = `The mouseout attribute doesn't have a keyboard equivalent`;
       evaluation.resultCode = 'RC5';
@@ -84,6 +84,10 @@ class QW_HTML_T6 extends Technique {
       evaluation.description = `All the mouse event handlers have a keyboard equivalent`;
       evaluation.resultCode = 'RC6';
     }
+    console.log( evaluation.resultCode )
+    console.log(element.attribs);
+    console.log(DomUtils.elementHasAttribute(element, 'onmouseout'));
+    console.log(DomUtils.elementHasAttribute(element, 'onmouseout') +"  !   "+ DomUtils.getElementAttribute('onmouseout') !== DomUtils.getElementAttribute('onblur'));
 
     evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
     evaluation.pointer = DomUtils.getElementSelector(element);

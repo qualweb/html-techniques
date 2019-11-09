@@ -76,17 +76,24 @@ class QW_HTML_T8 extends Technique {
     const pattern3 = new RegExp('^Intro#[0-9]+');
     const pattern4 = new RegExp('^imagem/s[0-9]+');
 
-    const altText = AccessibilityTreeUtils.getAccessibleName(element, processedHTML,false,false).toLocaleLowerCase();
-
-    if (altText !== '' && !pattern4.test(altText) && !pattern3.test(altText) && !pattern2.test(altText) && !pattern1.test(altText) && !pattern.test(altText) && !default_title.includes(altText)) {
-      evaluation.verdict = 'warning';
-      evaluation.description = `Text alternative needs manual verification`;
-      evaluation.resultCode = 'RC1';
-    } else {
-      evaluation.verdict = 'failed';
-      evaluation.description = 'Text alternative is not actually a text alternative for the non-text content';
-      evaluation.resultCode = 'RC2';
+    let altText = AccessibilityTreeUtils.getAccessibleName(element, processedHTML,false,false);
+    if (!altText || altText === '' ){
+        evaluation.verdict = 'failed';
+        evaluation.description = 'Text alternative is not actually a text alternative for the non-text content';
+        evaluation.resultCode = 'RC1';
+    }else{
+      altText = altText.toLocaleLowerCase();
+      if(!pattern4.test(altText.toLocaleLowerCase()) && !pattern3.test(altText) && !pattern2.test(altText) && !pattern1.test(altText) && !pattern.test(altText) && !default_title.includes(altText)) {
+        evaluation.verdict = 'warning';
+        evaluation.description = `Text alternative needs manual verification`;
+        evaluation.resultCode = 'RC2';
+      } else{
+        evaluation.verdict = 'failed';
+        evaluation.description = 'Text alternative is not actually a text alternative for the non-text content';
+        evaluation.resultCode = 'RC3';
+      }
     }
+
 
     evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
     evaluation.pointer = DomUtils.getElementSelector(element);

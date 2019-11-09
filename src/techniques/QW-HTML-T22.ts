@@ -78,7 +78,7 @@ class QW_HTML_T22 extends Technique {
       evaluation.description = `The webpage uses attributes in ${element.name} element to control the visual text presentation`;
       evaluation.resultCode = 'RC2';
 
-      evaluation.htmlCode = DomUtils.transform_element_into_html(element);
+      evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
       evaluation.pointer = DomUtils.getElementSelector(element);
       evaluation.attributes = element.attribs ? _.intersection(Object.keys(element.attribs), ['text', 'vlink', 'alink', 'link']) : undefined;
     }

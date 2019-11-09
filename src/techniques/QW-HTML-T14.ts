@@ -83,7 +83,7 @@ class QW_HTML_T14 extends Technique {
       }
     }
 
-    evaluation.htmlCode = QWDomUtils.transform_element_into_html(element);
+    evaluation.htmlCode = QWDomUtils.transformElementIntoHtml(element);
     evaluation.pointer = QWDomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);

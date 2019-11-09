@@ -40,7 +40,7 @@ describe('Technique QW-HTML-T1', function() {
     i++;
     describe(`${test.outcome.charAt(0).toUpperCase() + test.outcome.slice(1)} example ${i}`, function () {
       it(`should have outcome="${test.outcome}"`, async function () {
-        this.timeout(20 * 1000);
+        this.timeout(25 * 1000);
         const { source, processed } = await getDom(test.url);
 
 

@@ -60,6 +60,10 @@ class QW_HTML_T4 extends Technique {
       resultCode: ''
     };
 
+    let caption = DomUtils.getElementChildTextContent(element, 'caption');
+    console.log(caption);
+    console.log(DomUtils.getElementAttribute(element, 'summary'));
+
     if (!DomUtils.elementHasAttribute(element, 'summary')) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The summary does not exist in the table element';
@@ -68,7 +72,7 @@ class QW_HTML_T4 extends Technique {
       evaluation.verdict = 'failed';
       evaluation.description = 'The summary is empty';
       evaluation.resultCode = 'RC2';
-    } else if (DomUtils.getElementAttribute(element, 'summary').trim() === DomUtils.getElementChildTextContent(element, 'caption').trim()) {
+    } else if (caption !== null && DomUtils.getElementAttribute(element, 'summary').trim() === caption.trim()) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The caption is a duplicate of the summary';
       evaluation.resultCode = 'RC3';

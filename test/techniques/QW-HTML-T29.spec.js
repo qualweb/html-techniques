@@ -13,7 +13,7 @@ describe('Technique QW-HTML-T29', function() {
   const tests = [
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/testeHTML-T20/test1.html',
-      outcome: 'passed'
+      outcome: 'inapplicable'
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/testeHTML-T20/test2.html',

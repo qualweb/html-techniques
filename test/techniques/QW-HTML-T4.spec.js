@@ -25,7 +25,7 @@ describe('Technique QW-HTML-T4', function() {
     },
     {
       url: 'https://accessible-serv.lasige.di.fc.ul.pt/~fcaeiro/H73/H73fail4.html',
-      outcome: 'failed'
+      outcome: 'warning'
     },
     {
       url: 'https://accessible-serv.lasige.di.fc.ul.pt/~fcaeiro/H73/H73fail5.html',

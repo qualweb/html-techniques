@@ -5,7 +5,7 @@ import {
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 import {
-  DomElement
+  DomElement,DomUtils as HtmlDomUtils
 } from 'htmlparser2';
 
 import {
@@ -57,8 +57,8 @@ class QW_HTML_T13 extends Technique {
 
     if (element) {
       if (element.children) {
-        const text = element.children[0];
-        if (text.type === 'text') { // the title text exists and needs to be verified
+        const text = HtmlDomUtils.getText(element);
+        if (text && text!== "") { // the title text exists and needs to be verified
           evaluation.verdict = 'warning';
           evaluation.description = `Please verify the title text correlates to the page's content`;
           evaluation.resultCode = 'RC1';
