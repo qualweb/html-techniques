@@ -3,6 +3,7 @@
 import { DomElement } from 'htmlparser2';
 import html from 'htmlparser-to-html';
 import clone from 'lodash/clone';
+const puppeteer = require('puppeteer');
 
 
 
@@ -96,12 +97,22 @@ function transform_element_into_html(element: DomElement, withText: boolean = tr
 
   return html(codeElement);
 }
+async function getLinkUrl(url: string, selector: string) {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto(url, { 'waitUntil': 'networkidle0', timeout: 60000 });
+  await page.click(selector);
+  let link =await page.url();
+  await browser.close();
 
+  return link;
+}
 
 
 
 
 export {
+  getLinkUrl,
   getElementSelector,
   transform_element_into_html
 };
