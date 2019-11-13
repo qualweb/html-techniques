@@ -1,0 +1,33 @@
+TECHNIQUES :{	
+	'QW-HTML-T1': {
+    name: 'Providing text alternatives for the area elements of image maps',
+    description: 'This technique checks the text alternative of area elements of images maps',
+    RC3: 'Please verify the alt attribute value describes correctly the correspondent area of the image',
+    RC2: "The element's alt attribute value is empty",
+    RC1: "The element doesn't contain an alt attribute"
+  },
+  'QW-HTML-T2': {
+    name: 'Using caption elements to associate data table captions with data tables',
+    description: 'This technique checks the caption element is correctly use on tables',
+    RC1: 'The caption does not exist in the table element',
+    RC2: 'The caption is empty',
+    RC3: 'Please verify that the caption element identifies the table correctly.'
+  },
+    'QW-HTML-T3': {
+    name: 'Providing a description for groups of form controls using fieldset and legend elements',
+    description: 'This technique checks the correct use of the description element for form controls',
+    RC1: 'The fieldset is not in a form and is not referencing a form',
+    RC2: 'The legend does not exist in the fieldset element',
+    RC3: 'The legend is empty',
+    RC4: 'Please verify that the legend description is valid'
+  },
+  'QW-HTML-T4': {
+    name: 'Using the summary attribute of the table element to give an overview of data tables',
+    description: 'This technique checks the correct use of the summary attribute for table elements',
+    RC1: 'The summary does not exist in the table element',
+    RC2: 'The summary is empty',
+    RC3: 'The caption is a duplicate of the summary',
+    RC4: 'Please verify that the summary is a valid description of the table'
+  }
+
+}

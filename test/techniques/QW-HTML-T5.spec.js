@@ -41,6 +41,7 @@ describe('Technique QW-HTML-T5', function() {
 
   let i = 0;
   let lastOutcome = 'failed';
+  let struct = undefined;
   for (const test of tests || []) {
     if (test.outcome !== lastOutcome) {
       lastOutcome = test.outcome;
@@ -51,10 +52,22 @@ describe('Technique QW-HTML-T5', function() {
       it(`should have outcome="${test.outcome}"`, async function () {
         this.timeout(20 * 1000);
         const { source, processed } = await getDom(test.url);
-
-
         const report = await executeHTMLT(test.url, source.html.parsed, processed.html.parsed);
         expect(report.techniques['QW-HTML-T5'].metadata.outcome).to.be.equal(test.outcome);
+        let qwId = 'QW-HTML-T5';
+        let techniqueReport = report.techniques[qwId];
+        if(!struct){
+        struct = {'QW-HTML-T5':{
+           name :techniqueReport.name,
+           description :techniqueReport.description}};}
+
+        for(let child of techniqueReport.results){
+          struct[qwId][child.resultCode] = child.description; 
+        }
+        console.log(struct);
+
+
+        
       });
     });
   }

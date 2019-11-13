@@ -39,6 +39,7 @@ describe('Technique QW-HTML-T6', function() {
 
   let i = 0;
   let lastOutcome = 'passed';
+  let struct = undefined;
   for (const test of tests || []) {
     if (test.outcome !== lastOutcome) {
       lastOutcome = test.outcome;
@@ -53,6 +54,18 @@ describe('Technique QW-HTML-T6', function() {
 
         const report = await executeHTMLT(test.url, source.html.parsed, processed.html.parsed);
         expect(report.techniques['QW-HTML-T6'].metadata.outcome).to.be.equal(test.outcome);
+        let qwId = 'QW-HTML-T6';
+        let techniqueReport = report.techniques[qwId];
+        if(!struct){
+        struct = {'QW-HTML-T6':{
+           name :techniqueReport.name,
+           description :techniqueReport.description}};}
+
+        for(let child of techniqueReport.results){
+          struct[qwId][child.resultCode] = child.description; 
+        }
+        console.log(struct);
+        
       });
     });
   }

@@ -11,7 +11,7 @@ const {
 describe('Technique QW-HTML-T3', function() {
 
   const tests = [
-    /*{
+    {
       url: 'https://accessible-serv.lasige.di.fc.ul.pt/~fcaeiro/H71/H71fail.html',
       outcome: 'failed'
     },
@@ -58,7 +58,7 @@ describe('Technique QW-HTML-T3', function() {
     {
       url: 'https://accessible-serv.lasige.di.fc.ul.pt/~fcaeiro/H71/H71warning4.html',
       outcome: 'warning'
-    },*/
+    },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h71/fieldsetFormAttribute.html',
       outcome: 'warning'
@@ -67,6 +67,7 @@ describe('Technique QW-HTML-T3', function() {
 
   let i = 0;
   let lastOutcome = 'failed';
+  let struct = undefined;
   for (const test of tests || []) {
     if (test.outcome !== lastOutcome) {
       lastOutcome = test.outcome;
@@ -81,6 +82,17 @@ describe('Technique QW-HTML-T3', function() {
 
         const report = await executeHTMLT(test.url, source.html.parsed, processed.html.parsed);
         expect(report.techniques['QW-HTML-T3'].metadata.outcome).to.be.equal(test.outcome);
+        let qwId = 'QW-HTML-T3';
+        let techniqueReport = report.techniques[qwId];
+        if(!struct){
+        struct = {'QW-HTML-T3':{
+           name :techniqueReport.name,
+           description :techniqueReport.description}};}
+
+        for(let child of techniqueReport.results){
+          struct[qwId][child.resultCode] = child.description; 
+        }
+        console.log(struct);
       });
     });
   }
