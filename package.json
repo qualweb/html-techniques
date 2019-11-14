@@ -44,6 +44,7 @@
     "test-t33": "mocha test/techniques/QW-HTML-T33.spec.js",
     "test-t35": "mocha test/techniques/QW-HTML-T35.spec.js",
     "test-t37": "mocha test/techniques/QW-HTML-T37.spec.js",
+    "test-t39": "mocha test/techniques/QW-HTML-T39.spec.js",
     "test-t40": "mocha test/techniques/QW-HTML-T40.spec.js",
     "test-t41": "mocha test/techniques/QW-HTML-T41.spec.js",
     "test-t43": "mocha test/techniques/QW-HTML-T43.spec.js",
@@ -72,7 +73,7 @@
   "devDependencies": {
     "@qualweb/get-dom-puppeteer": "0.1.1",
     "@qualweb/types": "0.1.8",
-    "@qualweb/util": "0.1.9",
+    "@qualweb/util": "0.1.11",
     "@types/htmlparser2": "^3.10.1",
     "@types/lodash": "^4.14.144",
     "@types/node": "^12.11.2",
