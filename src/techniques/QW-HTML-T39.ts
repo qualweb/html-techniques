@@ -69,10 +69,8 @@ class QW_HTML_T39 extends Technique {
       AName = AccessibilityTreeUtils.getAccessibleName(element, processedHTML);
     }
     else {
-      console.log("svg"+ DomUtils.getElementSelector(element) )
-      AName =  await AccessibilityTreeUtils.getAcessibleNameSVG(url, DomUtils.getElementSelector(element));
+      AName =  await AccessibilityTreeUtils.getAccessibleNameSVG(url, DomUtils.getElementSelector(element));
     }
-    console.log(url+" "+AName);
     if (element.name === "img" && role === "none" || role === "presentation" || alt === "") {
       //inaplicable(presentation)
     } else {

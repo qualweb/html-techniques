@@ -61,8 +61,6 @@ class QW_HTML_T4 extends Technique {
     };
 
     let caption = DomUtils.getElementChildTextContent(element, 'caption');
-    console.log(caption);
-    console.log(DomUtils.getElementAttribute(element, 'summary'));
 
     if (!DomUtils.elementHasAttribute(element, 'summary')) {
       evaluation.verdict = 'failed';
