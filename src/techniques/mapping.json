@@ -6,7 +6,7 @@
     "a[href]": ["QW-HTML-T37"],
     "img + map > area": ["QW-HTML-T1"],
     "fieldset": ["QW-HTML-T3"],
-    "*": ["QW-HTML-T40"],
+    "body, body *": ["QW-HTML-T40"],
     "body": ["QW-HTML-T9"],
     "img,svg": ["QW-HTML-T39"],
     "applet": ["QW-HTML-T14"],
