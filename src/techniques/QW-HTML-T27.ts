@@ -1,19 +1,17 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
+
 import {
-  DomElement
-} from 'htmlparser2';
+  ElementHandle
+} from 'puppeteer';
 
 import {
   DomUtils
 } from '@qualweb/util';
-
-
 
 import Technique from './Technique.object';
 
@@ -50,7 +48,7 @@ class QW_HTML_T27 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: ElementHandle | undefined): Promise < void > {
 
     if (!element) {
       return;
@@ -62,13 +60,13 @@ class QW_HTML_T27 extends Technique {
       resultCode: ''
     };
 
-
     evaluation.verdict = 'warning';
     evaluation.description = 'Check that each heading identifies its section of the content';
     evaluation.resultCode = 'RC1';
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
+
     super.addEvaluationResult(evaluation);
   }
 }

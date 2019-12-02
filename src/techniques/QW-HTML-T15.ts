@@ -5,8 +5,8 @@ import {
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 import {
-  DomElement
-} from 'htmlparser2';
+  ElementHandle
+} from 'puppeteer';
 
 import {
   DomUtils
@@ -48,7 +48,7 @@ class QW_HTML_T15 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: ElementHandle | undefined): Promise < void > {
 
     if (!element) {
       return;
@@ -60,15 +60,34 @@ class QW_HTML_T15 extends Technique {
       resultCode: ''
     };
     
-    const checks = {};
+    let checks = {};
     checks['hasCaption'] = false;
     checks['hasTh'] = false;
 
-    if (element.children) {
-      this.checkChildren(element.children, checks);
+    if (await DomUtils.elementHasChildren(element)) {
+      checks = await element.evaluate((elem, checks) => {
+        function checkChildren(children, checks) {
+          for (const child of children) {
+            if (child['name'] === 'th')
+              checks['hasTh'] = true;
+            if (child['name'] === 'caption')
+              checks['hasCaption'] = true;
+            if (child['children'] !== undefined) {
+              checkChildren(child['children'], checks);
+            }
+          }
+        }
+
+        checkChildren(elem.children, checks);
+
+        return checks;
+      }, checks);
     }
 
-    if (DomUtils.elementHasAttribute(element, 'summary') && DomUtils.getElementAttribute(element, 'summary').trim() !== '') {
+    const hasSummary = await DomUtils.elementHasAttribute(element, 'summary');
+    const summary = await DomUtils.getElementAttribute(element, 'summary');
+
+    if (hasSummary && summary && summary.trim() !== '') {
       evaluation.verdict = 'failed';
       evaluation.description = `The table has a non-empty summary - Amend it if it's a layout table`;
       evaluation.resultCode = 'RC1';
@@ -86,22 +105,10 @@ class QW_HTML_T15 extends Technique {
       evaluation.resultCode = 'RC4';
     }
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
-  }
-
-  checkChildren(children: DomElement[], checks: any): void {
-    for (const child of children) {
-      if (child['name'] === 'th')
-        checks['hasTh'] = true;
-      if (child['name'] === 'caption')
-        checks['hasCaption'] = true;
-      if (child['children'] !== undefined) {
-        this.checkChildren(child['children'], checks);
-      }
-    }
   }
 }
 

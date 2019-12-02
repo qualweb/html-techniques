@@ -4,16 +4,17 @@ import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
+
 import {
-  DomElement
-} from 'htmlparser2';
+  Page,
+  ElementHandle
+} from 'puppeteer';
 
 import {
   DomUtils
 } from '@qualweb/util';
 
 import Technique from './Technique.object';
-import { isFocusableBrowser } from '../util';
 
 const technique: HTMLTechnique = {
   name: ' Failure of Success Criteria 2.1.1, 2.4.7, and 3.2.1 due to using script to remove focus when focus is received ',
@@ -58,9 +59,9 @@ class QW_HTML_T40 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[],url:string): Promise < void > {
+  async execute(element: ElementHandle | undefined, page: Page): Promise < void > {
     
-    if (element === undefined) {
+    if (!element) {
       return;
     }
 
@@ -70,12 +71,11 @@ class QW_HTML_T40 extends Technique {
       resultCode: ''
     };
 
-    const isFocusable = DomUtils.isElementFocusable(element);
-    let selector = DomUtils.getElementSelector(element);
+    const isFocusable =await DomUtils.isElementFocusable(element);
     let keepsFocus;
 
     if(isFocusable){
-      keepsFocus = await isFocusableBrowser(url, selector);
+      keepsFocus = await DomUtils.isFocusableBrowser(page, element);
       if (keepsFocus) { 
         evaluation.verdict = 'passed';
         evaluation.description = `Element kept focus`;
@@ -86,8 +86,8 @@ class QW_HTML_T40 extends Technique {
         evaluation.resultCode = 'RC2';
       }
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
 

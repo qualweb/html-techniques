@@ -1,15 +1,18 @@
 'use strict';
 
 import {
+  ElementHandle
+} from 'puppeteer';
+
+import {
+  DomUtils,AccessibilityTreeUtils
+} from '@qualweb/util';
+
+import Technique from './Technique.object';
+import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
-import {
-  DomElement
-} from 'htmlparser2';
-import { DomUtils,AccessibilityTreeUtils } from '@qualweb/util';
-
-import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
   name: 'Failure of Success Criterion 4.1.2 due to using script to make div or span a user interface control in HTML without providing a role for the control ',
@@ -45,9 +48,9 @@ class QW_HTML_T42 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise<void> {
+  async execute(element: ElementHandle | undefined): Promise < void > {
 
-    if (!element || !element.attribs) {
+    if (element === undefined||!(await DomUtils.elementHasAttributes(element))) {
       return;
     }
 
@@ -57,7 +60,7 @@ class QW_HTML_T42 extends Technique {
       resultCode: ''
     };
 
-    if (AccessibilityTreeUtils.isElementControl(element)) {
+    if (await AccessibilityTreeUtils.isElementControl(element)) {
       evaluation.verdict = 'passed';
       evaluation.description = `The element is a user interface control with an event handler`;
       evaluation.resultCode = 'RC1';
@@ -67,9 +70,8 @@ class QW_HTML_T42 extends Technique {
       evaluation.resultCode = 'RC2';
     }
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
-
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
     super.addEvaluationResult(evaluation);
   }
 }

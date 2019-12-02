@@ -4,9 +4,11 @@ import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
+
 import {
-  DomElement
-} from 'htmlparser2';
+  Page,
+  ElementHandle
+} from 'puppeteer';
 
 import {
   DomUtils
@@ -48,9 +50,9 @@ class QW_HTML_T37 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
+  async execute(element: ElementHandle | undefined, page: Page): Promise < void > {
     
-    if (element === undefined) {
+    if (!element) {
       return;
     }
 
@@ -60,8 +62,9 @@ class QW_HTML_T37 extends Technique {
       resultCode: ''
     };
 
-    const refElement = DomUtils.getElementReferencedByHREF(processedHTML, element);
-    const hidden = DomUtils.isElementHidden(element);
+    const refElement = await DomUtils.getElementReferencedByHREF(page, element);
+    const hidden = await DomUtils.isElementHidden(element);
+
     if (refElement) {
       if (!hidden) {
         evaluation.verdict = 'warning';
@@ -78,8 +81,8 @@ class QW_HTML_T37 extends Technique {
       evaluation.resultCode = 'RC3';
     }
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

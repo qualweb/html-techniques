@@ -5,15 +5,14 @@ import {
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 import {
-  DomElement,
-  DomUtils
-} from 'htmlparser2';
+  ElementHandle
+} from 'puppeteer';
 
 import {
-  DomUtils as QWDomUtils
+  DomUtils
 } from '@qualweb/util';
 
-import Technique from "./Technique.object";
+import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
   name: 'Providing text alternatives on applet elements',
@@ -49,7 +48,7 @@ class QW_HTML_T14 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: ElementHandle | undefined): Promise < void > {
 
     if (!element) {
       return;
@@ -61,18 +60,21 @@ class QW_HTML_T14 extends Technique {
       resultCode: ''
     };
 
-    if (!QWDomUtils.elementHasAttribute(element, 'alt')) { // fails if the element doesn't contain an alt attribute
+    const hasAlt = await DomUtils.elementHasAttribute(element, 'alt');
+    const alt = await DomUtils.getElementAttribute(element, 'alt');
+
+    if (!hasAlt) { // fails if the element doesn't contain an alt attribute
       evaluation.verdict = 'failed';
       evaluation.description = `The element doesn't contain an alt attribute`;
       evaluation.resultCode = 'RC1';
-    } else if (QWDomUtils.getElementAttribute(element, 'alt').trim() === '') { // fails if the element's alt attribute is empty
+    } else if (alt && alt.trim() === '') { // fails if the element's alt attribute is empty
       evaluation.verdict = 'failed';
       evaluation.description = `The element's alt attribute is empty`;
       evaluation.resultCode = 'RC2';
     } else {
-      const hasText = DomUtils.getText(element);
+      const text = await DomUtils.getElementText(element);
 
-      if (hasText) { // the element contains a non empty alt attribute and a text in his body
+      if (text !== undefined) { // the element contains a non empty alt attribute and a text in his body
         evaluation.verdict = 'warning';
         evaluation.description = `Please verify that the element's alt attribute value and his body text describes correctly the element`;
         evaluation.resultCode = 'RC3';
@@ -83,8 +85,8 @@ class QW_HTML_T14 extends Technique {
       }
     }
 
-    evaluation.htmlCode = QWDomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = QWDomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

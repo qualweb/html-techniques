@@ -4,17 +4,16 @@ import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
+
 import {
-  DomElement
-} from 'htmlparser2';
+  ElementHandle
+} from 'puppeteer';
 
 import {
   DomUtils
 } from '@qualweb/util';
 
 import Technique from './Technique.object';
-
-const stew = new(require('stew-select')).Stew();
 
 const technique: HTMLTechnique = {
   name: 'Providing submit buttons',
@@ -49,9 +48,9 @@ class QW_HTML_T32 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: ElementHandle | undefined): Promise < void > {
 
-    if (element === undefined) {
+    if (!element) {
       return;
     }
 
@@ -61,7 +60,7 @@ class QW_HTML_T32 extends Technique {
       resultCode: ''
     };
 
-    const children = stew.select(element, `input[type="submit"], input[type="image"], button[type="submit"]`);
+    const children = await element.$$(`input[type="submit"], input[type="image"], button[type="submit"]`);
 
     if (children.length > 0) { // the element contains one of the following elements input[type~='submit image'], button[type='submit']
       evaluation.verdict = 'passed';
@@ -73,8 +72,8 @@ class QW_HTML_T32 extends Technique {
       evaluation.resultCode = 'RC2';
     }
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

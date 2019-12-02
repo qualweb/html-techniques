@@ -1,18 +1,19 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 import {
-  DomElement
-} from 'htmlparser2';
-import {AccessibilityTreeUtils, DomUtils} from '@qualweb/util';
-import Technique from "./Technique.object";
-import {remove, trim} from 'lodash';
+  ElementHandle, Page
+} from 'puppeteer';
 
-const stew = new (require('stew-select')).Stew();
+import {
+  DomUtils,AccessibilityTreeUtils
+} from '@qualweb/util';
+
+import Technique from './Technique.object';
+import {trim} from  'lodash';
 
 const technique: HTMLTechnique = {
   name: 'Using id and headers attributes to associate data cells with header cells in data tables',
@@ -47,7 +48,7 @@ class QW_HTML_T17 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: ElementHandle | undefined,page:Page): Promise < void > {
     if (element === undefined) {
       return;
     }
@@ -57,16 +58,10 @@ class QW_HTML_T17 extends Technique {
       resultCode: ''
     };
 
-    let hasIds = stew.select(element, "[id]");
-    let hasHeaders = stew.select(element, "[headers]");
-    let genId = RegExp("qw-generated-id-");
+    let hasIds = await element.$$( "[id]");
+    let hasHeaders = await element.$$( "[headers]");
 
-    remove(hasIds, function (idElem: DomElement) {
-      // @ts-ignore
-      return genId.test(idElem["attribs"]["id"])
-    });
-
-    if (!AccessibilityTreeUtils.isDataTable(element, processedHTML)) {
+    if (await !AccessibilityTreeUtils.isDataTable(element, page)) {
       if (hasIds.length > 0 || hasHeaders.length > 0) {
         evaluation.verdict = 'failed';
         evaluation.description = 'This table is a layout table with id or headers attributes';
@@ -86,11 +81,11 @@ class QW_HTML_T17 extends Technique {
         evaluation.description = 'No header attributes are used in this data table';
         evaluation.resultCode = 'RC4';
       } else {
-        let headersElements = stew.select(element, "[headers]");
+        let headersElements = await element.$$( "[headers]");
         let headersMatchId = true;
         for (let headerElem of headersElements) {
           if (headersMatchId) {
-            headersMatchId = doesHeadersMatchId(element, headerElem.attribs.headers);
+            headersMatchId = await doesHeadersMatchId(element, await DomUtils.getElementAttribute(headerElem,"headers"));
           }
         }
 
@@ -106,23 +101,22 @@ class QW_HTML_T17 extends Technique {
       }
     }
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
-
-    console.log(evaluation.resultCode);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
+    
     super.addEvaluationResult(evaluation);
   }
 }
 
-function doesTableHaveDuplicateIds(table: DomElement) {
-  let elementsId = stew.select(table, '[id]');
+async function doesTableHaveDuplicateIds(table: ElementHandle) {
+  let elementsId = await table.$$( '[id]');
   let duplicate = false;
   let counter;
 
   for (let elementId of elementsId) {
     counter = 0;
     for (let elementId2 of elementsId) {
-      if (elementId.attribs["id"] === elementId2.attribs["id"]) {
+      if (await DomUtils.getElementAttribute(elementId,"id") ===await DomUtils.getElementAttribute(elementId2,"id")) {
         counter++;
       }
       if (counter > 1) {
@@ -143,7 +137,7 @@ function doesHeadersMatchId(table, headers) {
   let splitHeaders = headers.split(" ");
 
   for (let header of splitHeaders) {
-    let matchingIdElem = stew.select(table, '[id="' + header + '"]')[0];
+    let matchingIdElem = table.$( '[id="' + header + '"]');
     if (matchingIdElem !== undefined) {
       let matchingIdElemHeaders = matchingIdElem.attribs["headers"];
       if (splitHeaders.length === 1 && matchingIdElemHeaders === undefined) {

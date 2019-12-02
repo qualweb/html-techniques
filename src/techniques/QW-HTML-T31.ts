@@ -4,16 +4,17 @@ import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
+
 import {
-  DomElement
-} from 'htmlparser2';
-import {size} from 'lodash';
+  Page,
+  ElementHandle
+} from 'puppeteer';
+
 import {
   DomUtils
 } from '@qualweb/util';
-const stew = new(require('stew-select')).Stew();
-import Technique from './Technique.object';
 
+import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
   name: 'Using longdesc',
@@ -48,9 +49,9 @@ class QW_HTML_T31 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
+  async execute(element: ElementHandle | undefined, page: Page): Promise < void > {
 
-    if (element === undefined) {
+    if (!element) {
       return;
     }
 
@@ -60,16 +61,17 @@ class QW_HTML_T31 extends Technique {
       resultCode: ''
     };
 
-    if (!element['attribs'] || element['attribs']['longdesc'] === undefined) { // fails if the element doesn't contain a longdesc attribute
+    const longdesc = await DomUtils.getElementAttribute(element, 'longdesc');
+
+    if (longdesc === null) { // fails if the element doesn't contain a longdesc attribute
       evaluation['verdict'] = 'failed';
       evaluation['description'] = `The element doesn't contain a longdesc attribute`;
       evaluation.resultCode = 'RC1';
-    } else if (element['attribs']['longdesc'] === '') { // fails if the element's longdesc attribute is empty
+    } else if (longdesc.trim() === '') { // fails if the element's longdesc attribute is empty
       evaluation['verdict'] = 'failed';
       evaluation['description'] = `The element's longdesc attribute is empty`;
       evaluation.resultCode = 'RC2';
     } else {
-      const longdesc = element['attribs']['longdesc'];
       if (longdesc.includes('#')) {
         const i = longdesc.indexOf('#');
         let id;
@@ -79,28 +81,28 @@ class QW_HTML_T31 extends Technique {
         } else {
           id = longdesc;
         }
-        let exists = stew.select(processedHTML, '[id="' + id + '"]');
 
-        if (size(exists) > 0) { // the element has a longdesc attribute pointing to a resource in the current page
-          evaluation['verdict'] = 'warning';
-          evaluation['description'] = 'Please verify that the resource that longdesc is pointing at describes correctly the image';
+        const exists = await DomUtils.getElementById(page, id);
+
+        if (exists) { // the element has a longdesc attribute pointing to a resource in the current page
+          evaluation.verdict = 'warning';
+          evaluation.description = 'Please verify that the resource that longdesc is pointing at describes correctly the image';
           evaluation.resultCode = 'RC3';
         } else { // fails if the element that the longdesc is pointing at doesn't exist
-          evaluation['verdict'] = 'failed';
-          evaluation['description'] = `The resource that longdesc is pointing at doesn't exist`;
+          evaluation.verdict = 'failed';
+          evaluation.description = `The resource that longdesc is pointing at doesn't exist`;
           evaluation.resultCode = 'RC4';
         }
       } else { // the element has a longdesc attribute pointing to a resource outside the current page
         //var res = request('GET', longdesc);
-        evaluation['verdict'] = 'warning';
-        evaluation['description'] = 'Please verify that the resource that longdesc is pointing at exists and describes correctly the image';
+        evaluation.verdict = 'warning';
+        evaluation.description = 'Please verify that the resource that longdesc is pointing at exists and describes correctly the image';
         evaluation.resultCode = 'RC5';
       }
-
     }
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

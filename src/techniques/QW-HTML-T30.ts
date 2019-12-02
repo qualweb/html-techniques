@@ -4,11 +4,10 @@ import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
-import {
-  DomElement
-} from 'htmlparser2';
 
-const stew = new(require('stew-select')).Stew();
+import {
+  ElementHandle
+} from 'puppeteer';
 
 import {
   DomUtils
@@ -49,9 +48,9 @@ class QW_HTML_T30 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: ElementHandle | undefined): Promise < void > {
 
-    if (element === undefined) {
+    if (!element) {
       return;
     }
 
@@ -62,11 +61,11 @@ class QW_HTML_T30 extends Technique {
     };
 
     // verificar se existe pelo menos um th
-    const has_th = stew.select(element, 'th').length > 0;
+    const has_th = (await element.$$('th')).length > 0;
     // verificar se existe pelo menos um tr
-    const has_tr = stew.select(element, 'tr').length > 0;
+    const has_tr = (await element.$$('tr')).length > 0;
     // verificar se existe pelo menos um td
-    const has_td = stew.select(element, 'td').length > 0;
+    const has_td = (await element.$$('td')).length > 0;
 
     // verificar pelo menos uma ocorrencia de cada elemento
     if (has_td && has_tr && has_th) {
@@ -81,8 +80,8 @@ class QW_HTML_T30 extends Technique {
       evaluation.resultCode = 'RC2';
     }
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

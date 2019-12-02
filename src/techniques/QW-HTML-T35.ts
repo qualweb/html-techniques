@@ -5,9 +5,11 @@ import {
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 
+import { Page } from 'puppeteer';
 
 import Technique from './Technique.object';
-import { getNumberOfOpenPages } from '../util';
+
+import { BrowserUtils } from '@qualweb/util';
 
 
 const technique: HTMLTechnique = {
@@ -48,8 +50,11 @@ class QW_HTML_T35 extends Technique {
     throw new Error('Method not implemented.');
   }
 
-  async validate(url: string): Promise < void > {
-    console.log(url);
+  async validate(page: Page): Promise < void > {
+    
+    const url = await page.url();
+
+    const browser = page.browser();
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -57,10 +62,10 @@ class QW_HTML_T35 extends Technique {
       resultCode: ''
     };
 
-    const numberOfPages =  await getNumberOfOpenPages(url);
-    if (numberOfPages < 2) { 
+    const newTabWasOpen = await BrowserUtils.detectIfUnwantedTabWasOpened(browser, url);
+    if (!newTabWasOpen) { 
       evaluation.verdict = 'passed';
-      evaluation.description = `Browser didnt open new tab`;
+      evaluation.description = `Browser didn't open new tab`;
       evaluation.resultCode = 'RC1';
     } else { 
       evaluation.verdict = 'failed';

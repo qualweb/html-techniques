@@ -3,9 +3,8 @@
  */
 'use strict';
 
-import { DomElement } from 'htmlparser2';
+import { Page } from 'puppeteer';
 import { HTMLTOptions, HTMLTechniquesReport } from '@qualweb/html-techniques';
-const stew = new(require('stew-select')).Stew();
 
 import mapping from './techniques/mapping.json';
 
@@ -60,52 +59,50 @@ function resetConfiguration(): void {
   }
 }
 
-async function executeMappedTechniques(url:string,report: HTMLTechniquesReport, html: DomElement[], selectors: string[], mappedTechniques: any): Promise<void> {
+async function executeTechnique(technique: string, selector: string, page: Page, report: HTMLTechniquesReport): Promise<void> {
+  const elements = await page.$$(selector);
+  if (elements.length > 0) {
+    for (const elem of elements || []) {
+      await techniques[technique].execute(elem, page);
+      //await elem.dispose();
+    }
+  } else {
+    await techniques[technique].execute(undefined, page);
+  }
+  report.techniques[technique] = techniques[technique].getFinalResults();
+  report.metadata[report.techniques[technique].metadata.outcome]++;
+  techniques[technique].reset();
+}
+
+async function executeMappedTechniques(report: HTMLTechniquesReport, page: Page, selectors: string[], mappedTechniques: any): Promise<void> {
+  const promises = new Array<any>();
   for (const selector of selectors || []) {
     for (const technique of mappedTechniques[selector] || []) {
       if (techniquesToExecute[technique]) {
-        let elements = stew.select(html, selector);
-
-        if (elements.length > 0) {
-          for (const elem of elements || []) {
-            await techniques[technique].execute(elem, html,url);
-          }
-        } else {
-          await techniques[technique].execute(undefined, html,url);
-        }
-        report.techniques[technique] = techniques[technique].getFinalResults();
-        report.metadata[report.techniques[technique].metadata.outcome]++;
-        techniques[technique].reset();
+        promises.push(executeTechnique(technique, selector, page, report));
       }
     }
   }
+  await Promise.all(promises);
 }
 
-async function executeNotMappedTechniques(report: HTMLTechniquesReport, url: string): Promise<void> {
+async function executeNotMappedTechniques(report: HTMLTechniquesReport, page: Page): Promise<void> {
   if (techniquesToExecute['QW-HTML-T20']) {
-    await techniques['QW-HTML-T20'].validate(url);
+    await techniques['QW-HTML-T20'].validate(page);
     report.techniques['QW-HTML-T20'] = techniques['QW-HTML-T20'].getFinalResults();
     report.metadata[report.techniques['QW-HTML-T20'].metadata.outcome]++;
     techniques['QW-HTML-T20'].reset();
   }
 
   if (techniquesToExecute['QW-HTML-T35']) {
-    await techniques['QW-HTML-T35'].validate(url);
+    await techniques['QW-HTML-T35'].validate(page);
     report.techniques['QW-HTML-T35'] = techniques['QW-HTML-T35'].getFinalResults();
     report.metadata[report.techniques['QW-HTML-T35'].metadata.outcome]++;
     techniques['QW-HTML-T35'].reset();
   }
 }
 
-async function executeHTMLT(url: string, sourceHTML: DomElement[], processedHTML: DomElement[]): Promise<HTMLTechniquesReport> {
-
-  if (sourceHTML === null || sourceHTML === undefined) {
-    throw new Error(`Source html can't be null or undefined`);
-  }
-
-  if (processedHTML === null || processedHTML === undefined) {
-    throw new Error(`Processed html can't be null or undefined`);
-  }
+async function executeHTMLT(page: Page): Promise<HTMLTechniquesReport> {
 
   const report: HTMLTechniquesReport = {
     type: 'html-techniques',
@@ -118,10 +115,10 @@ async function executeHTMLT(url: string, sourceHTML: DomElement[], processedHTML
     techniques: {}
   };
 
-  await executeMappedTechniques(url,report, sourceHTML, Object.keys(mapping.pre), mapping.pre);
-  await executeMappedTechniques(url, report, processedHTML, Object.keys(mapping.post), mapping.post);
+  //await executeMappedTechniques(url,report, sourceHTML, Object.keys(mapping.pre), mapping.pre);
+  await executeMappedTechniques(report, page, Object.keys(mapping.post), mapping.post);
 
-  await executeNotMappedTechniques(report, url);
+  await executeNotMappedTechniques(report, page);
 
   resetConfiguration();
 

@@ -4,16 +4,16 @@ import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
+
 import {
-  DomElement
-} from 'htmlparser2';
+  ElementHandle
+} from 'puppeteer';
 
 import {
   DomUtils
 } from '@qualweb/util';
 
 import Technique from './Technique.object';
-const stew = new(require('stew-select')).Stew();
 
 const technique: HTMLTechnique = {
   name: 'Using ol, ul and dl for lists or groups of links',
@@ -48,9 +48,9 @@ class QW_HTML_T28 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: ElementHandle | undefined): Promise < void > {
 
-    if (element === undefined || !element.parent) {
+    if (!element || !await DomUtils.getElementParent(element)) {
       return;
     }
 
@@ -60,19 +60,21 @@ class QW_HTML_T28 extends Technique {
       resultCode: ''
     };
 
-    const hasLi = stew.select(element, 'li').length !== 0;
-    const hasDd = stew.select(element, 'dd').length !== 0;
-    const hasDt = stew.select(element, 'dt').length !== 0;
+    const hasLi = (await element.$$('li')).length !== 0;
+    const hasDd = (await element.$$('dd')).length !== 0;
+    const hasDt = (await element.$$('dt')).length !== 0;
 
-    if (hasLi && element.name === 'ul') { // fails if the element doesn't contain an alt attribute
+    const name = await DomUtils.getElementTagName(element);
+
+    if (hasLi && name === 'ul') { // fails if the element doesn't contain an alt attribute
       evaluation.verdict = 'warning';
       evaluation.description = 'Check that content that has the visual appearance of a list (with or without bullets) is marked as an unordered list';
       evaluation.resultCode = 'RC1';
-    } else if (hasLi && element.name === 'ol') {
+    } else if (hasLi && name === 'ol') {
       evaluation.verdict = 'warning';
       evaluation.description = 'Check that content that has the visual appearance of a numbered list is marked as an ordered list.';
       evaluation.resultCode = 'RC2';
-    } else if (element.name === 'dl' && (hasDt || hasDd)) {
+    } else if (name === 'dl' && (hasDt || hasDd)) {
       evaluation.verdict = 'warning';
       evaluation.description = 'Check that content is marked as a definition list when terms and their definitions are presented in the form of a list.';
       evaluation.resultCode = 'RC3';
@@ -82,8 +84,8 @@ class QW_HTML_T28 extends Technique {
       evaluation.resultCode = 'RC4';
     }
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

@@ -1,13 +1,13 @@
 'use strict';
 
-import _ from 'lodash';
+import intersection from 'lodash/intersection';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 import {
-  DomElement
-} from 'htmlparser2';
+  ElementHandle
+} from 'puppeteer';
 
 import {
   DomUtils
@@ -61,7 +61,7 @@ class QW_HTML_T22 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: ElementHandle | undefined): Promise < void > {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -75,12 +75,16 @@ class QW_HTML_T22 extends Technique {
       evaluation.resultCode = 'RC1';
     } else {
       evaluation.verdict = 'failed';
-      evaluation.description = `The webpage uses attributes in ${element.name} element to control the visual text presentation`;
+      evaluation.description = `The webpage uses attributes in ${await DomUtils.getElementTagName(element)} element to control the visual text presentation`;
       evaluation.resultCode = 'RC2';
 
-      evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-      evaluation.pointer = DomUtils.getElementSelector(element);
-      evaluation.attributes = element.attribs ? _.intersection(Object.keys(element.attribs), ['text', 'vlink', 'alink', 'link']) : undefined;
+      evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+      evaluation.pointer = await DomUtils.getElementSelector(element);
+
+      const hasAttributes = await DomUtils.elementHasAttributes(element);
+      const attributes = await DomUtils.getElementAttributesName(element);
+
+      evaluation.attributes = hasAttributes ? intersection(attributes, ['text', 'vlink', 'alink', 'link']) : undefined;
     }
 
     super.addEvaluationResult(evaluation);

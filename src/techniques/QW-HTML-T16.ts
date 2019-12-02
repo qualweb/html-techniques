@@ -1,19 +1,18 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 import {
-  DomElement
-} from 'htmlparser2';
+  ElementHandle
+} from 'puppeteer';
 
 import {
   DomUtils
 } from '@qualweb/util';
 
-import Technique from "./Technique.object";
+import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
   name: 'Failure of Success Criterion 2.2.2 due to using the blink element',
@@ -48,7 +47,7 @@ class QW_HTML_T16 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: ElementHandle | undefined): Promise < void > {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -60,8 +59,8 @@ class QW_HTML_T16 extends Technique {
       evaluation.verdict = 'failed';
       evaluation.description = 'Used blink element';
       evaluation.resultCode = 'RC1';
-      evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-      evaluation.pointer = DomUtils.getElementSelector(element);
+      evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+      evaluation.pointer = await DomUtils.getElementSelector(element);
     } else { // success if refresh element doesn't exist
       evaluation.verdict = 'passed';
       evaluation.description = `Blink is not used`;

@@ -5,13 +5,13 @@ import {
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 import {
-  DomElement
-} from 'htmlparser2';
+  Page,
+  ElementHandle
+} from 'puppeteer';
 
 import {
   DomUtils
 } from '@qualweb/util';
-const stew = new(require('stew-select')).Stew();
 
 import Technique from "./Technique.object";
 
@@ -55,7 +55,7 @@ class QW_HTML_T3 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
+  async execute(element: ElementHandle | undefined, page: Page): Promise < void > {
 
     if (!element) {
       return;
@@ -66,22 +66,27 @@ class QW_HTML_T3 extends Technique {
       description: '',
       resultCode: ''
     };
-    let formATT = DomUtils.getElementAttribute(element,"form");
-    let validFormAtt=[];
+    const formATT = await DomUtils.getElementAttribute(element, 'form');
+    
+    let validFormAtt = new Array<any>();
 
     if(formATT){
-      validFormAtt = stew.select(processedHTML,'form[id="'+formATT+'"]');
+      validFormAtt = await page.$$('form[id="' + validFormAtt + '"]');
     }
 
-    if (!DomUtils.elementHasParent(element, 'form')&&validFormAtt.length===0) {
+    const hasParent = await DomUtils.elementHasParent(element, 'form');
+    const hasChid = await DomUtils.elementHasChild(element, 'legend');
+    const childText = await DomUtils.getElementChildTextContent(element, 'legend');
+
+    if (!hasParent && validFormAtt.length === 0) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The fieldset is not in a form and is not referencing a form';
       evaluation.resultCode = 'RC1';
-    } else if (!DomUtils.elementHasChild(element, 'legend')) {
+    } else if (!hasChid) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The legend does not exist in the fieldset element';
       evaluation.resultCode = 'RC2';
-    } else if (DomUtils.getElementChildTextContent(element, 'legend').trim() === '') {
+    } else if (childText && childText.trim() === '') {
       evaluation.verdict = 'failed';
       evaluation.description = 'The legend is empty';
       evaluation.resultCode = 'RC3';
@@ -92,8 +97,8 @@ class QW_HTML_T3 extends Technique {
     }
 
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

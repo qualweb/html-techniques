@@ -4,9 +4,10 @@ import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
+
 import {
-  DomElement
-} from 'htmlparser2';
+  ElementHandle
+} from 'puppeteer';
 
 import {
   DomUtils
@@ -48,7 +49,7 @@ class QW_HTML_T23 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: ElementHandle | undefined): Promise < void > {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -56,17 +57,20 @@ class QW_HTML_T23 extends Technique {
       resultCode: ''
     };
 
-    if (element !== undefined && element.attribs !== undefined) {
-      if (element.attribs['href'] !== '') {
+    if (element !== undefined && (await DomUtils.elementHasAttributes(element))) {
+      const href = await DomUtils.getElementAttribute(element, 'href');
+
+      if (href) {
         evaluation.verdict = 'warning';
         evaluation.description = `Check whether the link leads to related information`;
         evaluation.resultCode = 'RC1';
 
-        evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-        evaluation.pointer = DomUtils.getElementSelector(element);
+        evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+        evaluation.pointer = await DomUtils.getElementSelector(element);
+
+        super.addEvaluationResult(evaluation);
       }
     }
-    super.addEvaluationResult(evaluation);
   }
 }
 

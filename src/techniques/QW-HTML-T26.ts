@@ -1,17 +1,16 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
-import {
-  DomElement,
-  DomUtils
-} from 'htmlparser2';
 
 import {
-  DomUtils as QWDomUtils
+  ElementHandle
+} from 'puppeteer';
+
+import {
+  DomUtils
 } from '@qualweb/util';
 
 import Technique from './Technique.object';
@@ -50,9 +49,9 @@ class QW_HTML_T26 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: ElementHandle | undefined): Promise < void > {
 
-    if (element === undefined) {
+    if (!element) {
       return;
     }
 
@@ -63,22 +62,22 @@ class QW_HTML_T26 extends Technique {
     };
 
     const default_title = [
-      "ENTER THE TITLE OF YOUR HTML DOCUMENT HERE", 
-      "UNTITLED DOCUMENT", 
-      "NO TITLE", 
-      "UNTITLED PAGE", 
-      "NEW PAGE 1", 
-      "ESCREVE O TÍTULO DO DOCUMENTO AQUI,", 
-      "DOCUMENTO SEM TÍTULO", 
-      "SEM TÍTULO", 
-      "NOVA PÁGINA 1"
+      'ENTER THE TITLE OF YOUR HTML DOCUMENT HERE', 
+      'UNTITLED DOCUMENT', 
+      'NO TITLE', 
+      'UNTITLED PAGE', 
+      'NEW PAGE 1', 
+      'ESCREVE O TÍTULO DO DOCUMENTO AQUI,', 
+      'DOCUMENTO SEM TÍTULO', 
+      'SEM TÍTULO', 
+      'NOVA PÁGINA 1'
     ];
 
-    const patt = new RegExp(".+\\.(html|htm)");
-    const textData = DomUtils.getText(element);
+    const patt = new RegExp('.+\\.(html|htm)');
+    const textData = await DomUtils.getElementText(element);
 
     if (textData) {
-      if (textData !== "" && !patt.test(textData) && !_.includes(default_title, textData.toLocaleUpperCase())) { // the title text exists and needs to be verified
+      if (textData !== '' && !patt.test(textData) && !default_title.includes(textData.toLocaleUpperCase())) { // the title text exists and needs to be verified
         evaluation.verdict = 'warning';
         evaluation.description = `Please verify the title tag text correlates to the page's content`;
         evaluation.resultCode = 'RC1';
@@ -93,9 +92,8 @@ class QW_HTML_T26 extends Technique {
       evaluation.resultCode = 'RC3';
     }
 
-    evaluation.htmlCode = QWDomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = QWDomUtils.getElementSelector(element);
-
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

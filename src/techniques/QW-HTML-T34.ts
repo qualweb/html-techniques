@@ -1,20 +1,18 @@
 'use strict';
-import { AccessibilityTreeUtils} from '@qualweb/util';
 
-import _ from 'lodash';
+import {
+  ElementHandle, Page
+} from 'puppeteer';
+
+import {
+  DomUtils,AccessibilityTreeUtils
+} from '@qualweb/util';
+
+import Technique from './Technique.object';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
-import {
-  DomElement
-} from 'htmlparser2';
-
-import {
-  getElementSelector,
-  transform_element_into_html
-} from '../util';
-import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
   name: 'Failure of Success Criteria 2.4.4, 2.4.9 and 4.1.2 due to not providing an accessible name for an image which is the only content in a link ',
@@ -64,39 +62,22 @@ class QW_HTML_T34 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
-
-    if (element === undefined||element.children === undefined) {
+  async execute(element: ElementHandle | undefined,page:Page): Promise < void > {
+    if (element === undefined||!(await DomUtils.elementHasAttributes(element))) {
       return;
     }
-
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
       description: '',
       resultCode: ''
     };
 
-    let img;
-    let aText;
+    let img = await element.$("img");
+    let aText = await DomUtils.getElementText(element);
 
-    for (let child of element.children) { // fails if the element doesn't contain an alt attribute
-        if (child["name"] === "img") {
-            img = child;
-        }
-        if (child["type"] === "text" && child["data"] !== "") {
-            aText = child["data"];
-        }
-    }
+    if (aText !== undefined && aText.trim()!==""||!img) {
 
-
-    if (aText !== undefined&&_.trim(aText)!=="") {
-
-    } else if (AccessibilityTreeUtils.getAccessibleName(img,processedHTML)) {
-        evaluation.verdict = 'passed';
-        evaluation.description = `The image has an accessible name`;
-        technique.metadata['passed']++;
-
-    } else if (AccessibilityTreeUtils.getAccessibleName(element,processedHTML)) {
+    }else if ( await AccessibilityTreeUtils.getAccessibleName(element,page)) {
         evaluation['verdict'] = 'passed';
         evaluation['description'] = `The link has an accessible name`;
         technique['metadata']['passed']++;
@@ -108,10 +89,8 @@ class QW_HTML_T34 extends Technique {
 
     }
 
-
-    evaluation.htmlCode = transform_element_into_html(element);
-    evaluation.pointer = getElementSelector(element);
-    
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

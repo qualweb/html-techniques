@@ -1,19 +1,20 @@
 'use strict';
 
+import {trim} from "lodash";
+
+import {
+  ElementHandle
+} from 'puppeteer';
+
+import {
+  DomUtils,AccessibilityTreeUtils
+} from '@qualweb/util';
+
+import Technique from './Technique.object';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
-import {
-  DomElement
-} from 'htmlparser2';
-
-import {
-  DomUtils, AccessibilityTreeUtils
-} from '@qualweb/util';
-import { trim } from 'lodash';
-
-import Technique from './Technique.object';
 
 
 const technique: HTMLTechnique = {
@@ -54,9 +55,8 @@ class QW_HTML_T33 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise<void> {
-
-    if (element === undefined) {
+  async execute(element: ElementHandle | undefined): Promise < void > {
+    if (element === undefined||!(await DomUtils.elementHasAttributes(element))) {
       return;
     }
 
@@ -66,10 +66,10 @@ class QW_HTML_T33 extends Technique {
       resultCode: ''
     };
     let trimTitle;
-    let title = DomUtils.getElementAttribute(element, 'title');
+    let title =await DomUtils.getElementAttribute(element, 'title');
     if (title)
-      trimTitle = trim(title)
-    let text = AccessibilityTreeUtils.getTrimmedText(element);
+      trimTitle = trim(title);
+    let text = await AccessibilityTreeUtils.getTrimmedText(element);
 
     if (!trimTitle || trimTitle === "") {
       evaluation.verdict = 'failed';
@@ -85,8 +85,9 @@ class QW_HTML_T33 extends Technique {
       evaluation.resultCode = 'RC3';
     }
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
+
 
     super.addEvaluationResult(evaluation);
   }

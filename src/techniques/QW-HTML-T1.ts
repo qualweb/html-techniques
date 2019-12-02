@@ -5,8 +5,8 @@ import {
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 import {
-  DomElement
-} from 'htmlparser2';
+  ElementHandle
+} from 'puppeteer';
 
 import { DomUtils } from '@qualweb/util';
 
@@ -60,7 +60,7 @@ class QW_HTML_T1 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise<void> {
+  async execute(element: ElementHandle | undefined): Promise<void> {
 
     if (!element) {
       return;
@@ -72,11 +72,13 @@ class QW_HTML_T1 extends Technique {
       resultCode: ''
     };
 
-    if (!DomUtils.elementHasAttribute(element, 'alt')) { // fails if the element doesn't contain an alt attribute
+    const alt = await DomUtils.getElementAttribute(element, 'alt');
+
+    if (alt === null) { // fails if the element doesn't contain an alt attribute
       evaluation.verdict = 'failed';
       evaluation.description = `The element doesn't contain an alt attribute`;
       evaluation.resultCode = 'RC1';
-    } else if (DomUtils.getElementAttribute(element, 'alt') === '') { // fails if the element's alt attribute value is empty
+    } else if (alt.trim() === '') { // fails if the element's alt attribute value is empty
       evaluation.verdict = 'failed';
       evaluation.description = `The element's alt attribute value is empty`;
       evaluation.resultCode = 'RC2';
@@ -86,8 +88,8 @@ class QW_HTML_T1 extends Technique {
       evaluation.resultCode = 'RC3';
     }
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

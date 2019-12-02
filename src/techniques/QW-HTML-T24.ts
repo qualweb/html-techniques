@@ -1,20 +1,19 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
-import {
-  DomElement,
-  DomUtils
-} from 'htmlparser2';
 
 import {
-  DomUtils as QWDomUtils
+  ElementHandle
+} from 'puppeteer';
+
+import {
+  DomUtils
 } from '@qualweb/util';
 
-import Technique from "./Technique.object";
+import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
   name: 'Providing descriptive titles for Web pages',
@@ -49,9 +48,9 @@ class QW_HTML_T24 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: ElementHandle | undefined): Promise < void > {
 
-    if (element === undefined) {
+    if (!element) {
       return;
     }
 
@@ -60,9 +59,9 @@ class QW_HTML_T24 extends Technique {
       description: '',
       resultCode: ''
     };
-    let text = _.trim(DomUtils.getText(element));
+    const text = await DomUtils.getElementText(element);
 
-    if (text !== '') {
+    if (text) {
       evaluation.verdict = 'warning';
       evaluation.description = 'Please verify that the title describes the page correctly.';
       evaluation.resultCode = 'RC1';
@@ -72,9 +71,9 @@ class QW_HTML_T24 extends Technique {
       evaluation.resultCode = 'RC2';
     }
 
-
-    evaluation.htmlCode = QWDomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = QWDomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
+    
     super.addEvaluationResult(evaluation);
   }
 }

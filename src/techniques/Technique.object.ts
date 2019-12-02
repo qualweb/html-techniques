@@ -3,7 +3,7 @@
 import clone from 'lodash/clone';
 import cloneDeep from 'lodash/cloneDeep';
 import { HTMLTechnique, HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { DomElement } from 'htmlparser2';
+import { Page, ElementHandle } from 'puppeteer';
 
 abstract class Technique {
 
@@ -48,7 +48,7 @@ abstract class Technique {
     this.technique.metadata[result.verdict]++;
   }
 
-  abstract async execute(element: DomElement | undefined, processedHTML: DomElement[],url ?:string): Promise<void>;
+  abstract async execute(element: ElementHandle | undefined, page: Page): Promise<void>;
 
   getFinalResults() {
     this.outcomeTechnique();

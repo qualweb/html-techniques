@@ -4,9 +4,10 @@ import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
+
 import {
-  DomElement
-} from 'htmlparser2';
+  ElementHandle
+} from 'puppeteer';
 
 import {
   DomUtils
@@ -49,9 +50,9 @@ class QW_HTML_T29 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: ElementHandle | undefined): Promise < void > {
 
-    if (element === undefined || !element.attribs) {
+    if (!element || !(await DomUtils.elementHasAttributes(element))) {
       return;
     }
 
@@ -61,30 +62,36 @@ class QW_HTML_T29 extends Technique {
       resultCode: ''
     };
 
-    if (element.attribs['onmousedown']) {
+    const hasOnmousedown = await DomUtils.elementHasAttribute(element, 'onmousedown');
+    const hasOnmouseup = await DomUtils.elementHasAttribute(element, 'onmouseup');
+    const hasOnclick = await DomUtils.elementHasAttribute(element, 'onclick');
+    const hasOnmouseover = await DomUtils.elementHasAttribute(element, 'onmouseover');
+    const hasOnmouseout = await DomUtils.elementHasAttribute(element, 'onmouseout');
+
+    if (hasOnmousedown) {
       evaluation.verdict = 'warning';
       evaluation.description = `The mousedown attribute is used`;
       evaluation.resultCode = 'RC1';
-    } else if (element.attribs['onmouseup']) {
+    } else if (hasOnmouseup) {
       evaluation.verdict = 'warning';
       evaluation.description = `The mouseup attribute is used`;
       evaluation.resultCode = 'RC2';
-    } else if (element.attribs['onclick']) {
+    } else if (hasOnclick) {
       evaluation.verdict = 'warning';
       evaluation.description = `The click attribute is used`;
       evaluation.resultCode = 'RC3';
-    } else if (element.attribs['onmouseover']) {
+    } else if (hasOnmouseover) {
       evaluation.verdict = 'warning';
       evaluation.description = `The mouseover attribute is used`;
       evaluation.resultCode = 'RC4';
-    } else if (element.attribs['onmouseout']) {
+    } else if (hasOnmouseout) {
       evaluation.verdict = 'warning';
       evaluation.description = `The mouseout attribute is used`;
       evaluation.resultCode = 'RC5';
     }
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

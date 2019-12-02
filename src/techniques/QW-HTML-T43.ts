@@ -4,9 +4,10 @@ import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
+
 import {
-  DomElement
-} from 'htmlparser2';
+  ElementHandle
+} from 'puppeteer';
 
 import {
   DomUtils
@@ -48,7 +49,7 @@ class QW_HTML_T43 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: ElementHandle | undefined): Promise<void> {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -56,12 +57,12 @@ class QW_HTML_T43 extends Technique {
       resultCode: ''
     };
 
-    if (element === undefined) {
+    if (!element) {
       evaluation.verdict = 'inapplicable';
       evaluation.description = 'There is no element eligible to use the \'align\' attribute';
       evaluation.resultCode = 'RC1';
     } else {
-      const alignAttribute = DomUtils.getElementAttribute(element, 'align');
+      const alignAttribute = await DomUtils.getElementAttribute(element, 'align');
 
       if (alignAttribute) {
         if (alignAttribute.trim() === 'justify') {
@@ -77,8 +78,8 @@ class QW_HTML_T43 extends Technique {
         return; // if it doesnt have the align attribute, it doesnt matter
       }
 
-      evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-      evaluation.pointer = DomUtils.getElementSelector(element);
+      evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+      evaluation.pointer = await DomUtils.getElementSelector(element);
     }
 
     super.addEvaluationResult(evaluation);

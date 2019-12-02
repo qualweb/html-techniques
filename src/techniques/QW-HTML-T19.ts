@@ -1,13 +1,12 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 import {
-  DomElement
-} from 'htmlparser2';
+  ElementHandle
+} from 'puppeteer';
 
 import {
   DomUtils
@@ -57,9 +56,15 @@ class QW_HTML_T19 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: ElementHandle | undefined): Promise < void > {
 
-    if (!element || !element.parent) {
+    if (!element) {
+      return;
+    }
+
+    const parent = await DomUtils.getElementParent(element);
+
+    if (!parent) {
       return;
     }
 
@@ -68,19 +73,20 @@ class QW_HTML_T19 extends Technique {
       description: '',
       resultCode: ''
     };
-    let parentName = element.parent["name"];
 
-    if (parentName != "head") {
+    const parentName = await DomUtils.getElementTagName(parent);
+
+    if (parentName !== 'head') {
       evaluation.verdict = 'failed';
       evaluation.description = `The element is not contained in the head element`;
       evaluation.resultCode = 'RC1';
-    } else if (!element.attribs) { // fails if the element doesn't contain an alt attribute
+    } else if (!(await DomUtils.elementHasAttributes(element))) { // fails if the element doesn't contain an alt attribute
       evaluation.verdict = 'failed';
       evaluation.description = `The element doesn't contain a rel or an href attribute`;
       evaluation.resultCode = 'RC2';
     } else {
-      const rel = element.attribs["rel"];
-      const href = element.attribs["href"];
+      const rel = await DomUtils.getElementAttribute(element, 'rel');
+      const href = await DomUtils.getElementAttribute(element, 'href');
 
       if (!rel) {
         evaluation.verdict = 'warning';
@@ -97,8 +103,8 @@ class QW_HTML_T19 extends Technique {
       }
     }
     
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

@@ -5,8 +5,8 @@ import {
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 import {
-  DomElement
-} from 'htmlparser2';
+  ElementHandle
+} from 'puppeteer';
 
 import {
   DomUtils
@@ -47,7 +47,7 @@ class QW_HTML_T5 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: ElementHandle | undefined): Promise < void > {
 
     if (!element) {
       return;
@@ -59,11 +59,14 @@ class QW_HTML_T5 extends Technique {
       resultCode: ''
     };
 
-    if (!DomUtils.elementHasAttribute(element, 'alt')) {
+    const hasAlt = await DomUtils.elementHasAttribute(element, 'alt');
+    const alt = await DomUtils.getElementAttribute(element, 'alt');
+
+    if (!hasAlt) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The alt does not exist in the input element';
       evaluation.resultCode = 'RC1';
-    } else if (DomUtils.getElementAttribute(element, 'alt').trim() === '') {
+    } else if (alt && alt.trim() === '') {
       evaluation.verdict = 'failed';
       evaluation.description = 'The alt is empty';
       evaluation.resultCode = 'RC2';
@@ -73,8 +76,8 @@ class QW_HTML_T5 extends Technique {
       evaluation.resultCode = 'RC3';
     }
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

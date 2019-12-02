@@ -5,15 +5,15 @@ import {
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 import {
-  DomElement
-} from 'htmlparser2';
+  Page,
+  ElementHandle
+} from 'puppeteer';
 
 import {
   DomUtils
 } from '@qualweb/util';
 
 import Technique from './Technique.object';
-const stew = new (require('stew-select')).Stew();
 
 const technique: HTMLTechnique = {
   name: 'Organizing a page using headings',
@@ -22,7 +22,7 @@ const technique: HTMLTechnique = {
   description: 'The objective of this technique is to ensure that sections have headings that identify them and that the heading are used in the correct order',
   metadata: {
     target: {
-      element: 'h1,h2,h3,h4,h5,h6'
+      element: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
     },
     'success-criteria': [{
       name: '1.3.1',
@@ -55,9 +55,9 @@ class QW_HTML_T9 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise<void> {
+  async execute(element: ElementHandle | undefined, page: Page): Promise<void> {
 
-    if (!element || stew.select(processedHTML, 'h1,h2,h3,h4,h5,h6').length === 0) {
+    if (!element || (await page.$$('h1,h2,h3,h4,h5,h6')).length === 0) {
       return;
     }
 
@@ -67,33 +67,32 @@ class QW_HTML_T9 extends Technique {
       resultCode: ''
     };
 
-    const regexp = new RegExp('^h[1-6]$');
-    let name: string | undefined;
     let equal = true;
     let complete = true;
     let errorElem = element;
-    let hasH1 = stew.select(processedHTML, 'h1').length > 0;
+    let hasH1 = (await page.$$('h1')).length > 0;
     let counter = 0;
-    let htmlList = stew.select(processedHTML, '*');
+    let htmlList = await page.$$('body, body *');
 
-    let elem;
+    while(equal && complete && hasH1 && counter < htmlList.length) {
+      const elem = htmlList[counter];
 
-    while(equal && complete && hasH1 && counter<htmlList.length){
-      elem = htmlList[counter];
-      let list = new Array<number>();
-      let split = new Array<string>();
+      const list = await elem.evaluate(ele => {
+        const regexp = new RegExp('^h[1-6]$');
+        const list = new Array<number>();
 
-
-      for (const child of elem.children || []) {
-        name = child['name'];
-        if (name !== undefined && regexp.test(name)) {
-          split = name.split('h');
-          list.push(parseInt(split[1]));
+        for (const child of ele.children) {
+          const name = child.tagName;
+          if (name && regexp.test(name)) {
+            const split = name.split('h');
+            list.push(parseInt(split[1]));
+          }
         }
-      }
+
+        return list;
+      });
 
       if (list.length !== 0) {
-
         const sortedArray = list.sort((n1, n2) => n1 - n2);
 
         for (let i = 0; i < list.length; i++) {
@@ -128,8 +127,8 @@ class QW_HTML_T9 extends Technique {
       evaluation.resultCode = 'RC4';
     }
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(errorElem);
-    evaluation.pointer = DomUtils.getElementSelector(errorElem);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(errorElem);
+    evaluation.pointer = await DomUtils.getElementSelector(errorElem);
 
     super.addEvaluationResult(evaluation);
   }

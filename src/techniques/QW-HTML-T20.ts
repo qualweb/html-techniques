@@ -5,6 +5,8 @@ import {
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 
+import { Page } from 'puppeteer';
+
 import validator from 'html-validator';
 
 import Technique from './Technique.object';
@@ -51,40 +53,61 @@ class QW_HTML_T20 extends Technique {
     throw new Error('Method not implemented.');
   }
 
-  async validate(url: string): Promise < void > {
+  async validate(page: Page): Promise < void > {
+
+    const url = await page.evaluate(() => {
+      return location.href;
+    });
 
     const options = {
       url,
       format: 'json'
     };
 
-    const validation = await validator(options);
 
-    for (const result of validation.messages || []) {
-      const evaluation: HTMLTechniqueResult = {
-        verdict: '',
-        description: '',
-        resultCode: ''
-      };
 
-      if (result.type === 'error') {
-        evaluation.verdict = 'failed';
-        evaluation.description = result.message;
-        evaluation.resultCode = 'RC2';
-      } else {
-        evaluation.verdict = 'warning';
-        evaluation.description = result.message;
-        evaluation.resultCode = 'RC3';
-      }
-
-      super.addEvaluationResult(evaluation);
+    let validation;
+    
+    try {
+      validation = await validator(options);
+    } catch (err) {
     }
 
-    if (super.getNumberOfFailedResults() + super.getNumberOfWarningResults() === 0) {
+    if (validation) {
+      for (const result of validation.messages || []) {
+        const evaluation: HTMLTechniqueResult = {
+          verdict: '',
+          description: '',
+          resultCode: ''
+        };
+
+        if (result.type === 'error') {
+          evaluation.verdict = 'failed';
+          evaluation.description = result.message;
+          evaluation.resultCode = 'RC2';
+        } else {
+          evaluation.verdict = 'warning';
+          evaluation.description = result.message;
+          evaluation.resultCode = 'RC3';
+        }
+
+        super.addEvaluationResult(evaluation);
+      }
+
+      if (super.getNumberOfFailedResults() + super.getNumberOfWarningResults() === 0) {
+        const evaluation: HTMLTechniqueResult = {
+          verdict: 'passed',
+          description: `The HTML document doesn't have errors`,
+          resultCode: 'RC1'
+        };
+
+        super.addEvaluationResult(evaluation);
+      }
+    } else {
       const evaluation: HTMLTechniqueResult = {
-        verdict: 'passed',
-        description: `The HTML document doesn't have errors`,
-        resultCode: 'RC1'
+        verdict: 'inapplicable',
+        description: `An error ocurred while trying to validate the page`,
+        resultCode: 'RC4'
       };
 
       super.addEvaluationResult(evaluation);

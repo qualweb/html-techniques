@@ -4,14 +4,12 @@ import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
-
-import { AccessibilityTreeUtils} from '@qualweb/util';
 import {
-  DomElement
-} from 'htmlparser2';
+  ElementHandle, Page
+} from 'puppeteer';
 
 import {
-  DomUtils
+  DomUtils,AccessibilityTreeUtils
 } from '@qualweb/util';
 
 import Technique from './Technique.object';
@@ -56,9 +54,9 @@ class QW_HTML_T8 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined, processedHTML: DomElement[]): Promise < void > {
+  async execute(element: ElementHandle | undefined,page:Page): Promise < void > {
 
-    if (!element || !DomUtils.elementHasAttributes(element)) {
+    if (!element||!(await DomUtils.elementHasAttributes(element))) {
       return;
     }
 
@@ -76,14 +74,14 @@ class QW_HTML_T8 extends Technique {
     const pattern3 = new RegExp('^Intro#[0-9]+');
     const pattern4 = new RegExp('^imagem/s[0-9]+');
 
-    let altText = AccessibilityTreeUtils.getAccessibleName(element, processedHTML,false,false);
-    if (!altText || altText === '' ){
+    let altText = await AccessibilityTreeUtils.getAccessibleName(element, page);
+    if (!altText || altText === ''){
         evaluation.verdict = 'failed';
         evaluation.description = 'Text alternative is not actually a text alternative for the non-text content';
         evaluation.resultCode = 'RC1';
     }else{
       altText = altText.toLocaleLowerCase();
-      if(!pattern4.test(altText.toLocaleLowerCase()) && !pattern3.test(altText) && !pattern2.test(altText) && !pattern1.test(altText) && !pattern.test(altText) && !default_title.includes(altText)) {
+      if(!pattern4.test(altText) && !pattern3.test(altText) && !pattern2.test(altText) && !pattern1.test(altText) && !pattern.test(altText) && !default_title.includes(altText)) {
         evaluation.verdict = 'warning';
         evaluation.description = `Text alternative needs manual verification`;
         evaluation.resultCode = 'RC2';
@@ -94,10 +92,8 @@ class QW_HTML_T8 extends Technique {
       }
     }
 
-
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
-
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
     super.addEvaluationResult(evaluation);
   }
 }

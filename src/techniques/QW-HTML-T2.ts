@@ -5,8 +5,8 @@ import {
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 import {
-  DomElement
-} from 'htmlparser2';
+  ElementHandle
+} from 'puppeteer';
 import {
   DomUtils
 } from '@qualweb/util';
@@ -45,7 +45,7 @@ class QW_HTML_T2 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: ElementHandle | undefined): Promise < void > {
 
     if (!element) {
       return;
@@ -57,11 +57,14 @@ class QW_HTML_T2 extends Technique {
       resultCode: ''
     };
 
-    if (!DomUtils.elementHasChild(element, 'caption')) {
+    const hasChild = await DomUtils.elementHasChild(element, 'caption');
+    const childText = await DomUtils.getElementChildTextContent(element, 'caption');
+
+    if (!hasChild) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The caption does not exist in the table element';
       evaluation.resultCode = 'RC1';
-    } else if (DomUtils.getElementChildTextContent(element, 'caption').trim() === '') {
+    } else if (childText && childText.trim() === '') {
       evaluation.verdict = 'failed';
       evaluation.description = 'The caption is empty';
       evaluation.resultCode = 'RC2';
@@ -71,8 +74,8 @@ class QW_HTML_T2 extends Technique {
       evaluation.resultCode = 'RC3';
     }
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

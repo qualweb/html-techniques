@@ -5,8 +5,8 @@ import {
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 import {
-  DomElement
-} from 'htmlparser2';
+  ElementHandle
+} from 'puppeteer';
 
 import {
   DomUtils
@@ -47,9 +47,9 @@ class QW_HTML_T6 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: ElementHandle | undefined): Promise < void > {
 
-    if (!element || !DomUtils.elementHasAttributes(element)) {
+    if (!element || !(await DomUtils.elementHasAttributes(element))) {
       return;
     }
 
@@ -59,23 +59,43 @@ class QW_HTML_T6 extends Technique {
       resultCode: ''
     };
 
-    if (DomUtils.elementHasAttribute(element, 'onmousedown') && DomUtils.getElementAttribute(element,'onmousedown') !== DomUtils.getElementAttribute(element,'onkeydown')) {
+    const hasOnmousedown = await DomUtils.elementHasAttribute(element, 'onmousedown');
+    const onmousedown = await DomUtils.getElementAttribute(element, 'onmousedown');
+    const onkeydown = await DomUtils.getElementAttribute(element, 'onkeydown');
+
+    const hasOnmouseup = await DomUtils.elementHasAttribute(element, 'onmouseup');
+    const onmouseup = await DomUtils.getElementAttribute(element, 'onmouseup');
+    const onkeyup = await DomUtils.getElementAttribute(element, 'onkeyup');
+    
+    const hasOnclick = await DomUtils.elementHasAttribute(element, 'onclick');
+    const onclick = await DomUtils.getElementAttribute(element, 'onclick');
+    const onkeypress = await DomUtils.getElementAttribute(element, 'onkeypress');
+
+    const hasOnmouseover = await DomUtils.elementHasAttribute(element, 'onmouseover');
+    const onmouseover = await DomUtils.getElementAttribute(element, 'onmouseover');
+    const onfocus = await DomUtils.getElementAttribute(element, 'onfocus');
+
+    const hasOnmouseout = await DomUtils.elementHasAttribute(element, 'onmouseout');
+    const onmouseout = await DomUtils.getElementAttribute(element, 'onmouseout');
+    const onblur = await DomUtils.getElementAttribute(element,'onblur');
+
+    if (hasOnmousedown && onmousedown !== onkeydown) {
       evaluation.verdict = 'failed';
       evaluation.description = `The mousedown attribute doesn't have a keyboard equivalent`;
       evaluation.resultCode = 'RC1';
-    } else if (DomUtils.elementHasAttribute(element, 'onmouseup') && DomUtils.getElementAttribute(element,'onmouseup') !== DomUtils.getElementAttribute(element,'onkeyup')) {
+    } else if (hasOnmouseup && onmouseup !== onkeyup) {
       evaluation.verdict = 'failed';
       evaluation.description = `The mouseup attribute doesn't have a keyboard equivalent`;
       evaluation.resultCode = 'RC2';
-    } else if (DomUtils.elementHasAttribute(element, 'onclick') && DomUtils.getElementAttribute(element,'onclick') !== DomUtils.getElementAttribute(element,'onkeypress')) {
+    } else if (hasOnclick && onclick !== onkeypress) {
       evaluation.verdict = 'failed';
       evaluation.description = `The click attribute doesn't have a keyboard equivalent`;
       evaluation.resultCode = 'RC3';
-    } else if (DomUtils.elementHasAttribute(element, 'onmouseover') && DomUtils.getElementAttribute(element,'onmouseover') !== DomUtils.getElementAttribute(element,'onfocus')) {
+    } else if (hasOnmouseover && onmouseover !== onfocus) {
       evaluation.verdict = 'failed';
       evaluation.description = `The mouseover attribute doesn't have a keyboard equivalent`;
       evaluation.resultCode = 'RC4';
-    } else if (DomUtils.elementHasAttribute(element, 'onmouseout') && DomUtils.getElementAttribute(element,'onmouseout') !== DomUtils.getElementAttribute(element,'onblur')) {
+    } else if (hasOnmouseout && onmouseout !== onblur) {
       evaluation.verdict = 'failed';
       evaluation.description = `The mouseout attribute doesn't have a keyboard equivalent`;
       evaluation.resultCode = 'RC5';
@@ -84,13 +104,9 @@ class QW_HTML_T6 extends Technique {
       evaluation.description = `All the mouse event handlers have a keyboard equivalent`;
       evaluation.resultCode = 'RC6';
     }
-    console.log( evaluation.resultCode )
-    console.log(element.attribs);
-    console.log(DomUtils.elementHasAttribute(element, 'onmouseout'));
-    console.log(DomUtils.elementHasAttribute(element, 'onmouseout') +"  !   "+ DomUtils.getElementAttribute('onmouseout') !== DomUtils.getElementAttribute('onblur'));
-
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer =await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

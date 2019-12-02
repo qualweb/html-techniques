@@ -1,19 +1,19 @@
 'use strict';
 
-import _ from 'lodash';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
+
 import {
-  DomElement
-} from 'htmlparser2';
+  ElementHandle
+} from 'puppeteer';
 
 import {
   DomUtils
 } from '@qualweb/util';
 
-import Technique from "./Technique.object";
+import Technique from './Technique.object';
 
 const technique: HTMLTechnique = {
   name: 'Positioning labels to maximize predictability of relationships',
@@ -56,9 +56,9 @@ class QW_HTML_T25 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: ElementHandle | undefined): Promise < void > {
 
-    if (element === undefined) {
+    if (!element) {
       return;
     }
 
@@ -68,7 +68,7 @@ class QW_HTML_T25 extends Technique {
       resultCode: ''
     };
 
-    const result = this.verifyInputLabelPosition(element);
+    const result = await this.verifyInputLabelPosition(element);
 
     if (result === 'checkbox') {
       evaluation.verdict = 'failed';
@@ -92,38 +92,64 @@ class QW_HTML_T25 extends Technique {
       evaluation.resultCode = 'RC5';
     }
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }
 
-  verifyInputLabelPosition(elem: DomElement): string | undefined {
-    if (elem.attribs) {
-      if (elem.attribs['type'] === 'radio' || elem.attribs['type'] === 'checkbox') {
-        if (elem.next) {
-          if (elem.next.name === 'label' && elem.next.attribs && elem.next.attribs['for'] === elem.attribs['id']) {
+  private async verifyInputLabelPosition(element: ElementHandle): Promise<string | undefined> {
+    if (await DomUtils.elementHasAttributes(element)) {
+      const type = await DomUtils.getElementAttribute(element, 'type');
+
+      const prevElement = await DomUtils.getElementPreviousSibling(element);
+      let prevElementTagName;
+      let prevElementHasAttributes
+      let prevElementAttributeFor;
+
+      if (prevElement) {
+        prevElementTagName = await DomUtils.getElementTagName(prevElement);
+        prevElementHasAttributes = await DomUtils.elementHasAttributes(prevElement);
+        prevElementAttributeFor = await DomUtils.getElementAttribute(prevElement, 'for');
+      }
+
+      const nextElement = await DomUtils.getElementNextSibling(element);
+      let nextElementTagName;
+      let nextElementHasAttributes;
+      let nextElementAttributeFor;
+
+      if (nextElement) {
+        nextElementTagName = await DomUtils.getElementTagName(nextElement);
+        nextElementHasAttributes = await DomUtils.elementHasAttributes(nextElement);
+        nextElementAttributeFor = await DomUtils.getElementAttribute(nextElement, 'for');
+      }
+
+      const elementId = await DomUtils.getElementAttribute(element, 'id');
+
+      if (type && (type === 'radio' || type === 'checkbox')) {
+        if (nextElement) {
+          if (nextElementTagName === 'label' && nextElementHasAttributes && nextElementAttributeFor === elementId) {
             return 'pass';
           }
-        } else if (elem.prev) {
-          if (elem.prev.name === 'label' && elem.prev.attribs && elem.prev.attribs['for'] === elem.attribs['id']) {
-            return elem.attribs['type'];
+        } else if (prevElement) {
+          if (prevElementTagName === 'label' && prevElementHasAttributes && prevElementAttributeFor === elementId) {
+            return type;
           }
         } else {
-          return 'noLabel'
+          return 'noLabel';
         }
       }
-      if (elem.attribs['type'] !== 'checkbox' && elem.attribs['type'] !== 'radio') {
-        if (elem.prev) {
-          if (elem.prev.name === 'label' && elem.prev.attribs && elem.prev.attribs['for'] === elem.attribs['id']) {
+      if (type && (type !== 'checkbox' && type !== 'radio')) {
+        if (prevElement) {
+          if (prevElementTagName === 'label' && prevElementHasAttributes && prevElementAttributeFor === elementId) {
             return 'pass';
           }
-        } else if (elem.next) {
-          if (elem.next.name === 'label' && elem.next.attribs && elem.next.attribs['for'] === elem.attribs['id']) {
+        } else if (nextElement) {
+          if (nextElementTagName === 'label' && nextElementHasAttributes && nextElementAttributeFor === elementId) {
             return 'other';
           }
         } else {
-          return 'noLabel'
+          return 'noLabel';
         }
       }
     }

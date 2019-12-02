@@ -1,19 +1,20 @@
 'use strict';
 
+import {trim} from "lodash";
+
+import {
+  ElementHandle, Page
+} from 'puppeteer';
+
+import {
+  DomUtils,AccessibilityTreeUtils
+} from '@qualweb/util';
+
+import Technique from './Technique.object';
 import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
-import {
-  DomElement
-} from 'htmlparser2';
-
-import {
-  DomUtils, AccessibilityTreeUtils
-} from '@qualweb/util';
-import { trim } from 'lodash';
-
-import Technique from './Technique.object';
 
 
 
@@ -49,8 +50,7 @@ class QW_HTML_T39 extends Technique {
   constructor() {
     super(technique);
   }
-
-  async execute(element: DomElement | undefined, processedHTML: DomElement[], url: string): Promise<void> {
+  async execute(element: ElementHandle | undefined,page:Page): Promise < void > {
 
     if (element === undefined) {
       return;
@@ -63,15 +63,16 @@ class QW_HTML_T39 extends Technique {
     };
 
     let AName, alt, role;
-    if (element.name === "img") {
-      alt = DomUtils.getElementAttribute(element, 'alt');
-      role = DomUtils.getElementAttribute(element, 'role');
-      AName = AccessibilityTreeUtils.getAccessibleName(element, processedHTML);
+    let name = await DomUtils.getElementName(element);
+    if (await DomUtils.getElementName(element) === "img") {
+      alt = await DomUtils.getElementAttribute(element, 'alt');
+      role = await DomUtils.getElementAttribute(element, 'role');
+      AName = await AccessibilityTreeUtils.getAccessibleName(element, page);
     }
     else {
-      AName =  await AccessibilityTreeUtils.getAccessibleNameSVG(url, DomUtils.getElementSelector(element));
+      AName =  await AccessibilityTreeUtils.getAccessibleNameSVG(element,page);
     }
-    if (element.name === "img" && role === "none" || role === "presentation" || alt === "") {
+    if (name === "img" && role === "none" || role === "presentation" || alt === "") {
       //inaplicable(presentation)
     } else {
       if (!AName && trim(AName) === "") {
@@ -83,8 +84,8 @@ class QW_HTML_T39 extends Technique {
         evaluation.description = `Please verify that the element's accessible describes  the image correctly`;
         evaluation.resultCode = 'RC2';
       }
-      evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-      evaluation.pointer = DomUtils.getElementSelector(element);
+      evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+      evaluation.pointer = await DomUtils.getElementSelector(element);
       super.addEvaluationResult(evaluation);
 
 

@@ -5,8 +5,8 @@ import {
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
 import {
-  DomElement
-} from 'htmlparser2';
+  ElementHandle
+} from 'puppeteer';
 
 import {
   DomUtils
@@ -47,7 +47,7 @@ class QW_HTML_T7 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise < void > {
+  async execute(element: ElementHandle | undefined): Promise < void > {
 
     if (!element) {
       return;
@@ -59,7 +59,10 @@ class QW_HTML_T7 extends Technique {
       resultCode: ''
     };
 
-    if (DomUtils.elementHasAttribute(element, 'title') && DomUtils.getElementAttribute(element, 'title').trim() !== '') {
+    const hasTitle = await DomUtils.elementHasAttribute(element, 'title');
+    const title = await DomUtils.getElementAttribute(element, 'title');
+
+    if (hasTitle && title && title.trim() !== '') {
       evaluation.verdict = 'passed';
       evaluation.description = `The element abbrv has the definition in the title attribute`;
       evaluation.resultCode = 'RC1';
@@ -68,8 +71,8 @@ class QW_HTML_T7 extends Technique {
       evaluation.description = `The element abbrv doesn't have the definition in the title attribute`;
       evaluation.resultCode = 'RC2';
     }
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }

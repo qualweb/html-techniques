@@ -4,11 +4,12 @@ import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
+
 import {
-  DomElement
-} from 'htmlparser2';
-import {includes} from 'lodash';
-import {DomUtils} from '@qualweb/util';
+  ElementHandle
+} from 'puppeteer';
+
+import { DomUtils } from '@qualweb/util';
 
 import Technique from './Technique.object';
 
@@ -46,7 +47,7 @@ class QW_HTML_T41 extends Technique {
     super(technique);
   }
 
-  async execute(element: DomElement | undefined): Promise<void> {
+  async execute(element: ElementHandle | undefined): Promise<void> {
 
     if (!element) {
       return;
@@ -58,17 +59,21 @@ class QW_HTML_T41 extends Technique {
       resultCode: ''
     };
 
-    if (element.name === 'th' && !DomUtils.elementHasAttribute(element, 'scope')) {
+    const name = await DomUtils.getElementTagName(element);
+
+    const hasScope = await DomUtils.elementHasAttribute(element, 'scope');
+    const scope = await DomUtils.getElementAttribute(element, 'scope');
+
+    if (name === 'th' && !hasScope) {
       evaluation.verdict = 'failed';
       evaluation.description = `The element doesn't contain a scope attribute`;
       evaluation.resultCode = 'RC1';
-    } else if (element.name === 'th' && DomUtils.getElementAttribute(element, 'scope') === '') {
+    } else if (name === 'th' && scope === '') {
       evaluation.verdict = 'failed';
       evaluation.description = `The element's scope attribute is empty`;
       evaluation.resultCode = 'RC2';
     } else {
-      let scope = DomUtils.getElementAttribute(element, 'scope');
-      if (includes(['col', 'row', 'colgroup', 'rowgroup'], scope)) {
+      if (scope && ['col', 'row', 'colgroup', 'rowgroup'].includes(scope)) {
         evaluation.verdict = 'passed';
         evaluation.description = 'The element\'s scope attribute matches the following values: col, row, colgroup, rowgroup';
         evaluation.resultCode = 'RC3';
@@ -79,8 +84,8 @@ class QW_HTML_T41 extends Technique {
       }
     }
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }
