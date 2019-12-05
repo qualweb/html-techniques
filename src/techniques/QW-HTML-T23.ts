@@ -57,7 +57,7 @@ class QW_HTML_T23 extends Technique {
       resultCode: ''
     };
 
-    if (element !== undefined && (await DomUtils.elementHasAttributes(element))) {
+    if (element) {
       const href = await DomUtils.getElementAttribute(element, 'href');
 
       if (href) {
@@ -67,10 +67,14 @@ class QW_HTML_T23 extends Technique {
 
         evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
         evaluation.pointer = await DomUtils.getElementSelector(element);
-
-        super.addEvaluationResult(evaluation);
       }
+    } else {
+      evaluation.verdict = 'failed';
+      evaluation.description = `The webpage doesn't have any links`;
+      evaluation.resultCode = 'RC2';
     }
+
+    super.addEvaluationResult(evaluation);
   }
 }
 
