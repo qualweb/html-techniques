@@ -61,6 +61,7 @@ describe('Technique QW-HTML-T38', async function() {
       outcome: 'warning'
     }
   ];
+  let browser;
   it("", async function () {
     browser = await puppeteer.launch();
   });
@@ -85,7 +86,7 @@ describe('Technique QW-HTML-T38', async function() {
       });
     });
   }
-  describe(``,  async function () {
+  describe(``,  function () {
     it(``, async function () {
       await browser.close();
     });

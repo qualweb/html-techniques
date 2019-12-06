@@ -52,7 +52,7 @@ class QW_HTML_T38 extends Technique {
   }
 
   async execute(element: ElementHandle | undefined, page: Page): Promise<void> {
-    if (element === undefined) {
+    if (element === null||element === undefined) {
       return;
     }
 
@@ -67,7 +67,7 @@ class QW_HTML_T38 extends Technique {
     let children = await DomUtils.getElementChildren(element);
 
     if (children !== null && children.length > 0) {
-      let firstFocusableElem = findFirstFocusableElement(element);
+      let firstFocusableElem = await findFirstFocusableElement(element);
       if (firstFocusableElem !== undefined) {
         if (isVisible) {
           const firstFocusableElemName = await DomUtils.getElementTagName(firstFocusableElem);
@@ -131,8 +131,8 @@ class QW_HTML_T38 extends Technique {
       evaluation.resultCode = 'RC9';
     }
 
-    evaluation.htmlCode = DomUtils.transformElementIntoHtml(element);
-    evaluation.pointer = DomUtils.getElementSelector(element);
+    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
+    evaluation.pointer = await DomUtils.getElementSelector(element);
 
     super.addEvaluationResult(evaluation);
   }
