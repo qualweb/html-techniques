@@ -61,14 +61,13 @@ class QW_HTML_T38 extends Technique {
       description: '',
       resultCode: ''
     };
-
-    //todo ainda por fazer
-    let isVisible = true;
+   
     let children = await DomUtils.getElementChildren(element);
 
     if (children !== null && children.length > 0) {
       let firstFocusableElem = await findFirstFocusableElement(element);
       if (firstFocusableElem !== undefined) {
+        let isVisible = await DomUtils.isElemenVisible(firstFocusableElem);
         if (isVisible) {
           const firstFocusableElemName = await DomUtils.getElementTagName(firstFocusableElem);
           //const firstFocusableElemAttribs = await DomUtils.getElementAttributes(firstFocusableElem);
@@ -83,8 +82,8 @@ class QW_HTML_T38 extends Technique {
               let idSymbol = firstFocusableElemHREF.indexOf('#');
               let idReferenced = firstFocusableElemHREF.substring(idSymbol + 1);
               if (idReferenced.length > 0) {
-                let idElementReferenced = element.$( '[id="' + idReferenced + '"]')[0];
-                if (idElementReferenced !== undefined) {
+                let idElementReferenced = await element.$( '[id="' + idReferenced + '"]')
+                if (idElementReferenced !== null) {
                   if (hasMainElementAsParent(idElementReferenced)) {
                     evaluation.verdict = 'warning';
                     evaluation.description = 'The first focusable control is a visible link to a <main> element.';
@@ -162,7 +161,7 @@ async function findFirstFocusableElement(element: ElementHandle):Promise< Elemen
   return firstFocusableElem;
 }
 
-function hasMainElementAsParent(element: ElementHandle): boolean {
+function hasMainElementAsParent(element: ElementHandle|null): boolean {
   let pointer = DomUtils.getElementSelector(element);
   return indexOf(pointer, 'main:') > 0;
 }

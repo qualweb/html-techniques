@@ -17,7 +17,7 @@ describe('Technique QW-HTML-T38', async function() {
       outcome: 'inapplicable'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g1/noFocusableElements.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/testeEstriga/testeEstriga3.html',
       outcome: 'failed'
     },
     {
@@ -77,6 +77,7 @@ describe('Technique QW-HTML-T38', async function() {
     describe(`${test.outcome.charAt(0).toUpperCase() + test.outcome.slice(1)} example ${i}`, function () {
       it(`should have outcome="${test.outcome}"`, async function () {
         this.timeout(20 * 1000);
+        console.log(test.url);
         const { sourceHtml, page, stylesheets } = await getDom(browser,test.url);
         configure({
           techniques: ['QW-HTML-T38']
