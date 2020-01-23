@@ -67,7 +67,7 @@ class QW_HTML_T38 extends Technique {
     if (children !== null && children.length > 0) {
       let firstFocusableElem = await findFirstFocusableElement(element);
       if (firstFocusableElem !== undefined) {
-        let isVisible = await DomUtils.isElemenVisible(firstFocusableElem);
+        let isVisible = await DomUtils.isElementVisible(firstFocusableElem);
         if (isVisible) {
           const firstFocusableElemName = await DomUtils.getElementTagName(firstFocusableElem);
           //const firstFocusableElemAttribs = await DomUtils.getElementAttributes(firstFocusableElem);

@@ -7,7 +7,7 @@ import {
 } from 'puppeteer';
 
 import {
-  DomUtils,AccessibilityTreeUtils
+  DomUtils,AccessibilityUtils
 } from '@qualweb/util';
 
 import Technique from './Technique.object';
@@ -69,7 +69,7 @@ class QW_HTML_T33 extends Technique {
     let title =await DomUtils.getElementAttribute(element, 'title');
     if (title)
       trimTitle = trim(title);
-    let text = await AccessibilityTreeUtils.getTrimmedText(element);
+    let text = await AccessibilityUtils.getTrimmedText(element);
 
     if (!trimTitle || trimTitle === "") {
       evaluation.verdict = 'failed';

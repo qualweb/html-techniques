@@ -86,7 +86,7 @@
     "css": "^2.2.4"
   },
   "dependencies": {
-    "@qualweb/util": "^0.2.7",
+    "@qualweb/util": "^0.2.32",
     "html-validator": "^5.0.0",
     "lodash": "^4.17.15",
     "stew-select": "0.0.5"

@@ -5,7 +5,7 @@ import {
 } from 'puppeteer';
 
 import {
-  DomUtils,AccessibilityTreeUtils
+  DomUtils,AccessibilityUtils
 } from '@qualweb/util';
 
 import Technique from './Technique.object';
@@ -60,7 +60,7 @@ class QW_HTML_T42 extends Technique {
       resultCode: ''
     };
 
-    if (await AccessibilityTreeUtils.isElementControl(element)) {
+    if (await AccessibilityUtils.isElementControl(element)) {
       evaluation.verdict = 'passed';
       evaluation.description = `The element is a user interface control with an event handler`;
       evaluation.resultCode = 'RC1';

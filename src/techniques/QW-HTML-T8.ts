@@ -9,7 +9,7 @@ import {
 } from 'puppeteer';
 
 import {
-  DomUtils,AccessibilityTreeUtils
+  DomUtils,AccessibilityUtils
 } from '@qualweb/util';
 
 import Technique from './Technique.object';
@@ -74,7 +74,7 @@ class QW_HTML_T8 extends Technique {
     const pattern3 = new RegExp('^Intro#[0-9]+');
     const pattern4 = new RegExp('^imagem/s[0-9]+');
 
-    let altText = await AccessibilityTreeUtils.getAccessibleName(element, page);
+    let altText = await AccessibilityUtils.getAccessibleName(element, page);
     if (!altText || altText === ''){
         evaluation.verdict = 'failed';
         evaluation.description = 'Text alternative is not actually a text alternative for the non-text content';

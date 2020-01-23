@@ -9,7 +9,7 @@ import {
 } from 'puppeteer';
 
 import {
-  DomUtils,AccessibilityTreeUtils
+  DomUtils,AccessibilityUtils
 } from '@qualweb/util';
 
 import Technique from './Technique.object';
@@ -61,7 +61,7 @@ class QW_HTML_T17 extends Technique {
     let hasIds = await element.$$( "[id]");
     let hasHeaders = await element.$$( "[headers]");
 
-    if (await !AccessibilityTreeUtils.isDataTable(element, page)) {
+    if (await !AccessibilityUtils.isDataTable(element, page)) {
       if (hasIds.length > 0 || hasHeaders.length > 0) {
         evaluation.verdict = 'failed';
         evaluation.description = 'This table is a layout table with id or headers attributes';

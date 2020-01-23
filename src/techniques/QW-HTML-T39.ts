@@ -7,7 +7,7 @@ import {
 } from 'puppeteer';
 
 import {
-  DomUtils,AccessibilityTreeUtils
+  DomUtils, AccessibilityUtils
 } from '@qualweb/util';
 
 import Technique from './Technique.object';
@@ -15,7 +15,6 @@ import {
   HTMLTechnique,
   HTMLTechniqueResult
 } from '@qualweb/html-techniques';
-
 
 
 const technique: HTMLTechnique = {
@@ -50,7 +49,8 @@ class QW_HTML_T39 extends Technique {
   constructor() {
     super(technique);
   }
-  async execute(element: ElementHandle | undefined,page:Page): Promise < void > {
+
+  async execute(element: ElementHandle | undefined, page: Page): Promise<void> {
 
     if (element === undefined) {
       return;
@@ -63,17 +63,16 @@ class QW_HTML_T39 extends Technique {
     };
 
     let AName, alt, role;
-    let name = await DomUtils.getElementName(element);
-    if (await DomUtils.getElementName(element) === "img") {
+    let name = await DomUtils.getElementTagName(element);
+    if (name === "img") {
       alt = await DomUtils.getElementAttribute(element, 'alt');
       role = await DomUtils.getElementAttribute(element, 'role');
-      AName = await AccessibilityTreeUtils.getAccessibleName(element, page);
-    }
-    else {
-      AName =  await AccessibilityTreeUtils.getAccessibleNameSVG(element,page);
+      AName = await AccessibilityUtils.getAccessibleName(element, page);
+    } else {
+      AName = await AccessibilityUtils.getAccessibleNameSVG(element, page);
     }
     if (name === "img" && role === "none" || role === "presentation" || alt === "") {
-      //inaplicable(presentation)
+      //inapplicable (presentation)
     } else {
       if (!AName && trim(AName) === "") {
         evaluation.verdict = 'failed';
@@ -96,4 +95,5 @@ class QW_HTML_T39 extends Technique {
 
 
 }
+
 export = QW_HTML_T39;

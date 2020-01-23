@@ -5,7 +5,7 @@ import {
 } from 'puppeteer';
 
 import {
-  DomUtils,AccessibilityTreeUtils
+  DomUtils,AccessibilityUtils
 } from '@qualweb/util';
 
 import Technique from './Technique.object';
@@ -77,7 +77,7 @@ class QW_HTML_T34 extends Technique {
 
     if (aText !== undefined && aText.trim()!==""||!img) {
 
-    }else if ( await AccessibilityTreeUtils.getAccessibleName(element,page)) {
+    }else if ( await AccessibilityUtils.getAccessibleName(element,page)) {
         evaluation['verdict'] = 'passed';
         evaluation['description'] = `The link has an accessible name`;
         technique['metadata']['passed']++;
