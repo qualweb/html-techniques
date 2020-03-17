@@ -1,61 +1,48 @@
 'use strict';
 
-import {
-  HTMLTechnique,
-  HTMLTechniqueResult
-} from '@qualweb/html-techniques';
-import {
-  Page,
-  ElementHandle
-} from 'puppeteer';
-
-import {
-  DomUtils
-} from '@qualweb/util';
-
-import Technique from "./Technique.object";
-
-const technique: HTMLTechnique = {
-  name: 'Providing a description for groups of form controls using fieldset and legend elements',
-  code: 'QW-HTML-T3',
-  mapping: 'H71',
-  description: 'This technique checks the correct use of the description element for form controls',
-  metadata: {
-    target: {
-      element: 'fieldset'
-    },
-    'success-criteria': [{
-        name: '1.3.1',
-        level: 'A',
-        principle: 'Perceivable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
-      },
-      {
-        name: '3.3.2',
-        level: 'A',
-        principle: 'Understandable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/labels-or-instructions'
-      },
-    ],
-    related: ['H44', 'H65'],
-    url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H71',
-    passed: 0,
-    warning: 0,
-    failed: 0,
-    inapplicable: 0,
-    outcome: '',
-    description: ''
-  },
-  results: new Array < HTMLTechniqueResult > ()
-};
+import { HTMLTechniqueResult } from '@qualweb/html-techniques';
+import { Page, ElementHandle } from 'puppeteer';
+import { DomUtils } from '@qualweb/util';
+import Technique from './Technique.object';
 
 class QW_HTML_T3 extends Technique {
 
   constructor() {
-    super(technique);
+    super({
+      name: 'Providing a description for groups of form controls using fieldset and legend elements',
+      code: 'QW-HTML-T3',
+      mapping: 'H71',
+      description: 'This technique checks the correct use of the description element for form controls',
+      metadata: {
+        target: {
+          element: 'fieldset'
+        },
+        'success-criteria': [{
+            name: '1.3.1',
+            level: 'A',
+            principle: 'Perceivable',
+            url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
+          },
+          {
+            name: '3.3.2',
+            level: 'A',
+            principle: 'Understandable',
+            url: 'https://www.w3.org/WAI/WCAG21/Understanding/labels-or-instructions'
+          },
+        ],
+        related: ['H44', 'H65'],
+        url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H71',
+        passed: 0,
+        warning: 0,
+        failed: 0,
+        outcome: '',
+        description: ''
+      },
+      results: new Array < HTMLTechniqueResult > ()
+    });
   }
 
-  async execute(element: ElementHandle | undefined, page: Page): Promise < void > {
+  async execute(element: ElementHandle | undefined, page: Page): Promise<void> {
 
     if (!element) {
       return;
@@ -96,11 +83,7 @@ class QW_HTML_T3 extends Technique {
       evaluation.resultCode = 'RC4';
     }
 
-
-    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
-    evaluation.pointer = await DomUtils.getElementSelector(element);
-
-    super.addEvaluationResult(evaluation);
+    await super.addEvaluationResult(evaluation, element);
   }
 }
 

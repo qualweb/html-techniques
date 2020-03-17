@@ -1,57 +1,45 @@
 'use strict';
 
-import {
-  HTMLTechnique,
-  HTMLTechniqueResult
-} from '@qualweb/html-techniques';
-import {
-  ElementHandle
-} from 'puppeteer';
-
-import {
-  DomUtils
-} from '@qualweb/util';
-
+import { HTMLTechniqueResult } from '@qualweb/html-techniques';
+import { ElementHandle } from 'puppeteer';
+import { DomUtils } from '@qualweb/util';
 import Technique from './Technique.object';
-
-const technique: HTMLTechnique = {
-  name: 'Using the link element and navigation tools',
-  code: 'QW-HTML-T19',
-  mapping: 'H59',
-  description: 'The objective of this technique is to describe how the link element can provide metadata about the position of an HTML page within a set of Web pages or can assist in locating content with a set of Web pages.',
-  metadata: {
-    target: {
-      element: 'link'
-    },
-    'success-criteria': [{
-        name: '2.4.5',
-        level: 'AA',
-        principle: 'Operable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/multiple-ways'
-      },
-      {
-        name: '2.4.8',
-        level: 'AAA',
-        principle: 'Operable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/location'
-      }
-    ],
-    related: ['G1', 'G63', 'G64', 'G123'],
-    url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H59',
-    passed: 0,
-    warning: 0,
-    failed: 0,
-    inapplicable: 0,
-    outcome: '',
-    description: ''
-  },
-  results: new Array < HTMLTechniqueResult > ()
-};
 
 class QW_HTML_T19 extends Technique {
 
   constructor() {
-    super(technique);
+    super({
+      name: 'Using the link element and navigation tools',
+      code: 'QW-HTML-T19',
+      mapping: 'H59',
+      description: 'The objective of this technique is to describe how the link element can provide metadata about the position of an HTML page within a set of Web pages or can assist in locating content with a set of Web pages.',
+      metadata: {
+        target: {
+          element: 'link'
+        },
+        'success-criteria': [{
+            name: '2.4.5',
+            level: 'AA',
+            principle: 'Operable',
+            url: 'https://www.w3.org/WAI/WCAG21/Understanding/multiple-ways'
+          },
+          {
+            name: '2.4.8',
+            level: 'AAA',
+            principle: 'Operable',
+            url: 'https://www.w3.org/WAI/WCAG21/Understanding/location'
+          }
+        ],
+        related: ['G1', 'G63', 'G64', 'G123'],
+        url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H59',
+        passed: 0,
+        warning: 0,
+        failed: 0,
+        outcome: '',
+        description: ''
+      },
+      results: new Array < HTMLTechniqueResult > ()
+    });
   }
 
   async execute(element: ElementHandle | undefined): Promise < void > {
@@ -105,11 +93,8 @@ class QW_HTML_T19 extends Technique {
         evaluation.resultCode = 'RC5';
       }
     }
-    
-    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
-    evaluation.pointer = await DomUtils.getElementSelector(element);
 
-    super.addEvaluationResult(evaluation);
+    await super.addEvaluationResult(evaluation, element);
   }
 }
 

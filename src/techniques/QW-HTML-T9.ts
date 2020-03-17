@@ -1,58 +1,44 @@
 'use strict';
 
-import {
-  HTMLTechnique,
-  HTMLTechniqueResult
-} from '@qualweb/html-techniques';
-import {
-  Page,
-  ElementHandle
-} from 'puppeteer';
-
-import {
-  DomUtils
-} from '@qualweb/util';
-
+import { HTMLTechniqueResult } from '@qualweb/html-techniques';
+import { Page, ElementHandle } from 'puppeteer';
 import Technique from './Technique.object';
-
-const technique: HTMLTechnique = {
-  name: 'Organizing a page using headings',
-  code: 'QW-HTML-T9',
-  mapping: 'G141',
-  description: 'The objective of this technique is to ensure that sections have headings that identify them and that the heading are used in the correct order',
-  metadata: {
-    target: {
-      element: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
-    },
-    'success-criteria': [{
-      name: '1.3.1',
-      level: 'A',
-      principle: 'Perceivable',
-      url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
-    },
-    {
-      name: '2.4.10',
-      level: 'AAA',
-      principle: 'Operable',
-      url: 'https://www.w3.org/WAI/WCAG21/Understanding/section-headings'
-    }
-    ],
-    related: ['G91', 'H30'],
-    url: 'https://www.w3.org/WAI/WCAG21/Techniques/general/G141',
-    passed: 0,
-    warning: 0,
-    failed: 0,
-    inapplicable: 0,
-    outcome: '',
-    description: ''
-  },
-  results: new Array<HTMLTechniqueResult>()
-};
 
 class QW_HTML_T9 extends Technique {
 
   constructor() {
-    super(technique);
+    super({
+      name: 'Organizing a page using headings',
+      code: 'QW-HTML-T9',
+      mapping: 'G141',
+      description: 'The objective of this technique is to ensure that sections have headings that identify them and that the heading are used in the correct order',
+      metadata: {
+        target: {
+          element: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
+        },
+        'success-criteria': [{
+          name: '1.3.1',
+          level: 'A',
+          principle: 'Perceivable',
+          url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
+        },
+        {
+          name: '2.4.10',
+          level: 'AAA',
+          principle: 'Operable',
+          url: 'https://www.w3.org/WAI/WCAG21/Understanding/section-headings'
+        }
+        ],
+        related: ['G91', 'H30'],
+        url: 'https://www.w3.org/WAI/WCAG21/Techniques/general/G141',
+        passed: 0,
+        warning: 0,
+        failed: 0,
+        outcome: '',
+        description: ''
+      },
+      results: new Array<HTMLTechniqueResult>()
+    });
   }
 
   async execute(element: ElementHandle | undefined, page: Page): Promise<void> {
@@ -81,7 +67,7 @@ class QW_HTML_T9 extends Technique {
         const regexp = new RegExp('^h[1-6]$');
         const list = new Array<number>();
 
-        for (const child of ele.children) {
+        for (const child of ele.children || []) {
           const name = child.tagName;
           if (name && regexp.test(name)) {
             const split = name.split('h');
@@ -127,10 +113,7 @@ class QW_HTML_T9 extends Technique {
       evaluation.resultCode = 'RC4';
     }
 
-    evaluation.htmlCode = await DomUtils.getElementHtmlCode(errorElem);
-    evaluation.pointer = await DomUtils.getElementSelector(errorElem);
-
-    super.addEvaluationResult(evaluation);
+    await super.addEvaluationResult(evaluation, element);
   }
 }
 

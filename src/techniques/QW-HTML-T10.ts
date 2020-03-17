@@ -1,57 +1,46 @@
 'use strict';
 
-import {
-  HTMLTechnique,
-  HTMLTechniqueResult
-} from '@qualweb/html-techniques';
-import {
-  ElementHandle
-} from 'puppeteer';
-
-import {
-  DomUtils
-} from '@qualweb/util';
+import { HTMLTechniqueResult } from '@qualweb/html-techniques';
+import { ElementHandle } from 'puppeteer';
+import { DomUtils } from '@qualweb/util';
 
 import Technique from './Technique.object';
-
-const technique: HTMLTechnique = {
-  name: 'Using the title attribute of the frame and iframe elements',
-  code: 'QW-HTML-T10',
-  mapping: 'H64',
-  description: 'The objective of this technique is to demonstrate the use of the title attribute of the frame or iframe element to describe the contents of each frame',
-  metadata: {
-    target: {
-      element: 'frame, iframe'
-    },
-    'success-criteria': [{
-        name: '2.4.1',
-        level: 'A',
-        principle: 'Operable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/bypass-blocks'
-      },
-      {
-        name: '4.1.2',
-        level: 'A',
-        principle: 'Robust',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/name-role-value'
-      }
-    ],
-    related: [],
-    url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H64',
-    passed: 0,
-    warning: 0,
-    failed: 0,
-    inapplicable: 0,
-    outcome: '',
-    description: ''
-  },
-  results: new Array < HTMLTechniqueResult > ()
-};
 
 class QW_HTML_T10 extends Technique {
 
   constructor() {
-    super(technique);
+    super({
+      name: 'Using the title attribute of the frame and iframe elements',
+      code: 'QW-HTML-T10',
+      mapping: 'H64',
+      description: 'The objective of this technique is to demonstrate the use of the title attribute of the frame or iframe element to describe the contents of each frame',
+      metadata: {
+        target: {
+          element: 'frame, iframe'
+        },
+        'success-criteria': [{
+            name: '2.4.1',
+            level: 'A',
+            principle: 'Operable',
+            url: 'https://www.w3.org/WAI/WCAG21/Understanding/bypass-blocks'
+          },
+          {
+            name: '4.1.2',
+            level: 'A',
+            principle: 'Robust',
+            url: 'https://www.w3.org/WAI/WCAG21/Understanding/name-role-value'
+          }
+        ],
+        related: [],
+        url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H64',
+        passed: 0,
+        warning: 0,
+        failed: 0,
+        outcome: '',
+        description: ''
+      },
+      results: new Array < HTMLTechniqueResult > ()
+    });
   }
 
   async execute(element: ElementHandle | undefined): Promise < void > {
@@ -87,10 +76,7 @@ class QW_HTML_T10 extends Technique {
       evaluation.resultCode = 'RC3';
     }
 
-    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
-    evaluation.pointer = await DomUtils.getElementSelector(element);
-
-    super.addEvaluationResult(evaluation);
+    await super.addEvaluationResult(evaluation, element);
   }
 }
 

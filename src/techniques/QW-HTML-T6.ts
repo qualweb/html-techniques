@@ -1,50 +1,39 @@
 'use strict';
 
-import {
-  HTMLTechnique,
-  HTMLTechniqueResult
-} from '@qualweb/html-techniques';
-import {
-  ElementHandle
-} from 'puppeteer';
-
-import {
-  DomUtils
-} from '@qualweb/util';
-
+import { HTMLTechniqueResult } from '@qualweb/html-techniques';
+import { ElementHandle } from 'puppeteer';
+import { DomUtils } from '@qualweb/util';
 import Technique from './Technique.object';
 
-const technique: HTMLTechnique = {
-  name: 'Using both keyboard and other device-specific functions',
-  code: 'QW-HTML-T6',
-  mapping: 'SCR20',
-  description: 'The objective of this technique is to verify the parity of keyboard-specific and mouse-specific events when code that has a scripting function associated with an event is used',
-  metadata: {
-    target: {
-      element: '*',
-      attributes: ['onmousedown', 'onmouseup', 'onclick', 'onmouseover', 'onmouseout']
-    },
-    'success-criteria': [{
-      name: '2.1.1',
-      level: 'A',
-      principle: 'Operable',
-      url: 'https://www.w3.org/WAI/WCAG21/Understanding/keyboard'
-    }],
-    related: ['G90'],
-    url: 'https://www.w3.org/WAI/WCAG21/Techniques/client-side-script/SCR20',
-    passed: 0,
-    warning: 0,
-    failed: 0,
-    inapplicable: 0,
-    outcome: '',
-    description: ''
-  },
-  results: new Array < HTMLTechniqueResult > ()
-};
 class QW_HTML_T6 extends Technique {
 
   constructor() {
-    super(technique);
+    super({
+      name: 'Using both keyboard and other device-specific functions',
+      code: 'QW-HTML-T6',
+      mapping: 'SCR20',
+      description: 'The objective of this technique is to verify the parity of keyboard-specific and mouse-specific events when code that has a scripting function associated with an event is used',
+      metadata: {
+        target: {
+          element: '*',
+          attributes: ['onmousedown', 'onmouseup', 'onclick', 'onmouseover', 'onmouseout']
+        },
+        'success-criteria': [{
+          name: '2.1.1',
+          level: 'A',
+          principle: 'Operable',
+          url: 'https://www.w3.org/WAI/WCAG21/Understanding/keyboard'
+        }],
+        related: ['G90'],
+        url: 'https://www.w3.org/WAI/WCAG21/Techniques/client-side-script/SCR20',
+        passed: 0,
+        warning: 0,
+        failed: 0,
+        outcome: '',
+        description: ''
+      },
+      results: new Array<HTMLTechniqueResult>()
+    });
   }
 
   async execute(element: ElementHandle | undefined): Promise < void > {
@@ -104,11 +93,8 @@ class QW_HTML_T6 extends Technique {
       evaluation.description = `All the mouse event handlers have a keyboard equivalent`;
       evaluation.resultCode = 'RC6';
     }
-    
-    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
-    evaluation.pointer =await DomUtils.getElementSelector(element);
 
-    super.addEvaluationResult(evaluation);
+    await super.addEvaluationResult(evaluation, element);
   }
 }
 

@@ -1,63 +1,53 @@
 'use strict';
 
-import {
-  HTMLTechnique,
-  HTMLTechniqueResult
-} from '@qualweb/html-techniques';
-import {
-  ElementHandle
-} from 'puppeteer';
-
+import { HTMLTechniqueResult } from '@qualweb/html-techniques';
+import { ElementHandle } from 'puppeteer';
 import { DomUtils } from '@qualweb/util';
-
 import Technique from './Technique.object';
-
-const technique: HTMLTechnique = {
-  name: 'Providing text alternatives for the area elements of image maps',
-  code: 'QW-HTML-T1',
-  mapping: 'H24',
-  description: 'This technique checks the text alternative of area elements of images maps',
-  metadata: {
-    target: {
-      'parent-sibling': 'img',
-      parent: 'map',
-      element: 'area'
-    },
-    'success-criteria': [{
-        name: '1.1.1',
-        level: 'A',
-        principle: 'Perceivable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/non-text-content'
-      },
-      {
-        name: '2.4.4',
-        level: 'A',
-        principle: 'Operable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/link-purpose-in-context'
-      },
-      {
-        name: '2.4.9',
-        level: 'AAA',
-        principle: 'Operable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/link-purpose-link-only'
-      }
-    ],
-    related: ['G91', 'H30'],
-    url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H24',
-    passed: 0,
-    warning: 0,
-    failed: 0,
-    inapplicable: 0,
-    outcome: '',
-    description: ''
-  },
-  results: new Array < HTMLTechniqueResult > ()
-};
 
 class QW_HTML_T1 extends Technique {
 
   constructor() {
-    super(technique);
+    super({
+      name: 'Providing text alternatives for the area elements of image maps',
+      code: 'QW-HTML-T1',
+      mapping: 'H24',
+      description: 'This technique checks the text alternative of area elements of images maps',
+      metadata: {
+        target: {
+          'parent-sibling': 'img',
+          parent: 'map',
+          element: 'area'
+        },
+        'success-criteria': [{
+            name: '1.1.1',
+            level: 'A',
+            principle: 'Perceivable',
+            url: 'https://www.w3.org/WAI/WCAG21/Understanding/non-text-content'
+          },
+          {
+            name: '2.4.4',
+            level: 'A',
+            principle: 'Operable',
+            url: 'https://www.w3.org/WAI/WCAG21/Understanding/link-purpose-in-context'
+          },
+          {
+            name: '2.4.9',
+            level: 'AAA',
+            principle: 'Operable',
+            url: 'https://www.w3.org/WAI/WCAG21/Understanding/link-purpose-link-only'
+          }
+        ],
+        related: ['G91', 'H30'],
+        url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H24',
+        passed: 0,
+        warning: 0,
+        failed: 0,
+        outcome: '',
+        description: ''
+      },
+      results: new Array<HTMLTechniqueResult>()
+    });
   }
 
   async execute(element: ElementHandle | undefined): Promise<void> {
@@ -88,10 +78,7 @@ class QW_HTML_T1 extends Technique {
       evaluation.resultCode = 'RC3';
     }
 
-    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
-    evaluation.pointer = await DomUtils.getElementSelector(element);
-
-    super.addEvaluationResult(evaluation);
+    await super.addEvaluationResult(evaluation);
   }
 }
 

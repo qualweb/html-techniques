@@ -1,51 +1,39 @@
 'use strict';
 
-import {
-  HTMLTechnique,
-  HTMLTechniqueResult
-} from '@qualweb/html-techniques';
-import {
-  ElementHandle
-} from 'puppeteer';
-
-import {
-  DomUtils
-} from '@qualweb/util';
+import { HTMLTechniqueResult } from '@qualweb/html-techniques';
+import { ElementHandle } from 'puppeteer';
+import { DomUtils } from '@qualweb/util';
 
 import Technique from './Technique.object';
-
-const technique: HTMLTechnique = {
-  name: 'Providing text alternatives on applet elements',
-  code: 'QW-HTML-T14',
-  mapping: 'H35',
-  description: 'Provide a text alternative for an applet by using the alt attribute to label an applet and providing the text alternative in the body of the applet element. In this technique, both mechanisms are required due to the varying support of the alt attribute and applet body text by user agents.',
-  metadata: {
-    'target': {
-      element: 'applet'
-    },
-    'success-criteria': [{
-      name: '1.1.1',
-      level: 'A',
-      principle: 'Perceivable',
-      url: 'https://www.w3.org/WAI/WCAG21/Understanding/page-titled'
-    }],
-    related: ['G94'],
-    url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H25',
-    passed: 0,
-    warning: 0,
-    failed: 0,
-    inapplicable: 0,
-    outcome: '',
-    description: ''
-  },
-  results: new Array < HTMLTechniqueResult > ()
-};
-
 
 class QW_HTML_T14 extends Technique {
 
   constructor() {
-    super(technique);
+    super({
+      name: 'Providing text alternatives on applet elements',
+      code: 'QW-HTML-T14',
+      mapping: 'H35',
+      description: 'Provide a text alternative for an applet by using the alt attribute to label an applet and providing the text alternative in the body of the applet element. In this technique, both mechanisms are required due to the varying support of the alt attribute and applet body text by user agents.',
+      metadata: {
+        'target': {
+          element: 'applet'
+        },
+        'success-criteria': [{
+          name: '1.1.1',
+          level: 'A',
+          principle: 'Perceivable',
+          url: 'https://www.w3.org/WAI/WCAG21/Understanding/page-titled'
+        }],
+        related: ['G94'],
+        url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H25',
+        passed: 0,
+        warning: 0,
+        failed: 0,
+        outcome: '',
+        description: ''
+      },
+      results: new Array < HTMLTechniqueResult > ()
+    });
   }
 
   async execute(element: ElementHandle | undefined): Promise < void > {
@@ -85,10 +73,7 @@ class QW_HTML_T14 extends Technique {
       }
     }
 
-    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
-    evaluation.pointer = await DomUtils.getElementSelector(element);
-
-    super.addEvaluationResult(evaluation);
+    await super.addEvaluationResult(evaluation, element);
   }
 }
 

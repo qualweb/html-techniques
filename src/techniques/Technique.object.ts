@@ -1,9 +1,11 @@
 'use strict';
 
-import clone from 'lodash/clone';
-import cloneDeep from 'lodash/cloneDeep';
+import clone from 'lodash.clone';
+import cloneDeep from 'lodash.clonedeep';
 import { HTMLTechnique, HTMLTechniqueResult } from '@qualweb/html-techniques';
 import { Page, ElementHandle } from 'puppeteer';
+
+import { DomUtils, Optimization } from '@qualweb/util';
 
 abstract class Technique {
 
@@ -43,12 +45,24 @@ abstract class Technique {
     return this.technique.metadata.inapplicable;
   }
 
-  protected addEvaluationResult(result: HTMLTechniqueResult): void {
+  protected async addEvaluationResult(result: HTMLTechniqueResult, element?: ElementHandle): Promise<void> {
+    if (element) {
+      const [htmlCode, pointer] = await Promise.all([
+        DomUtils.getElementHtmlCode(element, true, false),
+        DomUtils.getElementSelector(element)
+      ]);
+      result.htmlCode = htmlCode;
+      result.pointer = pointer;
+    }
+
     this.technique.results.push(clone(result));
-    this.technique.metadata[result.verdict]++;
+
+    if (result.verdict !== 'inapplicable') {
+      this.technique.metadata[result.verdict]++;
+    }
   }
 
-  abstract async execute(element: ElementHandle | undefined, page: Page): Promise<void>;
+  abstract async execute(element: ElementHandle | undefined, page: Page, optimize: Optimization): Promise<void>;
 
   getFinalResults() {
     this.outcomeTechnique();

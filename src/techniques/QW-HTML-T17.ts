@@ -1,51 +1,39 @@
 'use strict';
 
-import {
-  HTMLTechnique,
-  HTMLTechniqueResult
-} from '@qualweb/html-techniques';
-import {
-  ElementHandle, Page
-} from 'puppeteer';
-
-import {
-  DomUtils,AccessibilityUtils
-} from '@qualweb/util';
-
+import { HTMLTechniqueResult } from '@qualweb/html-techniques';
+import { ElementHandle, Page } from 'puppeteer';
+import { DomUtils, AccessibilityUtils } from '@qualweb/util';
 import Technique from './Technique.object';
-import {trim} from  'lodash';
 
-const technique: HTMLTechnique = {
-  name: 'Using id and headers attributes to associate data cells with header cells in data tables',
-  code: 'QW-HTML-T17',
-  mapping: 'H43',
-  description: 'This technique checks if data cells are associated with header cells in data tables',
-  metadata: {
-    target: {
-      element: 'table'
-    },
-    'success-criteria': [{
-      name: '1.3.1',
-      level: 'A',
-      principle: 'Perceivable',
-      url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
-    }],
-    related: [],
-    url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H43',
-    passed: 0,
-    warning: 0,
-    failed: 0,
-    inapplicable: 0,
-    outcome: '',
-    description: ''
-  },
-  results: new Array<HTMLTechniqueResult>()
-};
 
 class QW_HTML_T17 extends Technique {
 
   constructor() {
-    super(technique);
+    super({
+      name: 'Using id and headers attributes to associate data cells with header cells in data tables',
+      code: 'QW-HTML-T17',
+      mapping: 'H43',
+      description: 'This technique checks if data cells are associated with header cells in data tables',
+      metadata: {
+        target: {
+          element: 'table'
+        },
+        'success-criteria': [{
+          name: '1.3.1',
+          level: 'A',
+          principle: 'Perceivable',
+          url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
+        }],
+        related: [],
+        url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H43',
+        passed: 0,
+        warning: 0,
+        failed: 0,
+        outcome: '',
+        description: ''
+      },
+      results: new Array<HTMLTechniqueResult>()
+    });
   }
 
   async execute(element: ElementHandle | undefined,page:Page): Promise < void > {
@@ -100,11 +88,8 @@ class QW_HTML_T17 extends Technique {
         }
       }
     }
-
-    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
-    evaluation.pointer = await DomUtils.getElementSelector(element);
     
-    super.addEvaluationResult(evaluation);
+    await super.addEvaluationResult(evaluation, element);
   }
 }
 
@@ -131,7 +116,7 @@ async function doesTableHaveDuplicateIds(table: ElementHandle) {
 function doesHeadersMatchId(table, headers) {
   let outcome = false;
   let result = 0;
-  if (trim(headers) === '') {
+  if (headers.trim() === '') {
     return true;
   }
   let splitHeaders = headers.split(" ");
