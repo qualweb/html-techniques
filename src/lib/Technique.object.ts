@@ -41,10 +41,6 @@ abstract class Technique {
     return this.technique.metadata.failed;
   }
 
-  protected getNumberOfInapplicableResults(): number {
-    return this.technique.metadata.inapplicable;
-  }
-
   protected async addEvaluationResult(result: HTMLTechniqueResult, element?: ElementHandle): Promise<void> {
     if (element) {
       const [htmlCode, pointer] = await Promise.all([
@@ -73,7 +69,6 @@ abstract class Technique {
     this.technique.metadata.passed = 0;
     this.technique.metadata.warning = 0;
     this.technique.metadata.failed = 0;
-    this.technique.metadata.inapplicable = 0;
     this.technique.results = new Array<HTMLTechniqueResult>();
   }
 

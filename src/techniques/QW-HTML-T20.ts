@@ -3,7 +3,7 @@
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
 import { Page } from 'puppeteer';
 import validator from 'html-validator';
-import Technique from './Technique.object';
+import Technique from '../lib/Technique.object';
 
 class QW_HTML_T20 extends Technique {
 

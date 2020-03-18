@@ -1,0 +1,56 @@
+{
+  "QW_HTML_T1": {
+    "name": "Providing text alternatives for the area elements of image maps",
+    "code": "QW-HTML-T1",
+    "mapping": "H24",
+    "description": "This technique checks the text alternative of area elements of images maps",
+    "metadata": {
+      "target": {
+        "parent-sibling": "img",
+        "parent": "map",
+        "element": "area"
+      },
+      "success-criteria": [{
+          "name": "1.1.1",
+          "level": "A",
+          "principle": "Perceivable",
+          "url": "https://www.w3.org/WAI/WCAG21/Understanding/non-text-content"
+        },
+        {
+          "name": "2.4.4",
+          "level": "A",
+          "principle": "Operable",
+          "url": "https://www.w3.org/WAI/WCAG21/Understanding/link-purpose-in-context"
+        },
+        {
+          "name": "2.4.9",
+          "level": "AAA",
+          "principle": "Operable",
+          "url": "https://www.w3.org/WAI/WCAG21/Understanding/link-purpose-link-only"
+        }
+      ],
+      "related": ["G91", "H30"],
+      "url": "https://www.w3.org/WAI/WCAG21/Techniques/html/H24",
+    }
+  },
+  "QW_HTML_T23": {
+    "name": "Providing links to navigate to related Web pages",
+    "code": "QW-HTML-T23",
+    "mapping": "G125",
+    "description": "The objective of this technique is to make it possible for users to locate additional information by providing links to related Web pages",
+    "metadata": {
+      "target": {
+        "element": "a",
+        "attributes": "href"
+      },
+      "success-criteria": [{
+        "name": "2.4.5",
+        "level": "AA",
+        "principle": "Operable",
+        "url": "https://www.w3.org/WAI/WCAG21/Understanding/multiple-ways"
+      }],
+      "related": ["G63", "G64", "G126", "G185"],
+      "url": "https://www.w3.org/WAI/WCAG21/Techniques/general/G125"
+    }
+  }
+}

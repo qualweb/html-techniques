@@ -1,53 +1,40 @@
 'use strict';
 
-import {
-  HTMLTechnique,
-  HTMLTechniqueResult
-} from '@qualweb/html-techniques';
-
-import {
-  ElementHandle
-} from 'puppeteer';
-
-import {
-  DomUtils
-} from '@qualweb/util';
-
-import Technique from './Technique.object';
-
-const technique: HTMLTechnique = {
-  name: 'Failure of Success Criterion 2.1.1 due to using only pointing-device-specific event handlers (including gesture) for a function ',
-  code: 'QW-HTML-T29',
-  mapping: 'F54',
-  description: 'This technique counts the number of mouse specific events',
-  metadata: {
-    target: {
-      'parent-sibling': 'img',
-      parent: 'map',
-      element: 'area'
-    },
-    'success-criteria': [{
-      name: '2.2.1',
-      level: 'A',
-      principle: 'Operable',
-      url: 'https://www.w3.org/WAI/WCAG21/Understanding/keyboard'
-    }],
-    related: ['SCR20'],
-    url: 'https://www.w3.org/WAI/WCAG21/Techniques/failures/F54',
-    passed: 0,
-    warning: 0,
-    failed: 0,
-    inapplicable: 0,
-    outcome: '',
-    description: ''
-  },
-  results: new Array < HTMLTechniqueResult > ()
-};
+import { HTMLTechniqueResult } from '@qualweb/html-techniques';
+import { ElementHandle } from 'puppeteer';
+import { DomUtils } from '@qualweb/util';
+import Technique from '../lib/Technique.object';
 
 class QW_HTML_T29 extends Technique {
 
   constructor() {
-    super(technique);
+    super({
+      name: 'Failure of Success Criterion 2.1.1 due to using only pointing-device-specific event handlers (including gesture) for a function ',
+      code: 'QW-HTML-T29',
+      mapping: 'F54',
+      description: 'This technique counts the number of mouse specific events',
+      metadata: {
+        target: {
+          'parent-sibling': 'img',
+          parent: 'map',
+          element: 'area'
+        },
+        'success-criteria': [{
+          name: '2.2.1',
+          level: 'A',
+          principle: 'Operable',
+          url: 'https://www.w3.org/WAI/WCAG21/Understanding/keyboard'
+        }],
+        related: ['SCR20'],
+        url: 'https://www.w3.org/WAI/WCAG21/Techniques/failures/F54',
+        passed: 0,
+        warning: 0,
+        failed: 0,
+        outcome: '',
+        description: ''
+      },
+      results: new Array<HTMLTechniqueResult>()
+    });
   }
 
   async execute(element: ElementHandle | undefined): Promise < void > {
@@ -90,10 +77,7 @@ class QW_HTML_T29 extends Technique {
       evaluation.resultCode = 'RC5';
     }
 
-    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
-    evaluation.pointer = await DomUtils.getElementSelector(element);
-
-    super.addEvaluationResult(evaluation);
+    await super.addEvaluationResult(evaluation, element);
   }
 }
 

@@ -3,7 +3,7 @@
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
 import { ElementHandle } from 'puppeteer';
 import { DomUtils } from '@qualweb/util';
-import Technique from './Technique.object';
+import Technique from '../lib/Technique.object';
 
 class QW_HTML_T19 extends Technique {
 
@@ -56,45 +56,48 @@ class QW_HTML_T19 extends Technique {
       resultCode: ''
     };
 
-    const parentName = await DomUtils.getElementTagName(parent);
+    if (parent) {
 
-    if (parentName !== 'head') {
-      evaluation.verdict = 'warning';
-      evaluation.description = `The element is not contained in the head element. Verify if this link is used for navigation, and if it is, it must be inside the <head>`;
-      evaluation.resultCode = 'RC1';
-    } else if (!(await DomUtils.elementHasAttributes(element))) { // fails if the element doesn't contain an alt attribute
-      evaluation.verdict = 'inapplicable';
-      evaluation.description = `The element doesn't contain a rel or an href attribute`;
-      evaluation.resultCode = 'RC2';
-    } else {
-      //const rel = await DomUtils.getElementAttribute(element, 'rel');
-      //const href = await DomUtils.getElementAttribute(element, 'href');
+      const parentName = await DomUtils.getElementTagName(parent);
 
-      const [rel, href] = await Promise.all([
-        DomUtils.getElementAttribute(element, 'rel'),
-        DomUtils.getElementAttribute(element, 'href')
-      ]);
-
-      const relNavigationValues = ['alternate', 'author', 'help', 'license', 'next', 'prev', 'search'];
-
-      const relForNavigation = rel && relNavigationValues.includes(rel);
-
-      if (!relForNavigation) {
+      if (parentName !== 'head') {
+        evaluation.verdict = 'warning';
+        evaluation.description = `The element is not contained in the head element. Verify if this link is used for navigation, and if it is, it must be inside the <head>`;
+        evaluation.resultCode = 'RC1';
+      } else if (!(await DomUtils.elementHasAttributes(element))) { // fails if the element doesn't contain an alt attribute
         evaluation.verdict = 'inapplicable';
-        evaluation.description = `The element doesn't contain a rel attribute or doesn't pertains navigation`;
-        evaluation.resultCode = 'RC3';
-      } else if (!href) {
-        evaluation.verdict = 'failed';
-        evaluation.description = `The element doesn't contain an href attribute and pertains navigation`;
-        evaluation.resultCode = 'RC4';
+        evaluation.description = `The element doesn't contain a rel or an href attribute`;
+        evaluation.resultCode = 'RC2';
       } else {
-        evaluation.verdict = 'passed';
-        evaluation.description = 'The link has rel and href attributes and pertains navigation';
-        evaluation.resultCode = 'RC5';
-      }
-    }
+        //const rel = await DomUtils.getElementAttribute(element, 'rel');
+        //const href = await DomUtils.getElementAttribute(element, 'href');
 
-    await super.addEvaluationResult(evaluation, element);
+        const [rel, href] = await Promise.all([
+          DomUtils.getElementAttribute(element, 'rel'),
+          DomUtils.getElementAttribute(element, 'href')
+        ]);
+
+        const relNavigationValues = ['alternate', 'author', 'help', 'license', 'next', 'prev', 'search'];
+
+        const relForNavigation = rel && relNavigationValues.includes(rel);
+
+        if (!relForNavigation) {
+          evaluation.verdict = 'inapplicable';
+          evaluation.description = `The element doesn't contain a rel attribute or doesn't pertains navigation`;
+          evaluation.resultCode = 'RC3';
+        } else if (!href) {
+          evaluation.verdict = 'failed';
+          evaluation.description = `The element doesn't contain an href attribute and pertains navigation`;
+          evaluation.resultCode = 'RC4';
+        } else {
+          evaluation.verdict = 'passed';
+          evaluation.description = 'The link has rel and href attributes and pertains navigation';
+          evaluation.resultCode = 'RC5';
+        }
+      }
+
+      await super.addEvaluationResult(evaluation, element);
+    }
   }
 }
 

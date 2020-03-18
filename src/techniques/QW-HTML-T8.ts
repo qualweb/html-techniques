@@ -2,8 +2,10 @@
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
 import { ElementHandle, Page } from 'puppeteer';
-import { DomUtils, AccessibilityUtils } from '@qualweb/util';
-import Technique from './Technique.object';
+import { AccessibilityUtils } from '@qualweb/util';
+import Technique from '../lib/Technique.object';
+
+import { ElementExists, ElementHasAttributes } from '../lib/decorators';
 
 class QW_HTML_T8 extends Technique {
 
@@ -42,11 +44,8 @@ class QW_HTML_T8 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined, page: Page): Promise<void> {
-
-    if (!element||!(await DomUtils.elementHasAttributes(element))) {
-      return;
-    }
+  @ElementExists @ElementHasAttributes
+  async execute(element: ElementHandle, page: Page): Promise<void> {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',

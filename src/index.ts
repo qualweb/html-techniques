@@ -44,7 +44,7 @@ import QW_HTML_T41 from './techniques/QW-HTML-T41';
 import QW_HTML_T42 from './techniques/QW-HTML-T42';
 import QW_HTML_T43 from './techniques/QW-HTML-T43';
 
-import mapping from './techniques/mapping';
+import mapping from './lib/mapping';
 
 class HTMLTechniques {
 

@@ -1,53 +1,39 @@
 'use strict';
 
-import {
-  HTMLTechnique,
-  HTMLTechniqueResult
-} from '@qualweb/html-techniques';
-
-import {
-  Page,
-  ElementHandle
-} from 'puppeteer';
-
-import {
-  DomUtils
-} from '@qualweb/util';
-
-import Technique from './Technique.object';
-
-const technique: HTMLTechnique = {
-  name: 'Adding a link at the beginning of a block of repeated content to go to the end of the block',
-  code: 'QW-HTML-T37',
-  mapping: 'G123',
-  description: 'The objective of this technique is to provide a mechanism to bypass a block of material by skipping to the end of the block.',
-  metadata: {
-    target: {
-      element: 'a',
-      attributes: 'href'
-    },
-    'success-criteria': [{
-      name: '2.4.1',
-      level: 'A',
-      principle: 'Operable',
-      url: 'https://www.w3.org/WAI/WCAG21/Understanding/bypass-blocks'
-    }],
-    related: ['G1', 'G124'],
-    url: 'https://www.w3.org/WAI/WCAG21/Techniques/general/G123',
-    passed: 0,
-    warning: 0,
-    failed: 0,
-    inapplicable: 0,
-    outcome: '',
-    description: ''
-  },
-  results: new Array < HTMLTechniqueResult > ()
-};
+import { HTMLTechniqueResult } from '@qualweb/html-techniques';
+import { Page, ElementHandle } from 'puppeteer';
+import { DomUtils } from '@qualweb/util';
+import Technique from '../lib/Technique.object';
 
 class QW_HTML_T37 extends Technique {
 
   constructor() {
-    super(technique);
+    super({
+      name: 'Adding a link at the beginning of a block of repeated content to go to the end of the block',
+      code: 'QW-HTML-T37',
+      mapping: 'G123',
+      description: 'The objective of this technique is to provide a mechanism to bypass a block of material by skipping to the end of the block.',
+      metadata: {
+        target: {
+          element: 'a',
+          attributes: 'href'
+        },
+        'success-criteria': [{
+          name: '2.4.1',
+          level: 'A',
+          principle: 'Operable',
+          url: 'https://www.w3.org/WAI/WCAG21/Understanding/bypass-blocks'
+        }],
+        related: ['G1', 'G124'],
+        url: 'https://www.w3.org/WAI/WCAG21/Techniques/general/G123',
+        passed: 0,
+        warning: 0,
+        failed: 0,
+        outcome: '',
+        description: ''
+      },
+      results: new Array < HTMLTechniqueResult > ()
+    });
   }
 
   async execute(element: ElementHandle | undefined, page: Page): Promise < void > {
@@ -81,10 +67,7 @@ class QW_HTML_T37 extends Technique {
       evaluation.resultCode = 'RC3';
     }
 
-    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
-    evaluation.pointer = await DomUtils.getElementSelector(element);
-
-    super.addEvaluationResult(evaluation);
+    await super.addEvaluationResult(evaluation, element);
   }
 }
 

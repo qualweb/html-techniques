@@ -3,7 +3,7 @@
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
 import { ElementHandle, Page } from 'puppeteer';
 import { DomUtils, AccessibilityUtils } from '@qualweb/util';
-import Technique from './Technique.object';
+import Technique from '../lib/Technique.object';
 
 
 class QW_HTML_T17 extends Technique {

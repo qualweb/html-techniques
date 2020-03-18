@@ -3,7 +3,9 @@
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
 import { ElementHandle } from 'puppeteer';
 import { DomUtils } from '@qualweb/util';
-import Technique from './Technique.object';
+import Technique from '../lib/Technique.object';
+
+import { ElementExists, ElementHasAttributes } from '../lib/decorators';
 
 class QW_HTML_T6 extends Technique {
 
@@ -36,6 +38,7 @@ class QW_HTML_T6 extends Technique {
     });
   }
 
+  @ElementExists @ElementHasAttributes
   async execute(element: ElementHandle | undefined): Promise < void > {
 
     if (!element || !(await DomUtils.elementHasAttributes(element))) {

@@ -1,51 +1,39 @@
 'use strict';
 
-import {
-  ElementHandle
-} from 'puppeteer';
-
-import {
-  DomUtils,AccessibilityUtils
-} from '@qualweb/util';
-
-import Technique from './Technique.object';
-import {
-  HTMLTechnique,
-  HTMLTechniqueResult
-} from '@qualweb/html-techniques';
-
-const technique: HTMLTechnique = {
-  name: 'Failure of Success Criterion 4.1.2 due to using script to make div or span a user interface control in HTML without providing a role for the control ',
-  code: 'QW-HTML-T42',
-  mapping: 'F59',
-  description: 'This failure demonstrates how using generic HTML elements to create user interface controls can make the controls inaccessible to assistive technology.',
-  metadata: {
-    target: {
-      element: ['*']
-    },
-    'success-criteria': [{
-      name: '4.1.2',
-      level: 'A',
-      principle: 'Robust',
-      url: 'https://www.w3.org/WAI/WCAG21/Understanding/name-role-value'
-    }
-    ],
-    related: ['F42'],
-    url: 'https://www.w3.org/WAI/WCAG21/Techniques/failures/F59',
-    passed: 0,
-    warning: 0,
-    failed: 0,
-    inapplicable: 0,
-    outcome: '',
-    description: ''
-  },
-  results: new Array<HTMLTechniqueResult>()
-};
+import { HTMLTechniqueResult } from '@qualweb/html-techniques';
+import { ElementHandle } from 'puppeteer';
+import { DomUtils, AccessibilityUtils } from '@qualweb/util';
+import Technique from '../lib/Technique.object';
 
 class QW_HTML_T42 extends Technique {
 
   constructor() {
-    super(technique);
+    super({
+      name: 'Failure of Success Criterion 4.1.2 due to using script to make div or span a user interface control in HTML without providing a role for the control ',
+      code: 'QW-HTML-T42',
+      mapping: 'F59',
+      description: 'This failure demonstrates how using generic HTML elements to create user interface controls can make the controls inaccessible to assistive technology.',
+      metadata: {
+        target: {
+          element: ['*']
+        },
+        'success-criteria': [{
+          name: '4.1.2',
+          level: 'A',
+          principle: 'Robust',
+          url: 'https://www.w3.org/WAI/WCAG21/Understanding/name-role-value'
+        }
+        ],
+        related: ['F42'],
+        url: 'https://www.w3.org/WAI/WCAG21/Techniques/failures/F59',
+        passed: 0,
+        warning: 0,
+        failed: 0,
+        outcome: '',
+        description: ''
+      },
+      results: new Array<HTMLTechniqueResult>()
+    });
   }
 
   async execute(element: ElementHandle | undefined): Promise < void > {
@@ -70,9 +58,7 @@ class QW_HTML_T42 extends Technique {
       evaluation.resultCode = 'RC2';
     }
 
-    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
-    evaluation.pointer = await DomUtils.getElementSelector(element);
-    super.addEvaluationResult(evaluation);
+    await super.addEvaluationResult(evaluation, element);
   }
 }
 

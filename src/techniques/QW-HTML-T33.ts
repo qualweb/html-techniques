@@ -1,58 +1,43 @@
 'use strict';
 
-import {trim} from "lodash";
-
-import {
-  ElementHandle
-} from 'puppeteer';
-
-import {
-  DomUtils,AccessibilityUtils
-} from '@qualweb/util';
-
-import Technique from './Technique.object';
-import {
-  HTMLTechnique,
-  HTMLTechniqueResult
-} from '@qualweb/html-techniques';
-
-
-const technique: HTMLTechnique = {
-  name: 'Providing submit buttons',
-  code: 'QW-HTML-T33',
-  mapping: 'H33',
-  description: 'Supplementing link text with the title attribute',
-  metadata: {
-    target: {
-      element: 'a'
-    },
-    'success-criteria': [{
-      name: '2.4.4',
-      level: 'A',
-      principle: 'Operable',
-      url: 'https://www.w3.org/WAI/WCAG21/Understanding/link-purpose-in-context'
-    }, {
-      name: '2.4.9',
-      level: 'AAA',
-      principle: 'Operable',
-      url: 'https://www.w3.org/WAI/WCAG21/Understanding/link-purpose-link-only'
-    }],
-    related: ['C7', 'H30'],
-    url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H33',
-    passed: 0,
-    warning: 0,
-    failed: 0,
-    inapplicable: 0,
-    outcome: '',
-    description: ''
-  },
-  results: new Array<HTMLTechniqueResult>()
-};
+import { HTMLTechniqueResult } from '@qualweb/html-techniques';
+import { ElementHandle } from 'puppeteer';
+import { DomUtils, AccessibilityUtils } from '@qualweb/util';
+import Technique from '../lib/Technique.object';
 
 class QW_HTML_T33 extends Technique {
 
   constructor() {
-    super(technique);
+    super({
+      name: 'Providing submit buttons',
+      code: 'QW-HTML-T33',
+      mapping: 'H33',
+      description: 'Supplementing link text with the title attribute',
+      metadata: {
+        target: {
+          element: 'a'
+        },
+        'success-criteria': [{
+          name: '2.4.4',
+          level: 'A',
+          principle: 'Operable',
+          url: 'https://www.w3.org/WAI/WCAG21/Understanding/link-purpose-in-context'
+        }, {
+          name: '2.4.9',
+          level: 'AAA',
+          principle: 'Operable',
+          url: 'https://www.w3.org/WAI/WCAG21/Understanding/link-purpose-link-only'
+        }],
+        related: ['C7', 'H30'],
+        url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H33',
+        passed: 0,
+        warning: 0,
+        failed: 0,
+        outcome: '',
+        description: ''
+      },
+      results: new Array<HTMLTechniqueResult>()
+    });
   }
 
   async execute(element: ElementHandle | undefined): Promise < void > {
@@ -65,11 +50,11 @@ class QW_HTML_T33 extends Technique {
       description: '',
       resultCode: ''
     };
-    let trimTitle;
-    let title =await DomUtils.getElementAttribute(element, 'title');
+    let trimTitle: string | undefined;
+    let title = await DomUtils.getElementAttribute(element, 'title');
     if (title)
-      trimTitle = trim(title);
-    let text = await AccessibilityUtils.getTrimmedText(element);
+      trimTitle = title.trim();
+    const text = await AccessibilityUtils.getTrimmedText(element);
 
     if (!trimTitle || trimTitle === "") {
       evaluation.verdict = 'failed';
@@ -85,11 +70,7 @@ class QW_HTML_T33 extends Technique {
       evaluation.resultCode = 'RC3';
     }
 
-    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
-    evaluation.pointer = await DomUtils.getElementSelector(element);
-
-
-    super.addEvaluationResult(evaluation);
+    await super.addEvaluationResult(evaluation, element);
   }
 }
 

@@ -1,16 +1,28 @@
 const {
-  configure,
-  executeHTMLT
+  HTMLTechniques
 } = require('../../dist/index');
+const puppeteer = require('puppeteer');
+const { getDom } = require('../getDom');
 const { expect } = require('chai');
-const {
+/*const {
   getDom
-} = require('@qualweb/get-dom-puppeteer');
+} = require('@qualweb/get-dom-puppeteer');*/
 
 
 describe('Technique QW-HTML-T23', function() {
 
-  const tests = [
+  it.only('Decorator', async function() {
+    this.timeout(100 * 1000);
+    const browser = await puppeteer.launch();
+    const { page } = await getDom(browser, 'https://www.ama.gov.pt/');
+    const html = new HTMLTechniques();
+    //html.configure({ techniques: ['QW-HTML-T8']});
+    const report = await html.execute(page);
+    console.log(report)
+    await browser.close();
+  });
+
+  /*const tests = [
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g125/warning.html',
       outcome: 'warning'
@@ -43,6 +55,6 @@ describe('Technique QW-HTML-T23', function() {
         expect(report.techniques['QW-HTML-T23'].metadata.outcome).to.be.equal(test.outcome);
       });
     });
-  }
+  }*/
 
 });

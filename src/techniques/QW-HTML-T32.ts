@@ -1,51 +1,37 @@
 'use strict';
 
-import {
-  HTMLTechnique,
-  HTMLTechniqueResult
-} from '@qualweb/html-techniques';
-
-import {
-  ElementHandle
-} from 'puppeteer';
-
-import {
-  DomUtils
-} from '@qualweb/util';
-
-import Technique from './Technique.object';
-
-const technique: HTMLTechnique = {
-  name: 'Providing submit buttons',
-  code: 'QW-HTML-T32',
-  mapping: 'H32',
-  description: 'The objective of this technique is to provide a mechanism that allows users to explicitly request changes of context. The intended use of a submit button is to generate an HTTP request that submits data entered in a form, so it is an appropriate control to use for causing a change of context.',
-  metadata: {
-    target: {
-      element: 'form'
-    },
-    'success-criteria': [{
-      name: '3.2.2',
-      level: 'A',
-      principle: 'Understandable',
-      url: 'https://www.w3.org/WAI/WCAG21/Understanding/on-input'
-    }],
-    related: ['G80', 'H36', 'H84'],
-    url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H32',
-    passed: 0,
-    warning: 0,
-    failed: 0,
-    inapplicable: 0,
-    outcome: '',
-    description: ''
-  },
-  results: new Array < HTMLTechniqueResult > ()
-};
+import { HTMLTechniqueResult } from '@qualweb/html-techniques';
+import { ElementHandle } from 'puppeteer';
+import Technique from '../lib/Technique.object';
 
 class QW_HTML_T32 extends Technique {
 
   constructor() {
-    super(technique);
+    super({
+      name: 'Providing submit buttons',
+      code: 'QW-HTML-T32',
+      mapping: 'H32',
+      description: 'The objective of this technique is to provide a mechanism that allows users to explicitly request changes of context. The intended use of a submit button is to generate an HTTP request that submits data entered in a form, so it is an appropriate control to use for causing a change of context.',
+      metadata: {
+        target: {
+          element: 'form'
+        },
+        'success-criteria': [{
+          name: '3.2.2',
+          level: 'A',
+          principle: 'Understandable',
+          url: 'https://www.w3.org/WAI/WCAG21/Understanding/on-input'
+        }],
+        related: ['G80', 'H36', 'H84'],
+        url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H32',
+        passed: 0,
+        warning: 0,
+        failed: 0,
+        outcome: '',
+        description: ''
+      },
+      results: new Array < HTMLTechniqueResult > ()
+    });
   }
 
   async execute(element: ElementHandle | undefined): Promise < void > {
@@ -72,10 +58,7 @@ class QW_HTML_T32 extends Technique {
       evaluation.resultCode = 'RC2';
     }
 
-    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
-    evaluation.pointer = await DomUtils.getElementSelector(element);
-
-    super.addEvaluationResult(evaluation);
+    await super.addEvaluationResult(evaluation, element);
   }
 }
 

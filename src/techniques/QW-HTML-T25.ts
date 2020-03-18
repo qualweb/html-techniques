@@ -1,59 +1,45 @@
 'use strict';
 
-import {
-  HTMLTechnique,
-  HTMLTechniqueResult
-} from '@qualweb/html-techniques';
-
-import {
-  ElementHandle
-} from 'puppeteer';
-
-import {
-  DomUtils
-} from '@qualweb/util';
-
-import Technique from './Technique.object';
-
-const technique: HTMLTechnique = {
-  name: 'Positioning labels to maximize predictability of relationships',
-  code: 'QW-HTML-T25',
-  mapping: 'G162',
-  description: 'This technique checks the correct position of labels in forms',
-  metadata: {
-    target: {
-      element: 'form'
-    },
-    'success-criteria': [{
-        name: '1.3.1',
-        level: 'A',
-        principle: 'Perceivable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
-      },
-      {
-        name: '3.3.2',
-        level: 'A',
-        principle: 'Understandable',
-        url: 'https://www.w3.org/WAI/WCAG21/Understanding/labels-or-instructions'
-      },
-    ],
-    related: ['H44', 'H71', 'H65', 'G131', 'G167'],
-    url: 'https://www.w3.org/WAI/WCAG21/Techniques/general/G162.html',
-    passed: 0,
-    warning: 0,
-    failed: 0,
-    inapplicable: 0,
-    outcome: '',
-    description: '',
-  },
-  results: new Array < HTMLTechniqueResult > ()
-};
-
+import { HTMLTechniqueResult } from '@qualweb/html-techniques';
+import { ElementHandle } from 'puppeteer';
+import { DomUtils } from '@qualweb/util';
+import Technique from '../lib/Technique.object';
 
 class QW_HTML_T25 extends Technique {
 
   constructor() {
-    super(technique);
+    super({
+      name: 'Positioning labels to maximize predictability of relationships',
+      code: 'QW-HTML-T25',
+      mapping: 'G162',
+      description: 'This technique checks the correct position of labels in forms',
+      metadata: {
+        target: {
+          element: 'form'
+        },
+        'success-criteria': [{
+            name: '1.3.1',
+            level: 'A',
+            principle: 'Perceivable',
+            url: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
+          },
+          {
+            name: '3.3.2',
+            level: 'A',
+            principle: 'Understandable',
+            url: 'https://www.w3.org/WAI/WCAG21/Understanding/labels-or-instructions'
+          },
+        ],
+        related: ['H44', 'H71', 'H65', 'G131', 'G167'],
+        url: 'https://www.w3.org/WAI/WCAG21/Techniques/general/G162.html',
+        passed: 0,
+        warning: 0,
+        failed: 0,
+        outcome: '',
+        description: '',
+      },
+      results: new Array < HTMLTechniqueResult > ()
+    });
   }
 
   async execute(element: ElementHandle | undefined): Promise < void > {
@@ -92,10 +78,7 @@ class QW_HTML_T25 extends Technique {
       evaluation.resultCode = 'RC5';
     }
 
-    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
-    evaluation.pointer = await DomUtils.getElementSelector(element);
-
-    super.addEvaluationResult(evaluation);
+    await super.addEvaluationResult(evaluation, element);
   }
 
   private async verifyInputLabelPosition(element: ElementHandle): Promise<string | undefined> {

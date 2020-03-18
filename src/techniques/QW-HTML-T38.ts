@@ -1,58 +1,42 @@
 'use strict';
 
-
-import {
-  HTMLTechnique,
-  HTMLTechniqueResult
-} from '@qualweb/html-techniques';
-
-import {
-  Page,
-  ElementHandle
-} from 'puppeteer';
-
-import {
-  DomUtils
-} from '@qualweb/util';
-
-import {trim,indexOf} from 'lodash';
-
-import Technique from './Technique.object';
-const technique: HTMLTechnique = {
-  name: 'Adding a link at the top of each page that goes directly to the main content area',
-  code: 'QW-HTML-T38',
-  mapping: 'G1',
-  description: 'The objective of this technique is to provide a mechanism to bypass blocks of material that are repeated on multiple Web pages by skipping directly to the main content of the Web page.',
-  metadata: {
-    target: {
-      element: 'body'
-    },
-    'success-criteria': [{
-      name: '2.4.1',
-      level: 'A',
-      principle: 'Operable',
-      url: 'https://www.w3.org/WAI/WCAG21/Understanding/bypass-blocks'
-    }],
-    related: ['G123', 'G124'],
-    url: 'https://www.w3.org/WAI/WCAG21/Techniques/general/G1',
-    passed: 0,
-    warning: 0,
-    failed: 0,
-    inapplicable: 0,
-    outcome: '',
-    description: ''
-  },
-  results: new Array<HTMLTechniqueResult>()
-};
+import { HTMLTechniqueResult } from '@qualweb/html-techniques';
+import { Page, ElementHandle } from 'puppeteer';
+import { DomUtils } from '@qualweb/util';
+import Technique from '../lib/Technique.object';
 
 class QW_HTML_T38 extends Technique {
 
   constructor() {
-    super(technique);
+    super({
+      name: 'Adding a link at the top of each page that goes directly to the main content area',
+      code: 'QW-HTML-T38',
+      mapping: 'G1',
+      description: 'The objective of this technique is to provide a mechanism to bypass blocks of material that are repeated on multiple Web pages by skipping directly to the main content of the Web page.',
+      metadata: {
+        target: {
+          element: 'body'
+        },
+        'success-criteria': [{
+          name: '2.4.1',
+          level: 'A',
+          principle: 'Operable',
+          url: 'https://www.w3.org/WAI/WCAG21/Understanding/bypass-blocks'
+        }],
+        related: ['G123', 'G124'],
+        url: 'https://www.w3.org/WAI/WCAG21/Techniques/general/G1',
+        passed: 0,
+        warning: 0,
+        failed: 0,
+        outcome: '',
+        description: ''
+      },
+      results: new Array<HTMLTechniqueResult>()
+    });
   }
 
   async execute(element: ElementHandle | undefined, page: Page): Promise<void> {
-    if (element === null||element === undefined) {
+    if (element === undefined) {
       return;
     }
 
@@ -71,8 +55,8 @@ class QW_HTML_T38 extends Technique {
         if (isVisible) {
           const firstFocusableElemName = await DomUtils.getElementTagName(firstFocusableElem);
           //const firstFocusableElemAttribs = await DomUtils.getElementAttributes(firstFocusableElem);
-          const firstFocusableElemHREF = trim(await DomUtils.getElementAttribute(firstFocusableElem, 'href'));
-          if (firstFocusableElemName === 'a'   && firstFocusableElemHREF) {
+          const firstFocusableElemHREF = await DomUtils.getElementAttribute(firstFocusableElem, 'href');
+          if (firstFocusableElemName === 'a' && firstFocusableElemHREF && firstFocusableElemHREF.trim()) {
             let url = await page.url();
             let urlConcatWithId = url + '#';
             let lastSlash = url.lastIndexOf('/');
@@ -84,7 +68,7 @@ class QW_HTML_T38 extends Technique {
               if (idReferenced.length > 0) {
                 let idElementReferenced = await element.$( '[id="' + idReferenced + '"]')
                 if (idElementReferenced !== null) {
-                  if (hasMainElementAsParent(idElementReferenced)) {
+                  if (await hasMainElementAsParent(idElementReferenced)) {
                     evaluation.verdict = 'warning';
                     evaluation.description = 'The first focusable control is a visible link to a <main> element.';
                     evaluation.resultCode = 'RC1';
@@ -130,10 +114,7 @@ class QW_HTML_T38 extends Technique {
       evaluation.resultCode = 'RC9';
     }
 
-    evaluation.htmlCode = await DomUtils.getElementHtmlCode(element);
-    evaluation.pointer = await DomUtils.getElementSelector(element);
-
-    super.addEvaluationResult(evaluation);
+    await super.addEvaluationResult(evaluation, element);
   }
 }
 
@@ -161,9 +142,13 @@ async function findFirstFocusableElement(element: ElementHandle):Promise< Elemen
   return firstFocusableElem;
 }
 
-function hasMainElementAsParent(element: ElementHandle|null): boolean {
-  let pointer = DomUtils.getElementSelector(element);
-  return indexOf(pointer, 'main:') > 0;
+async function hasMainElementAsParent(element: ElementHandle | undefined): Promise<boolean> {
+  if (element) {
+    let pointer = await DomUtils.getElementSelector(element);
+    return pointer.indexOf('main:') > 0;
+  }
+
+  return false;
 }
 
 export = QW_HTML_T38;

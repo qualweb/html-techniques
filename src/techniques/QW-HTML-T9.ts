@@ -2,7 +2,7 @@
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
 import { Page, ElementHandle } from 'puppeteer';
-import Technique from './Technique.object';
+import Technique from '../lib/Technique.object';
 
 class QW_HTML_T9 extends Technique {
 
@@ -55,7 +55,7 @@ class QW_HTML_T9 extends Technique {
 
     let equal = true;
     let complete = true;
-    let errorElem = element;
+    //let errorElem = element;
     let hasH1 = (await page.$$('h1')).length > 0;
     let counter = 0;
     let htmlList = await page.$$('body, body *');
@@ -84,11 +84,11 @@ class QW_HTML_T9 extends Technique {
         for (let i = 0; i < list.length; i++) {
           if (list[i] !== sortedArray[i]) {
             equal = false;
-            errorElem = elem;
+            //errorElem = elem;
           }
           if (i > 0 && i - 1 < list.length && sortedArray[i] - sortedArray[i - 1] > 1) {
             complete = false;
-            errorElem = elem;
+            //errorElem = elem;
           }
         }
       }
