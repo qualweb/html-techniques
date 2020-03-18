@@ -17,10 +17,6 @@ class QW_HTML_T1 extends Technique {
   @ElementExists
   async execute(element: ElementHandle | undefined): Promise<void> {
 
-    if (!element) {
-      return;
-    }
-
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
       description: '',
