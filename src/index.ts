@@ -81,7 +81,7 @@ class HTMLTechniques {
     'QW-HTML-T28': true,
     'QW-HTML-T29': true,
     'QW-HTML-T30': true,
-    'QW-HTML-T31': true,
+    'QW-HTML-T31': false,
     'QW-HTML-T32': true,
     'QW-HTML-T34': true,
     'QW-HTML-T33': true,
