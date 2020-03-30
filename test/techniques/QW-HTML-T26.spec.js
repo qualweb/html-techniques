@@ -1,11 +1,9 @@
 const {
-  configure,
-  executeHTMLT
+  HTMLTechniques
 } = require('../../dist/index');
 const { expect } = require('chai');
-const {
-  getDom
-} = require('@qualweb/get-dom-puppeteer');
+const { getDom } = require('../getDom');
+const puppeteer = require('puppeteer');
 
 
 describe('Technique QW-HTML-T26', function() {
@@ -36,25 +34,36 @@ describe('Technique QW-HTML-T26', function() {
       outcome: 'inapplicable'
     }
   ];
+  it('Starting testbench', async function () {
+    const browser = await puppeteer.launch();
 
-  let i = 0;
-  let lastOutcome = 'failed';
-  for (const test of tests || []) {
-    if (test.outcome !== lastOutcome) {
-      lastOutcome = test.outcome;
-      i = 0;
+    let i = 0;
+    let lastOutcome = 'failed';
+    for (const test of tests || []) {
+      if (test.outcome !== lastOutcome) {
+        lastOutcome = test.outcome;
+        i = 0;
+      }
+      i++;
+      describe(`${test.outcome.charAt(0).toUpperCase() + test.outcome.slice(1)} example ${i}`, function () {
+        it(`should have outcome="${test.outcome}"`, async function () {
+          this.timeout(200 * 1000);
+          const { page } = await getDom(browser, test.url);
+          const htmlTecniques = new HTMLTechniques({
+            techniques: ['QW-HTML-T26']
+          });
+
+          const report = await htmlTecniques.execute(page);
+          console.log(report);
+          //expect(report.techniques['QW-HTML-T8'].metadata.outcome).to.be.equal(test.outcome);
+        });
+      });
     }
-    i++;
-    describe(`${test.outcome.charAt(0).toUpperCase() + test.outcome.slice(1)} example ${i}`, function () {
-      it(`should have outcome="${test.outcome}"`, async function () {
-        this.timeout(20 * 1000);
-        const { source, processed } = await getDom(test.url);
-
-
-        const report = await executeHTMLT(test.url, source.html.parsed, processed.html.parsed);
-        expect(report.techniques['QW-HTML-T26'].metadata.outcome).to.be.equal(test.outcome);
+    describe(`Closing testbench`, async function () {
+      it(`Closed`, async function () {
+        await browser.close();
       });
     });
-  }
-
+  });
 });
+
