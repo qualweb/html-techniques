@@ -47,11 +47,12 @@ class QW_HTML_T39 extends Technique {
       resultCode: ''
     };
 
-    let AName, alt, role;
+    let AName, alt, role,inAT;
     let name = await DomUtils.getElementTagName(element);
     if (name === "img") {
       alt = await DomUtils.getElementAttribute(element, 'alt');
       role = await DomUtils.getElementAttribute(element, 'role');
+      inAT = await AccessibilityUtils.isElementInAT(element,page);
       AName = await AccessibilityUtils.getAccessibleName(element, page);
     } else {
       AName = await AccessibilityUtils.getAccessibleNameSVG(element, page);
@@ -59,7 +60,7 @@ class QW_HTML_T39 extends Technique {
     if (name === "img" && role === "none" || role === "presentation" || alt === "") {
       //inapplicable (presentation)
     } else {
-      if (!AName && AName.trim() === "") {
+      if (!inAT||!AName || AName.trim() === "") {
         evaluation.verdict = 'failed';
         evaluation.description = `The image doesnt have a valid accessible name`;
         evaluation.resultCode = 'RC1';

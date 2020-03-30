@@ -56,10 +56,10 @@ class QW_HTML_T8 extends Technique {
     const default_title = ['spacer', 'image', 'picture', 'separador', 'imagem', 'fotografia'];
 
     const pattern = new RegExp('.+\\.(jpg|jpeg|png|gif|tiff|bmp)');
-    const pattern1 = new RegExp('^picture/s[0-9]+');
-    const pattern2 = new RegExp('[0-9]+');
-    const pattern3 = new RegExp('^Intro#[0-9]+');
-    const pattern4 = new RegExp('^imagem/s[0-9]+');
+    const pattern1 = new RegExp('^picture/s[0-9]+$');
+    const pattern2 = new RegExp('^[0-9]+$');
+    const pattern3 = new RegExp('^Intro#[0-9]+$');
+    const pattern4 = new RegExp('^imagem/s[0-9]+$');
 
     let altText = await AccessibilityUtils.getAccessibleName(element, page);
     if (!altText || altText === ''){

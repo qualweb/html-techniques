@@ -86,7 +86,7 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "@qualweb/util": "^0.2.51",
+    "@qualweb/util": "^0.2.56",
     "html-validator": "^5.1.5",
     "lodash.clone": "^4.5.0",
     "lodash.clonedeep": "^4.5.0",
