@@ -2,7 +2,7 @@
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
 import { ElementHandle } from 'puppeteer';
-import { DomUtils, AccessibilityUtils } from '@qualweb/util';
+import { DomUtils} from '@qualweb/util';
 import Technique from '../lib/Technique.object';
 
 class QW_HTML_T33 extends Technique {
@@ -54,13 +54,13 @@ class QW_HTML_T33 extends Technique {
     let title = await DomUtils.getElementAttribute(element, 'title');
     if (title)
       trimTitle = title.trim();
-    const text = await AccessibilityUtils.getTrimmedText(element);
+    const text = await DomUtils.getElementText(element);
 
     if (!trimTitle || trimTitle === "") {
       evaluation.verdict = 'failed';
       evaluation.description = `The element's title attribute is empty`;
       evaluation.resultCode = 'RC1';
-    } else if (text && trimTitle === text) {
+    } else if (text &&  trimTitle === text.trim()) {
       evaluation.verdict = 'failed';
       evaluation.description = `The element contains a title attribute equal to the text in the link`;
       evaluation.resultCode = 'RC2';
