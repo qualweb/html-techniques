@@ -65,7 +65,7 @@ class QW_HTML_T40 extends Technique {
         evaluation.verdict = 'passed';
         evaluation.description = `Element kept focus`;
         evaluation.resultCode = 'RC1';
-      }else{  
+      } else {
         evaluation.verdict = 'failed';
         evaluation.description = `Element didn't keep focus`;
         evaluation.resultCode = 'RC2';

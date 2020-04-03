@@ -36,20 +36,21 @@ class QW_HTML_T17 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined,page:Page): Promise < void > {
-    if (element === undefined) {
+  async execute(element: ElementHandle | undefined, page: Page): Promise < void > {
+    if (!element) {
       return;
     }
+
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
       description: '',
       resultCode: ''
     };
 
-    let hasIds = await element.$$( "[id]");
-    let hasHeaders = await element.$$( "[headers]");
+    let hasIds = await element.$$('[id]');
+    let hasHeaders = await element.$$('[headers]');
 
-    if (await !AccessibilityUtils.isDataTable(element, page)) {
+    if (!AccessibilityUtils.isDataTable(element, page)) {
       if (hasIds.length > 0 || hasHeaders.length > 0) {
         evaluation.verdict = 'failed';
         evaluation.description = 'This table is a layout table with id or headers attributes';
@@ -62,18 +63,18 @@ class QW_HTML_T17 extends Technique {
     } else {
       if (doesTableHaveDuplicateIds(element)) {
         evaluation.verdict = 'failed';
-        evaluation.description = 'There are duplicate ids in this data table';
+        evaluation.description = 'There are duplicate `id`s in this data table';
         evaluation.resultCode = 'RC3';
       } else if (hasHeaders.length <= 0) {
         evaluation.verdict = 'inapplicable';
         evaluation.description = 'No header attributes are used in this data table';
         evaluation.resultCode = 'RC4';
       } else {
-        let headersElements = await element.$$( "[headers]");
+        let headersElements = await element.$$('[headers]');
         let headersMatchId = true;
         for (let headerElem of headersElements) {
           if (headersMatchId) {
-            headersMatchId = await doesHeadersMatchId(element, await DomUtils.getElementAttribute(headerElem,"headers"));
+            headersMatchId = doesHeadersMatchId(element, await DomUtils.getElementAttribute(headerElem,"headers"));
           }
         }
 
@@ -93,15 +94,15 @@ class QW_HTML_T17 extends Technique {
   }
 }
 
-async function doesTableHaveDuplicateIds(table: ElementHandle) {
-  let elementsId = await table.$$( '[id]');
+async function doesTableHaveDuplicateIds(table: ElementHandle): Promise<boolean> {
+  let elementsId = await table.$$('[id]');
   let duplicate = false;
-  let counter;
+  let counter: number;
 
   for (let elementId of elementsId) {
     counter = 0;
     for (let elementId2 of elementsId) {
-      if (await DomUtils.getElementAttribute(elementId,"id") ===await DomUtils.getElementAttribute(elementId2,"id")) {
+      if (await DomUtils.getElementAttribute(elementId,"id") === await DomUtils.getElementAttribute(elementId2,"id")) {
         counter++;
       }
       if (counter > 1) {
@@ -113,29 +114,31 @@ async function doesTableHaveDuplicateIds(table: ElementHandle) {
   return duplicate;
 }
 
-function doesHeadersMatchId(table, headers) {
+function doesHeadersMatchId(table: ElementHandle, headers: string | null): boolean {
   let outcome = false;
   let result = 0;
-  if (headers.trim() === '') {
-    return true;
-  }
-  let splitHeaders = headers.split(" ");
+  if (headers) {
+    if (headers.trim() === '') {
+      return true;
+    }
+    let splitHeaders = headers.split(" ");
 
-  for (let header of splitHeaders) {
-    let matchingIdElem = table.$( '[id="' + header + '"]');
-    if (matchingIdElem !== undefined) {
-      let matchingIdElemHeaders = matchingIdElem.attribs["headers"];
-      if (splitHeaders.length === 1 && matchingIdElemHeaders === undefined) {
-        outcome = true;
-      } else if (matchingIdElemHeaders !== undefined) {
-        for (let headerIdElem of matchingIdElemHeaders.split(" ")) {
-          if (splitHeaders.indexOf(headerIdElem) >= 0 && headerIdElem !== header) {
-            result++;
-          }
-        }
-        if (result === matchingIdElemHeaders.split(" ").length) {
+    for (let header of splitHeaders) {
+      let matchingIdElem = table.$( '[id="' + header + '"]');
+      if (matchingIdElem !== undefined) {
+        let matchingIdElemHeaders = matchingIdElem['attribs']["headers"];
+        if (splitHeaders.length === 1 && matchingIdElemHeaders === undefined) {
           outcome = true;
-          break;
+        } else if (matchingIdElemHeaders !== undefined) {
+          for (let headerIdElem of matchingIdElemHeaders.split(" ")) {
+            if (splitHeaders.indexOf(headerIdElem) >= 0 && headerIdElem !== header) {
+              result++;
+            }
+          }
+          if (result === matchingIdElemHeaders.split(" ").length) {
+            outcome = true;
+            break;
+          }
         }
       }
     }

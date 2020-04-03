@@ -42,7 +42,7 @@ class QW_HTML_T25 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined): Promise < void > {
+  async execute(element: ElementHandle | undefined): Promise<void> {
 
     if (!element) {
       return;

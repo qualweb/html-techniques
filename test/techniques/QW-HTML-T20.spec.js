@@ -1,19 +1,21 @@
+const { HTMLTechniques } = require('../../dist/index');
+const puppeteer = require('puppeteer');
+const { getDom } = require('../getDom');
 const { expect } = require('chai');
-const { executeHTMLT, configure } = require('../../dist/index');
-const { getDom } = require('@qualweb/get-dom-puppeteer');
+
+
 
 describe('Technique QW-HTML-T20', function() {
-  it('should validate', async function() {
-    this.timeout(20 * 10000);
-    
-    const dom = await getDom('https://ciencias.ulisboa.pt');
 
-    configure({
-      techniques: ['QW-HTML-T20']
-    });
-
-    const report = await executeHTMLT('https://ciencias.ulisboa.pt', dom.source.html.parsed, dom.processed.html.parsed);
+  it.only('Decorator', async function() {
+    this.timeout(100 * 1000);
+    const browser = await puppeteer.launch();
+    const { page } = await getDom(browser, 'https://www.ama.gov.pt/');
+    const html = new HTMLTechniques({ techniques: ['QW-HTML-T20']});
     
-    expect(report.techniques['QW-HTML-T20'].metadata.outcome).to.be.equal('failed');
+    const report = await html.execute(page);
+    console.log(report);
+    await browser.close();
+    expect(true);
   });
 });

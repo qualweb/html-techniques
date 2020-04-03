@@ -49,6 +49,7 @@ import mapping from './lib/mapping';
 class HTMLTechniques {
 
   private optimization = Optimization.Performance;
+  private htmlValidatorEndpoint: string | undefined = undefined;
   private techniques: any;
   private techniquesToExecute = {
     'QW-HTML-T1': true,
@@ -192,6 +193,10 @@ class HTMLTechniques {
         this.optimization = Optimization.ErrorDetection;
       }
     }
+
+    if (options.htmlValidatorEndpoint) {
+      this.htmlValidatorEndpoint = options.htmlValidatorEndpoint;
+    }
   }
   
   public resetConfiguration(): void {
@@ -237,7 +242,7 @@ class HTMLTechniques {
   
   private async executeNotMappedTechniques(report: HTMLTechniquesReport, page: Page): Promise<void> {
     if (this.techniquesToExecute['QW-HTML-T20']) {
-      await this.techniques['QW-HTML-T20'].validate(page);
+      await this.techniques['QW-HTML-T20'].validate(page, this.htmlValidatorEndpoint);
       report.techniques['QW-HTML-T20'] = this.techniques['QW-HTML-T20'].getFinalResults();
       report.metadata[report.techniques['QW-HTML-T20'].metadata.outcome]++;
       this.techniques['QW-HTML-T20'].reset();

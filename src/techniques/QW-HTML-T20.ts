@@ -2,10 +2,12 @@
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
 import { Page } from 'puppeteer';
-import validator from 'html-validator';
+import fetch from 'node-fetch';
 import Technique from '../lib/Technique.object';
 
 class QW_HTML_T20 extends Technique {
+
+  private endpoint = 'http://194.117.20.242/validate/';
 
   constructor() {
     super({
@@ -44,25 +46,24 @@ class QW_HTML_T20 extends Technique {
     throw new Error('Method not implemented.');
   }
 
-  async validate(page: Page): Promise < void > {
+  async validate(page: Page, endpoint?: string): Promise<void> {
 
     const url = await page.evaluate(() => {
       return location.href;
     });
-
-    const options = {
-      url,
-      format: 'json'
-    };
-
-    let validation;
+    
+    let validationUrl = endpoint ? endpoint + encodeURIComponent(url) : this.endpoint + encodeURIComponent(url);
+    
+    let response: any;
     
     try {
-      validation = await validator(options);
+      response = await fetch(validationUrl);
     } catch (err) {
+      console.log(err);
     }
 
-    if (validation) {
+    if (response && response.status === 200) {
+      const validation = JSON.parse(await response.json());
       for (const result of validation.messages || []) {
         const evaluation: HTMLTechniqueResult = {
           verdict: '',
@@ -92,14 +93,6 @@ class QW_HTML_T20 extends Technique {
 
         super.addEvaluationResult(evaluation);
       }
-    } else {
-      const evaluation: HTMLTechniqueResult = {
-        verdict: 'inapplicable',
-        description: `An error ocurred while trying to validate the page`,
-        resultCode: 'RC4'
-      };
-
-      super.addEvaluationResult(evaluation);
     }
   }
 }

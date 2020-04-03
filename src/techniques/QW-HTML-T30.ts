@@ -30,7 +30,7 @@ class QW_HTML_T30 extends Technique {
         outcome: '',
         description: ''
       },
-      results: new Array < HTMLTechniqueResult > ()
+      results: new Array<HTMLTechniqueResult>()
     });
   }
 

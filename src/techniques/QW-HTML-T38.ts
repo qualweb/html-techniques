@@ -57,7 +57,7 @@ class QW_HTML_T38 extends Technique {
           //const firstFocusableElemAttribs = await DomUtils.getElementAttributes(firstFocusableElem);
           const firstFocusableElemHREF = await DomUtils.getElementAttribute(firstFocusableElem, 'href');
           if (firstFocusableElemName === 'a' && firstFocusableElemHREF && firstFocusableElemHREF.trim()) {
-            let url = await page.url();
+            let url = page.url();
             let urlConcatWithId = url + '#';
             let lastSlash = url.lastIndexOf('/');
             let filename = url.substring(lastSlash + 1);
