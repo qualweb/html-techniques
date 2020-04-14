@@ -69,7 +69,7 @@ class QW_HTML_T41 extends Technique {
       } else {
         evaluation.verdict = 'failed';
         evaluation.description = 'The element\'s scope attribute doesn\'t match any of the following values: col, row, colgroup, rowgroup';
-        evaluation.resultCode = 'RC3';
+        evaluation.resultCode = 'RC4';
       }
     }
 

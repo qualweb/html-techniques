@@ -45,28 +45,21 @@ class QW_HTML_T13 extends Technique {
     };
 
     if (element) {
-      if (await DomUtils.elementHasChildren(element)) {
-        const text = await DomUtils.getElementText(element);
-        if (text && text !== '') { // the title text exists and needs to be verified
-          evaluation.verdict = 'warning';
-          evaluation.description = `Please verify the title text correlates to the page's content`;
-          evaluation.resultCode = 'RC1';
-        } else { // fails if inside the title tag exists another element instead of text
-          evaluation.verdict = 'failed';
-          evaluation.description = `Title tag contains elements instead of text`;
-          evaluation.resultCode = 'RC2';
-        }
-      } else { // fails if the title tag is empty
+      const text = await DomUtils.getElementText(element);
+      if (text && text !== '') { // the title text exists and needs to be verified
+        evaluation.verdict = 'warning';
+        evaluation.description = `Please verify the title text correlates to the page's content`;
+        evaluation.resultCode = 'RC1';
+      } else { // fails if inside the title tag exists another element instead of text
         evaluation.verdict = 'failed';
-        evaluation.description = `Title text is empty`;
-        evaluation.resultCode = 'RC3';
+        evaluation.description = `Title tag contains elements instead of text`;
+        evaluation.resultCode = 'RC2';
       }
     } else { // fails if title element doesn't exist
       evaluation.verdict = 'failed';
       evaluation.description = `Title tag doesn't exist`;
       evaluation.resultCode = 'RC4';
     }
-
     await super.addEvaluationResult(evaluation, element);
   }
 }

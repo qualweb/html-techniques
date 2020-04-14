@@ -4,7 +4,7 @@ export default {
   'post': {
     'img + map > area': ['QW-HTML-T1'],
     'fieldset': ['QW-HTML-T3'],
-    'title': ['QW-HTML-T13', 'QW-HTML-T24', 'QW-HTML-T26'],
+    ':not(svg) > title': ['QW-HTML-T13', 'QW-HTML-T24', 'QW-HTML-T26'],
     'body': ['QW-HTML-T9','QW-HTML-T38'],
     'input[type="image"]': ['QW-HTML-T5'],
     'frame, iframe': ['QW-HTML-T10'],

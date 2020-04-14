@@ -82,7 +82,7 @@ class HTMLTechniques {
     'QW-HTML-T28': true,
     'QW-HTML-T29': true,
     'QW-HTML-T30': true,
-    'QW-HTML-T31': true,
+    'QW-HTML-T31': false,
     'QW-HTML-T32': true,
     'QW-HTML-T34': true,
     'QW-HTML-T33': true,
@@ -93,7 +93,7 @@ class HTMLTechniques {
     'QW-HTML-T40': true,
     'QW-HTML-T41': true,
     'QW-HTML-T42': true,
-    'QW-HTML-T43': true,
+    'QW-HTML-T43': false,
   };
 
   constructor(options?: HTMLTOptions) {

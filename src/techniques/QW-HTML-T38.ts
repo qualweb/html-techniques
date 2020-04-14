@@ -45,7 +45,7 @@ class QW_HTML_T38 extends Technique {
       description: '',
       resultCode: ''
     };
-   
+
     let children = await DomUtils.getElementChildren(element);
 
     if (children !== null && children.length > 0) {
@@ -66,7 +66,7 @@ class QW_HTML_T38 extends Technique {
               let idSymbol = firstFocusableElemHREF.indexOf('#');
               let idReferenced = firstFocusableElemHREF.substring(idSymbol + 1);
               if (idReferenced.length > 0) {
-                let idElementReferenced = await element.$( '[id="' + idReferenced + '"]')
+                let idElementReferenced = await element.$('[id="' + idReferenced + '"]')
                 if (idElementReferenced !== null) {
                   if (await hasMainElementAsParent(idElementReferenced)) {
                     evaluation.verdict = 'warning';
@@ -118,24 +118,27 @@ class QW_HTML_T38 extends Technique {
   }
 }
 
-async function findFirstFocusableElement(element: ElementHandle):Promise< ElementHandle | undefined> {
+async function findFirstFocusableElement(element: ElementHandle): Promise<ElementHandle | undefined> {
   let foundFirstFocusableElem = false;
   let firstFocusableElem: ElementHandle | undefined;
   let children = await DomUtils.getElementChildren(element);
+  console.log(children.length)
 
   if (children && children.length > 0) {
     let i = 0;
-    while (!foundFirstFocusableElem) {
+    while (!foundFirstFocusableElem && i < children.length) {
       if (children[i] !== undefined) {
-        if ( await DomUtils.isElementFocusable(children[i])) {
+        console.log(await DomUtils.isElementFocusable(children[i]))
+        if (await DomUtils.isElementFocusable(children[i])) {
           firstFocusableElem = children[i];
           foundFirstFocusableElem = true;
         } else {
-          findFirstFocusableElement(children[i]);
+          firstFocusableElem = await findFirstFocusableElement(children[i]);
+          foundFirstFocusableElem = true;
         }
         i++;
       } else {
-        return undefined;
+        foundFirstFocusableElem = true;
       }
     }
   }

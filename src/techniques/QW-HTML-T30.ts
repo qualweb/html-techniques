@@ -8,7 +8,7 @@ class QW_HTML_T30 extends Technique {
 
   constructor() {
     super({
-      name: 'Providing text alternatives for the area elements of image maps',
+      name: 'Using table markup to present tabular information',
       code: 'QW-HTML-T30',
       mapping: 'H51',
       description: 'The objective of this technique is to present tabular information in a way that preserves relationships within the information even when users cannot see the table or the presentation format is changed. Using the table element with the child elements tr, th, and td makes these relationships perceivable.',
