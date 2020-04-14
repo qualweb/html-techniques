@@ -122,13 +122,11 @@ async function findFirstFocusableElement(element: ElementHandle): Promise<Elemen
   let foundFirstFocusableElem = false;
   let firstFocusableElem: ElementHandle | undefined;
   let children = await DomUtils.getElementChildren(element);
-  console.log(children.length)
 
   if (children && children.length > 0) {
     let i = 0;
     while (!foundFirstFocusableElem && i < children.length) {
       if (children[i] !== undefined) {
-        console.log(await DomUtils.isElementFocusable(children[i]))
         if (await DomUtils.isElementFocusable(children[i])) {
           firstFocusableElem = children[i];
           foundFirstFocusableElem = true;
