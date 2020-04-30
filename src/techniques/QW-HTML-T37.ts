@@ -37,10 +37,6 @@ class QW_HTML_T37 extends Technique {
   }
 
   async execute(element: ElementHandle | undefined, page: Page): Promise < void > {
-    
-    if (!element) {
-      return;
-    }
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -48,26 +44,33 @@ class QW_HTML_T37 extends Technique {
       resultCode: ''
     };
 
-    const refElement = await DomUtils.getElementReferencedByHREF(page, element);
-    const hidden = await DomUtils.isElementHidden(element);
+    if (!element) {
+      evaluation.verdict = 'failed';
+      evaluation.description = `This page does not have links`;
+      evaluation.resultCode = 'RC1';
+    } else {
 
-    if (refElement) {
-      if (!hidden) {
-        evaluation.verdict = 'warning';
-        evaluation.description = 'This link skips a content block';
-        evaluation.resultCode = 'RC1';
+      const refElement = await DomUtils.getElementReferencedByHREF(page, element);
+      const hidden = await DomUtils.isElementHidden(element);
+
+      if (refElement) {
+        if (!hidden) {
+          evaluation.verdict = 'warning';
+          evaluation.description = 'This link skips a content block';
+          evaluation.resultCode = 'RC2';
+        } else {
+          evaluation.verdict = 'failed';
+          evaluation.description = 'This link that skips a content block is not visible';
+          evaluation.resultCode = 'RC3';
+        }
       } else {
         evaluation.verdict = 'failed';
-        evaluation.description = 'This link that skips a content block is not visible';
-        evaluation.resultCode = 'RC2';
+        evaluation.description = `This link is not used to skip a content block`;
+        evaluation.resultCode = 'RC4';
       }
-    } else {
-      evaluation.verdict = 'inapplicable';
-      evaluation.description = `This link is not used to skip a content block`;
-      evaluation.resultCode = 'RC3';
-    }
 
-    await super.addEvaluationResult(evaluation, element);
+      await super.addEvaluationResult(evaluation, element);
+    }
   }
 }
 
