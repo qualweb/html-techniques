@@ -39,9 +39,9 @@ class QW_HTML_T35 extends Technique {
     throw new Error('Method not implemented.');
   }
 
-  async validate(page: Page): Promise < void > {
+  async validate(page: Page): Promise<void> {
     
-    const url = await page.url();
+    const url = page.url();
 
     const browser = page.browser();
 

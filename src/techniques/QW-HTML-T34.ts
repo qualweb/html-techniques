@@ -70,7 +70,7 @@ class QW_HTML_T34 extends Technique {
       evaluation['description'] = `The link has an accessible name`;
     } else {
       evaluation['verdict'] = 'failed';
-      evaluation['description'] = `The image doesnt have an accessible name`;
+      evaluation['description'] = `The image doesn't have an accessible name`;
     }
 
     await super.addEvaluationResult(evaluation, element);

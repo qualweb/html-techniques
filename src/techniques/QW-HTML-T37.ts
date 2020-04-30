@@ -36,7 +36,7 @@ class QW_HTML_T37 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined, page: Page): Promise < void > {
+  async execute(element: ElementHandle | undefined, page: Page): Promise <void> {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',

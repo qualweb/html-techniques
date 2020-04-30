@@ -57,7 +57,7 @@ class QW_HTML_T38 extends Technique {
           //const firstFocusableElemAttribs = await DomUtils.getElementAttributes(firstFocusableElem);
           const firstFocusableElemHREF = await DomUtils.getElementAttribute(firstFocusableElem, 'href');
           if (firstFocusableElemName === 'a' && firstFocusableElemHREF && firstFocusableElemHREF.trim()) {
-            let url = await page.url();
+            let url = page.url();
             let urlConcatWithId = url + '#';
             let lastSlash = url.lastIndexOf('/');
             let filename = url.substring(lastSlash + 1);
@@ -122,13 +122,11 @@ async function findFirstFocusableElement(element: ElementHandle): Promise<Elemen
   let foundFirstFocusableElem = false;
   let firstFocusableElem: ElementHandle | undefined;
   let children = await DomUtils.getElementChildren(element);
-  console.log(children.length)
 
   if (children && children.length > 0) {
     let i = 0;
     while (!foundFirstFocusableElem && i < children.length) {
       if (children[i] !== undefined) {
-        console.log(await DomUtils.isElementFocusable(children[i]))
         if (await DomUtils.isElementFocusable(children[i])) {
           firstFocusableElem = children[i];
           foundFirstFocusableElem = true;
