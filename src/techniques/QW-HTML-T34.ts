@@ -9,7 +9,7 @@ class QW_HTML_T34 extends Technique {
 
   constructor() {
     super({
-      name: 'Failure of Success Criteria 2.4.4, 2.4.9 and 4.1.2 due to not providing an accessible name for an image which is the only content in a link ',
+      name: 'Failure of Success Criteria 2.4.4, 2.4.9 and 4.1.2 due to not providing an accessible name for an image which is the only content in a link',
       code: 'QW-HTML-T34',
       mapping: 'F89',
       description: 'This technique checks the text alternative of images which are the only content of a link',

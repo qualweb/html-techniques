@@ -9,7 +9,7 @@ class QW_HTML_T35 extends Technique {
 
   constructor() {
     super({
-      name: 'Failure of Success Criterion 3.2.1 and 3.2.5 due to opening a new window as soon as a new page is loaded ',
+      name: 'Failure of Success Criterion 3.2.1 and 3.2.5 due to opening a new window as soon as a new page is loaded',
       code: 'QW-HTML-T35',
       mapping: 'F52',
       description: 'The objective of this technique is to ensure that pages do not disorient users by opening up one or more new windows that automatically attain focus as soon as a page is loaded. ',

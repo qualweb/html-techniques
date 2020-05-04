@@ -9,7 +9,7 @@ class QW_HTML_T33 extends Technique {
 
   constructor() {
     super({
-      name: 'Providing submit buttons',
+      name: 'Supplementing link text with the title attribute',
       code: 'QW-HTML-T33',
       mapping: 'H33',
       description: 'Supplementing link text with the title attribute',

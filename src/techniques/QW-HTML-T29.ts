@@ -9,7 +9,7 @@ class QW_HTML_T29 extends Technique {
 
   constructor() {
     super({
-      name: 'Failure of Success Criterion 2.1.1 due to using only pointing-device-specific event handlers (including gesture) for a function ',
+      name: 'Failure of Success Criterion 2.1.1 due to using only pointing-device-specific event handlers (including gesture) for a function',
       code: 'QW-HTML-T29',
       mapping: 'F54',
       description: 'This technique counts the number of mouse specific events',

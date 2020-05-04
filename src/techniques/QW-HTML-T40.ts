@@ -9,7 +9,7 @@ class QW_HTML_T40 extends Technique {
 
   constructor() {
     super({
-      name: ' Failure of Success Criteria 2.1.1, 2.4.7, and 3.2.1 due to using script to remove focus when focus is received ',
+      name: 'Failure of Success Criteria 2.1.1, 2.4.7, and 3.2.1 due to using script to remove focus when focus is received',
       code: 'QW-HTML-T40',
       mapping: 'F55',
       description: 'Content that normally receives focus when the content is accessed by keyboard may have this focus removed by scripting.',

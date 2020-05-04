@@ -9,7 +9,7 @@ class QW_HTML_T42 extends Technique {
 
   constructor() {
     super({
-      name: 'Failure of Success Criterion 4.1.2 due to using script to make div or span a user interface control in HTML without providing a role for the control ',
+      name: 'Failure of Success Criterion 4.1.2 due to using script to make div or span a user interface control in HTML without providing a role for the control',
       code: 'QW-HTML-T42',
       mapping: 'F59',
       description: 'This failure demonstrates how using generic HTML elements to create user interface controls can make the controls inaccessible to assistive technology.',
