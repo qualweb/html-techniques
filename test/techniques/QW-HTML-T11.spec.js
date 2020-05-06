@@ -55,7 +55,7 @@ describe('Technique QW-HTML-T11', function() {
 
 
         const report = await executeHTMLT(test.url, source.html.parsed, processed.html.parsed);
-        expect(report.techniques['QW-HTML-T11'].metadata.outcome).to.be.equal(test.outcome);
+        expect(report.assertions['QW-HTML-T11'].metadata.outcome).to.be.equal(test.outcome);
       });
     });
   }

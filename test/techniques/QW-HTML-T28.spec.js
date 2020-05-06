@@ -48,7 +48,7 @@ describe('Technique QW-HTML-T28', function() {
 
 
         const report = await executeHTMLT(test.url, source.html.parsed, processed.html.parsed);
-        expect(report.techniques['QW-HTML-T28'].metadata.outcome).to.be.equal(test.outcome);
+        expect(report.assertions['QW-HTML-T28'].metadata.outcome).to.be.equal(test.outcome);
       });
     });
   }

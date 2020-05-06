@@ -55,7 +55,7 @@ describe('Technique QW-HTML-T26', function() {
 
           const report = await htmlTecniques.execute(page);
           console.log(report);
-          //expect(report.techniques['QW-HTML-T8'].metadata.outcome).to.be.equal(test.outcome);
+          //expect(report.assertions['QW-HTML-T8'].metadata.outcome).to.be.equal(test.outcome);
         });
       });
     }

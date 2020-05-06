@@ -87,7 +87,7 @@ describe('Technique QW-HTML-T38', async function () {
 
           const report = await htmlTecniques.execute(page);
           console.log(report.techniques['QW-HTML-T38'].results);
-          //expect(report.techniques['QW-HTML-T8'].metadata.outcome).to.be.equal(test.outcome);
+          //expect(report.assertions['QW-HTML-T8'].metadata.outcome).to.be.equal(test.outcome);
         }
         );
       }
