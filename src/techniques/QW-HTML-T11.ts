@@ -86,11 +86,11 @@ class QW_HTML_T11 extends Technique {
       evaluation.resultCode = 'RC1';
     } else if (equalAltText) {
       evaluation.verdict = 'failed';
-      evaluation.description = `The element text is equal to img alternative text`;
+      evaluation.description = `The link text is equal to the image's alternative text`;
       evaluation.resultCode = 'RC2';
     } else {
       evaluation.verdict = 'warning';
-      evaluation.description = 'The a element contains an image that has an alt attribute that should be manually verified';
+      evaluation.description = 'The link contains an image that has an alt attribute that should be manually verified';
       evaluation.resultCode = 'RC3';
     }
 
