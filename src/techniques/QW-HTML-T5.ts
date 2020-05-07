@@ -52,15 +52,15 @@ class QW_HTML_T5 extends Technique {
 
     if (!hasAlt) {
       evaluation.verdict = 'failed';
-      evaluation.description = 'The alt does not exist in the input element';
+      evaluation.description = 'The input element does not have an alt attribute';
       evaluation.resultCode = 'RC1';
     } else if (alt && alt.trim() === '') {
       evaluation.verdict = 'failed';
-      evaluation.description = 'The alt is empty';
+      evaluation.description = 'The input element has an empty alt attribute';
       evaluation.resultCode = 'RC2';
     } else {
       evaluation.verdict = 'warning';
-      evaluation.description = 'Please verify that the alt is a valid description of the input image';
+      evaluation.description = 'Please verify that the value of the alt attribute correctly describes the function of the button';
       evaluation.resultCode = 'RC3';
     }
 
