@@ -51,11 +51,11 @@ class QW_HTML_T31 extends Technique {
 
     if (longdesc === null) { // fails if the element doesn't contain a longdesc attribute
       evaluation['verdict'] = 'failed';
-      evaluation['description'] = `The element doesn't contain a longdesc attribute`;
+      evaluation['description'] = `The image does not contain a longdesc attribute`;
       evaluation.resultCode = 'RC1';
     } else if (longdesc.trim() === '') { // fails if the element's longdesc attribute is empty
       evaluation['verdict'] = 'failed';
-      evaluation['description'] = `The element's longdesc attribute is empty`;
+      evaluation['description'] = `The longdesc attribute is empty`;
       evaluation.resultCode = 'RC2';
     } else {
       if (longdesc.includes('#')) {
@@ -72,17 +72,17 @@ class QW_HTML_T31 extends Technique {
 
         if (exists) { // the element has a longdesc attribute pointing to a resource in the current page
           evaluation.verdict = 'warning';
-          evaluation.description = 'Please verify that the resource that longdesc is pointing at describes correctly the image';
+          evaluation.description = 'Please verify that the resource the longdesc is pointing at describes correctly the image';
           evaluation.resultCode = 'RC3';
         } else { // fails if the element that the longdesc is pointing at doesn't exist
           evaluation.verdict = 'failed';
-          evaluation.description = `The resource that longdesc is pointing at doesn't exist`;
+          evaluation.description = `The resource that longdesc is pointing at does not exist`;
           evaluation.resultCode = 'RC4';
         }
       } else { // the element has a longdesc attribute pointing to a resource outside the current page
         //var res = request('GET', longdesc);
         evaluation.verdict = 'warning';
-        evaluation.description = 'Please verify that the resource that longdesc is pointing at exists and describes correctly the image';
+        evaluation.description = 'Please verify that the resource the longdesc is pointing at exists and describes correctly the image';
         evaluation.resultCode = 'RC5';
       }
     }
