@@ -4,16 +4,16 @@ import { HTMLTechniqueResult } from '@qualweb/html-techniques';
 import techniques from './techniques.json';
 import { DomUtils } from '@qualweb/util';
 
-function HTMLTechnique<T extends { new (...args: any[]): {} }>(constructor: T) {
+function HTMLTechnique<T extends { new(...args: any[]): {} }>(constructor: T) {
   const technique = techniques[constructor.name];
-  
+
   technique.metadata.passed = 0;
   technique.metadata.warning = 0;
   technique.metadata.failed = 0;
   technique.metadata.outcome = '';
   technique.metadata.description = '';
   technique.results = new Array<HTMLTechniqueResult>();
-  
+
   const newConstructor: any = function () {
     let func: any = function () {
       return new constructor(technique);
@@ -27,7 +27,7 @@ function HTMLTechnique<T extends { new (...args: any[]): {} }>(constructor: T) {
 
 function ElementExists(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
   const method = descriptor.value;
-  descriptor.value = function() {
+  descriptor.value = function () {
     if (arguments[0]) {
       return method.apply(this, arguments);
     } else {
@@ -38,8 +38,8 @@ function ElementExists(target: any, propertyKey: string, descriptor: PropertyDes
 
 function ElementHasAttributes(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
   const method = descriptor.value;
-  descriptor.value = async function() {
-    const hasAttributes = await DomUtils.elementHasAttributes(arguments[0]);
+  descriptor.value = function () {
+    const hasAttributes = arguments[0].elementHasAttributes();
     if (hasAttributes) {
       return method.apply(this, arguments);
     } else {

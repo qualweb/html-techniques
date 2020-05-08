@@ -1,12 +1,12 @@
 'use strict';
 
-import { Page } from 'puppeteer';
 import { HTMLTOptions, HTMLTechniquesReport } from '@qualweb/html-techniques';
 import { Optimization } from '@qualweb/util';
 
 import * as techniques from './lib/techniques';
 
 import mapping from './lib/mapping';
+import { QWPage } from '@qualweb/qw-page';
 
 class HTMLTechniques {
 
@@ -91,8 +91,8 @@ class HTMLTechniques {
     }
   }
 
-  private async executeTechnique(technique: string, selector: string, page: Page, report: HTMLTechniquesReport): Promise<void> {
-    const elements = await page.$$(selector);
+  private async executeTechnique(technique: string, selector: string, page: QWPage, report: HTMLTechniquesReport): Promise<void> {
+    const elements = await page.getElements(selector);
     if (elements.length > 0) {
       for (const elem of elements || []) {
         try {
@@ -114,7 +114,7 @@ class HTMLTechniques {
     this.techniques[technique].reset();
   }
   
-  private async executeMappedTechniques(report: HTMLTechniquesReport, page: Page, selectors: string[], mappedTechniques: any): Promise<void> {
+  private async executeMappedTechniques(report: HTMLTechniquesReport, page: QWPage, selectors: string[], mappedTechniques: any): Promise<void> {
     const promises = new Array<any>();
     for (const selector of selectors || []) {
       for (const technique of mappedTechniques[selector] || []) {
@@ -126,7 +126,7 @@ class HTMLTechniques {
     await Promise.all(promises);
   }
   
-  private async executeNotMappedTechniques(report: HTMLTechniquesReport, page: Page): Promise<void> {
+  private async executeNotMappedTechniques(report: HTMLTechniquesReport, page: QWPage): Promise<void> {
     if (this.techniquesToExecute['QW-HTML-T20']) {
       await this.techniques['QW-HTML-T20'].validate(page, this.htmlValidatorEndpoint);
       report.assertions['QW-HTML-T20'] = this.techniques['QW-HTML-T20'].getFinalResults();
@@ -142,7 +142,7 @@ class HTMLTechniques {
     }
   }
   
-  public async execute(page: Page): Promise<HTMLTechniquesReport> {
+  public async execute(page: QWPage): Promise<HTMLTechniquesReport> {
   
     const report: HTMLTechniquesReport = {
       type: 'html-techniques',
