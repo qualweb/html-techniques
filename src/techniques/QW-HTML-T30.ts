@@ -1,8 +1,8 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle } from 'puppeteer';
 import Technique from '../lib/Technique.object';
+import { QWElement } from "@qualweb/qw-element";
 
 class QW_HTML_T30 extends Technique {
 
@@ -34,7 +34,7 @@ class QW_HTML_T30 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined): Promise < void > {
+  execute(element: QWElement | undefined): void {
 
     if (!element) {
       return;
@@ -47,11 +47,11 @@ class QW_HTML_T30 extends Technique {
     };
 
     // verificar se existe pelo menos um th
-    const has_th = (await element.$$('th')).length > 0;
+    const has_th = (element.getElements('th')).length > 0;
     // verificar se existe pelo menos um tr
-    const has_tr = (await element.$$('tr')).length > 0;
+    const has_tr = (element.getElements('tr')).length > 0;
     // verificar se existe pelo menos um td
-    const has_td = (await element.$$('td')).length > 0;
+    const has_td = (element.getElements('td')).length > 0;
 
     // verificar pelo menos uma ocorrencia de cada elemento
     if (has_td && has_tr && has_th) {
@@ -66,7 +66,7 @@ class QW_HTML_T30 extends Technique {
       evaluation.resultCode = 'RC2';
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

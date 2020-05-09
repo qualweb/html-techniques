@@ -1,10 +1,9 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle } from 'puppeteer';
-import { DomUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
 import intersection from 'lodash.intersection';
+import { QWElement } from "@qualweb/qw-element";
 
 class QW_HTML_T22 extends Technique {
 
@@ -49,7 +48,7 @@ class QW_HTML_T22 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined): Promise<void> {
+  execute(element: QWElement | undefined): void {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -63,16 +62,16 @@ class QW_HTML_T22 extends Technique {
       evaluation.resultCode = 'RC1';
     } else {
       evaluation.verdict = 'failed';
-      evaluation.description = `The webpage uses attributes in ${await DomUtils.getElementTagName(element)} element to control the visual text presentation`;
+      evaluation.description = `The webpage uses attributes in ${element.getElementTagName()} element to control the visual text presentation`;
       evaluation.resultCode = 'RC2';
 
-      const hasAttributes = await DomUtils.elementHasAttributes(element);
-      const attributes = await DomUtils.getElementAttributesName(element);
+      const hasAttributes = element.elementHasAttributes();
+      const attributes = element.getElementAttributesName();
 
       evaluation.attributes = hasAttributes ? intersection(attributes, ['text', 'vlink', 'alink', 'link']) : undefined;
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

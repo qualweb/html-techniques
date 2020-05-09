@@ -1,11 +1,9 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle } from 'puppeteer';
-import { DomUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
-
 import { ElementExists, ElementHasAttributes } from '../lib/decorators';
+import { QWElement } from "@qualweb/qw-element";
 
 class QW_HTML_T6 extends Technique {
 
@@ -39,9 +37,9 @@ class QW_HTML_T6 extends Technique {
   }
 
   @ElementExists @ElementHasAttributes
-  async execute(element: ElementHandle | undefined): Promise < void > {
+  execute(element: QWElement | undefined): void {
 
-    if (!element || !(await DomUtils.elementHasAttributes(element))) {
+    if (!element || !(element.elementHasAttributes())) {
       return;
     }
 
@@ -51,25 +49,25 @@ class QW_HTML_T6 extends Technique {
       resultCode: ''
     };
 
-    const hasOnmousedown = await DomUtils.elementHasAttribute(element, 'onmousedown');
-    const onmousedown = await DomUtils.getElementAttribute(element, 'onmousedown');
-    const onkeydown = await DomUtils.getElementAttribute(element, 'onkeydown');
+    const hasOnmousedown = element.elementHasAttribute('onmousedown');
+    const onmousedown = element.getElementAttribute('onmousedown');
+    const onkeydown = element.getElementAttribute('onkeydown');
 
-    const hasOnmouseup = await DomUtils.elementHasAttribute(element, 'onmouseup');
-    const onmouseup = await DomUtils.getElementAttribute(element, 'onmouseup');
-    const onkeyup = await DomUtils.getElementAttribute(element, 'onkeyup');
+    const hasOnmouseup = element.elementHasAttribute('onmouseup');
+    const onmouseup = element.getElementAttribute('onmouseup');
+    const onkeyup = element.getElementAttribute('onkeyup');
     
-    const hasOnclick = await DomUtils.elementHasAttribute(element, 'onclick');
-    const onclick = await DomUtils.getElementAttribute(element, 'onclick');
-    const onkeypress = await DomUtils.getElementAttribute(element, 'onkeypress');
+    const hasOnclick = element.elementHasAttribute('onclick');
+    const onclick = element.getElementAttribute('onclick');
+    const onkeypress = element.getElementAttribute('onkeypress');
 
-    const hasOnmouseover = await DomUtils.elementHasAttribute(element, 'onmouseover');
-    const onmouseover = await DomUtils.getElementAttribute(element, 'onmouseover');
-    const onfocus = await DomUtils.getElementAttribute(element, 'onfocus');
+    const hasOnmouseover = element.elementHasAttribute('onmouseover');
+    const onmouseover = element.getElementAttribute('onmouseover');
+    const onfocus = element.getElementAttribute('onfocus');
 
-    const hasOnmouseout = await DomUtils.elementHasAttribute(element, 'onmouseout');
-    const onmouseout = await DomUtils.getElementAttribute(element, 'onmouseout');
-    const onblur = await DomUtils.getElementAttribute(element,'onblur');
+    const hasOnmouseout = element.elementHasAttribute('onmouseout');
+    const onmouseout = element.getElementAttribute('onmouseout');
+    const onblur = element.getElementAttribute('onblur');
 
     if (hasOnmousedown && onmousedown !== onkeydown) {
       evaluation.verdict = 'failed';
@@ -97,7 +95,7 @@ class QW_HTML_T6 extends Technique {
       evaluation.resultCode = 'RC6';
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

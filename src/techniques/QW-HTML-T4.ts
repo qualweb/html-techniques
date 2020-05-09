@@ -1,9 +1,8 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle } from 'puppeteer';
-import { DomUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
+import { QWElement } from "@qualweb/qw-element";
 
 class QW_HTML_T4 extends Technique {
 
@@ -35,7 +34,7 @@ class QW_HTML_T4 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined): Promise<void> {
+  execute(element: QWElement | undefined): void {
 
     if (!element) {
       return;
@@ -47,9 +46,9 @@ class QW_HTML_T4 extends Technique {
       resultCode: ''
     };
 
-    const caption = await DomUtils.getElementChildTextContent(element, 'caption');
-    const hasSummary = await DomUtils.elementHasAttribute(element, 'summary');
-    const summary = await DomUtils.getElementAttribute(element, 'summary');
+    const caption = element.getElementChildTextContent('caption');
+    const hasSummary = element.elementHasAttribute('summary');
+    const summary = element.getElementAttribute('summary');
 
     if (!hasSummary) {
       evaluation.verdict = 'failed';
@@ -69,7 +68,7 @@ class QW_HTML_T4 extends Technique {
       evaluation.resultCode = 'RC4';
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

@@ -1,9 +1,10 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { Page, ElementHandle } from 'puppeteer';
 import { DomUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
+import { QWElement } from "@qualweb/qw-element";
+import { QWPage } from "@qualweb/qw-page";
 
 class QW_HTML_T38 extends Technique {
 
@@ -35,7 +36,7 @@ class QW_HTML_T38 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined, page: Page): Promise<void> {
+  execute(element: QWElement | undefined, page: QWPage): void {
     if (element === undefined) {
       return;
     }
@@ -46,16 +47,16 @@ class QW_HTML_T38 extends Technique {
       resultCode: ''
     };
 
-    let children = await DomUtils.getElementChildren(element);
+    let children = element.getElementChildren();
 
     if (children !== null && children.length > 0) {
-      let firstFocusableElem = await findFirstFocusableElement(element);
+      let firstFocusableElem = findFirstFocusableElement(element);
       if (firstFocusableElem !== undefined) {
-        let isVisible = await DomUtils.isElementVisible(firstFocusableElem);
+        let isVisible = DomUtils.isElementVisible(firstFocusableElem);
         if (isVisible) {
-          const firstFocusableElemName = await DomUtils.getElementTagName(firstFocusableElem);
+          const firstFocusableElemName = firstFocusableElem.getElementTagName();
           //const firstFocusableElemAttribs = await DomUtils.getElementAttributes(firstFocusableElem);
-          const firstFocusableElemHREF = await DomUtils.getElementAttribute(firstFocusableElem, 'href');
+          const firstFocusableElemHREF = firstFocusableElem.getElementAttribute('href');
           if (firstFocusableElemName === 'a' && firstFocusableElemHREF && firstFocusableElemHREF.trim()) {
             let url = page.url();
             let urlConcatWithId = url + '#';
@@ -66,9 +67,9 @@ class QW_HTML_T38 extends Technique {
               let idSymbol = firstFocusableElemHREF.indexOf('#');
               let idReferenced = firstFocusableElemHREF.substring(idSymbol + 1);
               if (idReferenced.length > 0) {
-                let idElementReferenced = await element.$('[id="' + idReferenced + '"]')
+                let idElementReferenced = element.getElement('[id="' + idReferenced + '"]')
                 if (idElementReferenced !== null) {
-                  if (await hasMainElementAsParent(idElementReferenced)) {
+                  if (hasMainElementAsParent(idElementReferenced)) {
                     evaluation.verdict = 'warning';
                     evaluation.description = 'The first focusable control is a visible link to a <main> element.';
                     evaluation.resultCode = 'RC1';
@@ -114,24 +115,24 @@ class QW_HTML_T38 extends Technique {
       evaluation.resultCode = 'RC9';
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 
-async function findFirstFocusableElement(element: ElementHandle): Promise<ElementHandle | undefined> {
+function findFirstFocusableElement(element: QWElement): QWElement | undefined {
   let foundFirstFocusableElem = false;
-  let firstFocusableElem: ElementHandle | undefined;
-  let children = await DomUtils.getElementChildren(element);
+  let firstFocusableElem: QWElement | undefined;
+  let children = element.getElementChildren();
 
   if (children && children.length > 0) {
     let i = 0;
     while (!foundFirstFocusableElem && i < children.length) {
       if (children[i] !== undefined) {
-        if (await DomUtils.isElementFocusable(children[i])) {
+        if (DomUtils.isElementFocusable(children[i])) {
           firstFocusableElem = children[i];
           foundFirstFocusableElem = true;
         } else {
-          firstFocusableElem = await findFirstFocusableElement(children[i]);
+          firstFocusableElem = findFirstFocusableElement(children[i]);
           foundFirstFocusableElem = true;
         }
         i++;
@@ -143,9 +144,9 @@ async function findFirstFocusableElement(element: ElementHandle): Promise<Elemen
   return firstFocusableElem;
 }
 
-async function hasMainElementAsParent(element: ElementHandle | undefined): Promise<boolean> {
+function hasMainElementAsParent(element: QWElement | undefined): boolean {
   if (element) {
-    let pointer = await DomUtils.getElementSelector(element);
+    let pointer = element.getElementSelector();
     return pointer.indexOf('main:') > 0;
   }
 

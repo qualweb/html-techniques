@@ -1,9 +1,8 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle } from 'puppeteer';
-import { DomUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
+import {QWElement} from "@qualweb/qw-element";
 
 class QW_HTML_T15 extends Technique {
 
@@ -35,7 +34,7 @@ class QW_HTML_T15 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined): Promise<void> {
+  execute(element: QWElement | undefined): void {
 
     if (!element) {
       return;
@@ -51,7 +50,7 @@ class QW_HTML_T15 extends Technique {
     checks['hasCaption'] = false;
     checks['hasTh'] = false;
 
-    if (await DomUtils.elementHasChildren(element)) {
+    if (element.elementHasChidren()) {
       checks = await element.evaluate((elem, checks) => {
         function checkChildren(children, checks) {
           for (const child of children) {
@@ -71,8 +70,8 @@ class QW_HTML_T15 extends Technique {
       }, checks);
     }
 
-    const hasSummary = await DomUtils.elementHasAttribute(element, 'summary');
-    const summary = await DomUtils.getElementAttribute(element, 'summary');
+    const hasSummary = element.elementHasAttribute('summary');
+    const summary = element.getElementAttribute('summary');
 
     if (hasSummary && summary && summary.trim() !== '') {
       evaluation.verdict = 'failed';
@@ -92,7 +91,7 @@ class QW_HTML_T15 extends Technique {
       evaluation.resultCode = 'RC4';
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

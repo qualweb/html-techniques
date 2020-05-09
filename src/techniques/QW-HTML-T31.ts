@@ -1,9 +1,9 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { Page, ElementHandle } from 'puppeteer';
-import { DomUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
+import { QWElement } from "@qualweb/qw-element";
+import { QWPage } from "@qualweb/qw-page";
 
 class QW_HTML_T31 extends Technique {
 
@@ -35,7 +35,7 @@ class QW_HTML_T31 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined, page: Page): Promise < void > {
+  execute(element: QWElement | undefined, page: QWPage): void {
 
     if (!element) {
       return;
@@ -47,7 +47,7 @@ class QW_HTML_T31 extends Technique {
       resultCode: ''
     };
 
-    const longdesc = await DomUtils.getElementAttribute(element, 'longdesc');
+    const longdesc = element.getElementAttribute('longdesc');
 
     if (longdesc === null) { // fails if the element doesn't contain a longdesc attribute
       evaluation['verdict'] = 'failed';
@@ -68,7 +68,7 @@ class QW_HTML_T31 extends Technique {
           id = longdesc;
         }
 
-        const exists = await DomUtils.getElementById(page, element, id);
+        const exists = page.getElementByID(id, element);
 
         if (exists) { // the element has a longdesc attribute pointing to a resource in the current page
           evaluation.verdict = 'warning';
@@ -87,7 +87,7 @@ class QW_HTML_T31 extends Technique {
       }
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

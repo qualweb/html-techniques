@@ -1,10 +1,10 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle, Page } from 'puppeteer';
-import { DomUtils, AccessibilityUtils } from '@qualweb/util';
+import { AccessibilityUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
-
+import { QWElement } from "@qualweb/qw-element";
+import { QWPage } from "@qualweb/qw-page";
 
 class QW_HTML_T17 extends Technique {
 
@@ -36,7 +36,7 @@ class QW_HTML_T17 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined, page: Page): Promise < void > {
+  execute(element: QWElement | undefined, page: QWPage): void {
     if (!element) {
       return;
     }
@@ -47,8 +47,8 @@ class QW_HTML_T17 extends Technique {
       resultCode: ''
     };
 
-    let hasIds = await element.$$('[id]');
-    let hasHeaders = await element.$$('[headers]');
+    let hasIds = element.getElements('[id]');
+    let hasHeaders = element.getElements('[headers]');
 
     if (!AccessibilityUtils.isDataTable(element, page)) {
       if (hasIds.length > 0 || hasHeaders.length > 0) {
@@ -70,11 +70,11 @@ class QW_HTML_T17 extends Technique {
         evaluation.description = 'No header attributes are used in this data table';
         evaluation.resultCode = 'RC4';
       } else {
-        let headersElements = await element.$$('[headers]');
+        let headersElements = element.getElements('[headers]');
         let headersMatchId = true;
         for (let headerElem of headersElements) {
           if (headersMatchId) {
-            headersMatchId = doesHeadersMatchId(element, await DomUtils.getElementAttribute(headerElem,"headers"));
+            headersMatchId = doesHeadersMatchId(element, headerElem.getElementAttribute("headers"));
           }
         }
 
@@ -90,19 +90,19 @@ class QW_HTML_T17 extends Technique {
       }
     }
     
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 
-async function doesTableHaveDuplicateIds(table: ElementHandle): Promise<boolean> {
-  let elementsId = await table.$$('[id]');
+function doesTableHaveDuplicateIds(table: QWElement): boolean {
+  let elementsId = table.getElements('[id]');
   let duplicate = false;
   let counter: number;
 
   for (let elementId of elementsId) {
     counter = 0;
     for (let elementId2 of elementsId) {
-      if (await DomUtils.getElementAttribute(elementId,"id") === await DomUtils.getElementAttribute(elementId2,"id")) {
+      if (elementId.getElementAttribute("id") === elementId2.getElementAttribute("id")) {
         counter++;
       }
       if (counter > 1) {
@@ -114,7 +114,7 @@ async function doesTableHaveDuplicateIds(table: ElementHandle): Promise<boolean>
   return duplicate;
 }
 
-function doesHeadersMatchId(table: ElementHandle, headers: string | null): boolean {
+function doesHeadersMatchId(table: QWElement, headers: string | null): boolean {
   let outcome = false;
   let result = 0;
   if (headers) {
@@ -124,8 +124,8 @@ function doesHeadersMatchId(table: ElementHandle, headers: string | null): boole
     let splitHeaders = headers.split(" ");
 
     for (let header of splitHeaders) {
-      let matchingIdElem = table.$( '[id="' + header + '"]');
-      if (matchingIdElem !== undefined) {
+      let matchingIdElem = table.getElement( '[id="' + header + '"]');
+      if (matchingIdElem !== null) {
         let matchingIdElemHeaders = matchingIdElem['attribs']["headers"];
         if (splitHeaders.length === 1 && matchingIdElemHeaders === undefined) {
           outcome = true;

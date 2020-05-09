@@ -1,9 +1,8 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle } from 'puppeteer';
-import { DomUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
+import { QWElement } from "@qualweb/qw-element";
 
 class QW_HTML_T28 extends Technique {
 
@@ -35,9 +34,9 @@ class QW_HTML_T28 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined): Promise < void > {
+  execute(element: QWElement | undefined): void {
 
-    if (!element || !await DomUtils.getElementParent(element)) {
+    if (!element || !element.getElementParent()) {
       return;
     }
 
@@ -47,11 +46,11 @@ class QW_HTML_T28 extends Technique {
       resultCode: ''
     };
 
-    const hasLi = (await element.$$('li')).length !== 0;
-    const hasDd = (await element.$$('dd')).length !== 0;
-    const hasDt = (await element.$$('dt')).length !== 0;
+    const hasLi = (element.getElements('li')).length !== 0;
+    const hasDd = (element.getElements('dd')).length !== 0;
+    const hasDt = (element.getElements('dt')).length !== 0;
 
-    const name = await DomUtils.getElementTagName(element);
+    const name = element.getElementTagName();
 
     if (hasLi && name === 'ul') { // fails if the element doesn't contain an alt attribute
       evaluation.verdict = 'warning';
@@ -71,7 +70,7 @@ class QW_HTML_T28 extends Technique {
       evaluation.resultCode = 'RC4';
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

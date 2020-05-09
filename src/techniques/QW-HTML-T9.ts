@@ -1,8 +1,9 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { Page, ElementHandle } from 'puppeteer';
 import Technique from '../lib/Technique.object';
+import { QWElement } from "@qualweb/qw-element";
+import { QWPage } from "@qualweb/qw-page";
 
 class QW_HTML_T9 extends Technique {
 
@@ -41,9 +42,9 @@ class QW_HTML_T9 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined, page: Page): Promise<void> {
+  execute(element: QWElement | undefined, page: QWPage): void {
 
-    if (!element || (await page.$$('h1,h2,h3,h4,h5,h6')).length === 0) {
+    if (!element || (page.getElements('h1,h2,h3,h4,h5,h6')).length === 0) {
       return;
     }
 
@@ -56,9 +57,9 @@ class QW_HTML_T9 extends Technique {
     let equal = true;
     let complete = true;
     //let errorElem = element;
-    let hasH1 = (await page.$$('h1')).length > 0;
+    let hasH1 = (page.getElements('h1')).length > 0;
     let counter = 0;
-    let htmlList = await page.$$('body, body *');
+    let htmlList = page.getElements('body, body *');
 
     while(equal && complete && hasH1 && counter < htmlList.length) {
       const elem = htmlList[counter];
@@ -113,7 +114,7 @@ class QW_HTML_T9 extends Technique {
       evaluation.resultCode = 'RC4';
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

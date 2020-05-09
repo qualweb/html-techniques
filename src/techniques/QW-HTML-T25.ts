@@ -1,9 +1,8 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle } from 'puppeteer';
-import { DomUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
+import { QWElement } from "@qualweb/qw-element";
 
 class QW_HTML_T25 extends Technique {
 
@@ -42,7 +41,7 @@ class QW_HTML_T25 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined): Promise<void> {
+  execute(element: QWElement | undefined): void {
 
     if (!element) {
       return;
@@ -54,7 +53,7 @@ class QW_HTML_T25 extends Technique {
       resultCode: ''
     };
 
-    const result = await this.verifyInputLabelPosition(element);
+    const result = this.verifyInputLabelPosition(element);
 
     if (result === 'checkbox') {
       evaluation.verdict = 'failed';
@@ -78,36 +77,36 @@ class QW_HTML_T25 extends Technique {
       evaluation.resultCode = 'RC5';
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 
-  private async verifyInputLabelPosition(element: ElementHandle): Promise<string | undefined> {
-    if (await DomUtils.elementHasAttributes(element)) {
-      const type = await DomUtils.getElementAttribute(element, 'type');
+  private verifyInputLabelPosition(element: QWElement): string | undefined {
+    if (element.elementHasAttributes()) {
+      const type = element.getElementAttribute('type');
 
-      const prevElement = await DomUtils.getElementPreviousSibling(element);
+      const prevElement = element.getElementPreviousSibling();
       let prevElementTagName;
-      let prevElementHasAttributes
+      let prevElementHasAttributes;
       let prevElementAttributeFor;
 
       if (prevElement) {
-        prevElementTagName = await DomUtils.getElementTagName(prevElement);
-        prevElementHasAttributes = await DomUtils.elementHasAttributes(prevElement);
-        prevElementAttributeFor = await DomUtils.getElementAttribute(prevElement, 'for');
+        prevElementTagName = prevElement.getElementTagName();
+        prevElementHasAttributes = prevElement.elementHasAttributes();
+        prevElementAttributeFor = prevElement.getElementAttribute('for');
       }
 
-      const nextElement = await DomUtils.getElementNextSibling(element);
+      const nextElement = element.getElementNextSibling();
       let nextElementTagName;
       let nextElementHasAttributes;
       let nextElementAttributeFor;
 
       if (nextElement) {
-        nextElementTagName = await DomUtils.getElementTagName(nextElement);
-        nextElementHasAttributes = await DomUtils.elementHasAttributes(nextElement);
-        nextElementAttributeFor = await DomUtils.getElementAttribute(nextElement, 'for');
+        nextElementTagName = nextElement.getElementTagName();
+        nextElementHasAttributes = nextElement.elementHasAttributes();
+        nextElementAttributeFor = nextElement.getElementAttribute('for');
       }
 
-      const elementId = await DomUtils.getElementAttribute(element, 'id');
+      const elementId = element.getElementAttribute('id');
 
       if (type && (type === 'radio' || type === 'checkbox')) {
         if (nextElement) {

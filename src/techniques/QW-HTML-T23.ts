@@ -1,11 +1,9 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle } from 'puppeteer';
-import { DomUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
-
 import { HTMLTechnique } from '../lib/decorators';
+import { QWElement } from "@qualweb/qw-element";
 
 @HTMLTechnique
 class QW_HTML_T23 extends Technique {
@@ -14,7 +12,7 @@ class QW_HTML_T23 extends Technique {
     super(technique);
   }
 
-  async execute(element: ElementHandle | undefined): Promise<void> {
+  execute(element: QWElement | undefined): void {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -23,7 +21,7 @@ class QW_HTML_T23 extends Technique {
     };
 
     if (element) {
-      const href = await DomUtils.getElementAttribute(element, 'href');
+      const href = element.getElementAttribute('href');
 
       if (href) {
         evaluation.verdict = 'warning';
@@ -36,7 +34,7 @@ class QW_HTML_T23 extends Technique {
       evaluation.resultCode = 'RC2';
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 
