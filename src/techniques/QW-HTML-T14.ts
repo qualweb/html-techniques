@@ -53,22 +53,22 @@ class QW_HTML_T14 extends Technique {
 
     if (!hasAlt) { // fails if the element doesn't contain an alt attribute
       evaluation.verdict = 'failed';
-      evaluation.description = `The element doesn't contain an alt attribute`;
+      evaluation.description = `The applet element does not contain an alt attribute`;
       evaluation.resultCode = 'RC1';
     } else if (alt && alt.trim() === '') { // fails if the element's alt attribute is empty
       evaluation.verdict = 'failed';
-      evaluation.description = `The element's alt attribute is empty`;
+      evaluation.description = `The applet element has an empty alt attribute`;
       evaluation.resultCode = 'RC2';
     } else {
       const text = await DomUtils.getElementText(element);
 
       if (text !== undefined) { // the element contains a non empty alt attribute and a text in his body
         evaluation.verdict = 'warning';
-        evaluation.description = `Please verify that the element's alt attribute value and his body text describes correctly the element`;
+        evaluation.description = `Please verify that the values of the alt attribute and the body text correctly describe the applet element`;
         evaluation.resultCode = 'RC3';
       } else { // fails if the element doesn't contain a text in the body
         evaluation.verdict = 'failed';
-        evaluation.description = `The element doesn't contain a text in his body`;
+        evaluation.description = `The applet element does not contain alternative text in its body`;
         evaluation.resultCode = 'RC4';
       }
     }
