@@ -35,11 +35,11 @@ class QW_HTML_T35 extends Technique {
 
 
 
-  async execute(): Promise<void> {
+  execute(): void {
     throw new Error('Method not implemented.');
   }
 
-  async validate(newTabWasOpen: boolean): Promise<void> {
+  validate(newTabWasOpen: boolean): void {
 
 
     const evaluation: HTMLTechniqueResult = {

@@ -38,11 +38,11 @@ class QW_HTML_T20 extends Technique {
     });
   }
 
-  async execute(): Promise<void> {
+  execute(): void {
     throw new Error('Method not implemented.');
   }
 
-  async validate(validation): Promise<void> {
+  validate(validation): void{
 
 
       for (const result of validation.messages || []) {

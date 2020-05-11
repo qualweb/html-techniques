@@ -16,7 +16,6 @@ describe('HTML module', function () {
       await page.addScriptTag({
         path: require.resolve('./qwPage.js')
       })
-      sourceHtml.html.parsed = {};
       const report = await page.evaluate(() => {
         const html = new HTMLTechniques.HTMLTechniques();
         const report = html.execute( new QWPage.QWPage(document),false, {});

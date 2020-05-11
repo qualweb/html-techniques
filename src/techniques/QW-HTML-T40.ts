@@ -46,7 +46,7 @@ class QW_HTML_T40 extends Technique {
     });
   }
 
-  async execute(element: QWElement | undefined, page: QWPage): Promise < void > {
+  execute(element: QWElement | undefined, page: QWPage):  void  {
     
     if (!element) {
       return;
