@@ -8,6 +8,7 @@
     "tsc": "tsc",
     "lint": "eslint src/**/*",
     "test": "mocha test/**/*",
+    "test-all": "mocha test/techniquesHTML.spec.js",
     "test:t1": "mocha test/techniques/QW-HTML-T1.spec.js",
     "test:t2": "mocha test/techniques/QW-HTML-T2.spec.js",
     "test:t3": "mocha test/techniques/QW-HTML-T3.spec.js",

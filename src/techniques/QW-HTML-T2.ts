@@ -53,7 +53,7 @@ class QW_HTML_T2 extends Technique {
       evaluation.verdict = 'failed';
       evaluation.description = 'The caption does not exist in the table element';
       evaluation.resultCode = 'RC1';
-    } else if (childText && childText.trim() === '') {
+    } else if (!childText ||childText && childText.trim() === '') {
       evaluation.verdict = 'failed';
       evaluation.description = 'The caption is empty';
       evaluation.resultCode = 'RC2';
