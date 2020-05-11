@@ -27,15 +27,15 @@ class QW_HTML_T1 extends Technique {
 
     if (alt === null) { // fails if the element doesn't contain an alt attribute
       evaluation.verdict = 'failed';
-      evaluation.description = `The element doesn't contain an alt attribute`;
+      evaluation.description = `The area element does not contain an alt attribute`;
       evaluation.resultCode = 'RC1';
     } else if (alt.trim() === '') { // fails if the element's alt attribute value is empty
       evaluation.verdict = 'failed';
-      evaluation.description = `The element's alt attribute value is empty`;
+      evaluation.description = `The are element contains an empty alt attribute`;
       evaluation.resultCode = 'RC2';
     } else { // the element contains an non-empty alt attribute, and it's value needs to be verified
       evaluation.verdict = 'warning';
-      evaluation.description = 'Please verify the alt attribute value describes correctly the correspondent area of the image';
+      evaluation.description = 'Please verify that the alt attribute describes correctly the corresponding area of the image';
       evaluation.resultCode = 'RC3';
     }
 
