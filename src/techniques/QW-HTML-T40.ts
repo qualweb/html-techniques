@@ -1,9 +1,10 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { Page, ElementHandle } from 'puppeteer';
 import { DomUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
+import { QWElement } from '@qualweb/qw-element';
+import { QWPage } from '@qualweb/qw-page';
 
 class QW_HTML_T40 extends Technique {
 
@@ -45,7 +46,7 @@ class QW_HTML_T40 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined, page: Page): Promise < void > {
+  async execute(element: QWElement | undefined, page: QWPage): Promise < void > {
     
     if (!element) {
       return;
@@ -57,10 +58,10 @@ class QW_HTML_T40 extends Technique {
       resultCode: ''
     };
 
-    const isFocusable = await DomUtils.isElementFocusable(element);
+    const isFocusable = DomUtils.isElementFocusable(element);
 
     if(isFocusable){
-      const keepsFocus = await DomUtils.isFocusableBrowser(page, element);
+      const keepsFocus = DomUtils.isFocusableBrowser(page, element);
       if (keepsFocus) { 
         evaluation.verdict = 'passed';
         evaluation.description = `Element kept focus`;
@@ -71,7 +72,7 @@ class QW_HTML_T40 extends Technique {
         evaluation.resultCode = 'RC2';
       }
 
-      await super.addEvaluationResult(evaluation, element);
+      super.addEvaluationResult(evaluation, element);
     }  
   }
 }

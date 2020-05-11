@@ -4,6 +4,7 @@ import { HTMLTechniqueResult } from '@qualweb/html-techniques';
 import { AccessibilityUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
 import { QWElement } from "@qualweb/qw-element";
+import { QWPage } from '@qualweb/qw-page';
 
 class QW_HTML_T42 extends Technique {
 
@@ -36,9 +37,9 @@ class QW_HTML_T42 extends Technique {
     });
   }
 
-  execute(element: QWElement | undefined): void {
+  execute(element: QWElement | undefined, page: QWPage | undefined): void {
 
-    if (element === undefined||!(element.elementHasAttributes())) {
+    if (element === undefined || !(element.elementHasAttributes()) || page === undefined) {
       return;
     }
 
@@ -48,7 +49,7 @@ class QW_HTML_T42 extends Technique {
       resultCode: ''
     };
 
-    if (AccessibilityUtils.isElementControl(element)) {
+    if (AccessibilityUtils.isElementControl(element, page)) {
       evaluation.verdict = 'passed';
       evaluation.description = `The element is a user interface control with an event handler`;
       evaluation.resultCode = 'RC1';

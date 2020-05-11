@@ -11,7 +11,6 @@ import { QWPage } from '@qualweb/qw-page';
 class HTMLTechniques {
 
   private optimization = Optimization.Performance;
-  private htmlValidatorEndpoint: string | undefined = undefined;
   private techniques: any;
   private techniquesToExecute: any;
 
@@ -19,7 +18,7 @@ class HTMLTechniques {
     this.techniques = {};
     this.techniquesToExecute = {};
 
-    for(const technique of Object.keys(techniques) || []) {
+    for (const technique of Object.keys(techniques) || []) {
       const _technique = technique.replace(/_/g, '-');
       this.techniques[_technique] = new techniques[technique]();
       this.techniquesToExecute[_technique] = true;
@@ -40,10 +39,10 @@ class HTMLTechniques {
     if (options.techniques) {
       options.techniques = options.techniques.map(t => t.toUpperCase().trim());
     }
-  
+
     for (const technique of Object.keys(this.techniques) || []) {
       this.techniquesToExecute[technique] = true;
-  
+
       if (options.principles && options.principles.length !== 0) {
         if (options.levels && options.levels.length !== 0) {
           if (!this.techniques[technique].hasPrincipleAndLevels(options.principles, options.levels)) {
@@ -79,31 +78,27 @@ class HTMLTechniques {
         this.optimization = Optimization.ErrorDetection;
       }
     }
-
-    if (options.htmlValidatorEndpoint) {
-      this.htmlValidatorEndpoint = options.htmlValidatorEndpoint;
-    }
   }
-  
+
   public resetConfiguration(): void {
     for (const technique in this.techniquesToExecute || {}) {
       this.techniquesToExecute[technique] = true;
     }
   }
 
-  private async executeTechnique(technique: string, selector: string, page: QWPage, report: HTMLTechniquesReport): Promise<void> {
-    const elements = await page.getElements(selector);
+  private executeTechnique(technique: string, selector: string, page: QWPage, report: HTMLTechniquesReport): void{
+    const elements = page.getElements(selector);
     if (elements.length > 0) {
       for (const elem of elements || []) {
         try {
-          await this.techniques[technique].execute(elem, page, this.optimization);
+          this.techniques[technique].execute(elem, page, this.optimization);
         } catch (err) {
           console.error(err);
         }
       }
     } else {
       try {
-        await this.techniques[technique].execute(undefined, page, this.optimization);
+        this.techniques[technique].execute(undefined, page, this.optimization);
       } catch (err) {
         console.error(err);
       }
@@ -113,8 +108,8 @@ class HTMLTechniques {
     report.metadata[report.assertions[technique].metadata.outcome]++;
     this.techniques[technique].reset();
   }
-  
-  private async executeMappedTechniques(report: HTMLTechniquesReport, page: QWPage, selectors: string[], mappedTechniques: any): Promise<void> {
+
+  private executeMappedTechniques(report: HTMLTechniquesReport, page: QWPage, selectors: string[], mappedTechniques: any): void {
     const promises = new Array<any>();
     for (const selector of selectors || []) {
       for (const technique of mappedTechniques[selector] || []) {
@@ -123,27 +118,26 @@ class HTMLTechniques {
         }
       }
     }
-    await Promise.all(promises);
   }
-  
-  private async executeNotMappedTechniques(report: HTMLTechniquesReport, page: QWPage): Promise<void> {
+
+  private executeNotMappedTechniques(report: HTMLTechniquesReport, newTabWasOpen: boolean, validation): void {
     if (this.techniquesToExecute['QW-HTML-T20']) {
-      await this.techniques['QW-HTML-T20'].validate(page, this.htmlValidatorEndpoint);
+      this.techniques['QW-HTML-T20'].validate(validation);
       report.assertions['QW-HTML-T20'] = this.techniques['QW-HTML-T20'].getFinalResults();
       report.metadata[report.assertions['QW-HTML-T20'].metadata.outcome]++;
       this.techniques['QW-HTML-T20'].reset();
     }
-  
+
     if (this.techniquesToExecute['QW-HTML-T35']) {
-      await this.techniques['QW-HTML-T35'].validate(page);
+      this.techniques['QW-HTML-T35'].validate(newTabWasOpen);
       report.assertions['QW-HTML-T35'] = this.techniques['QW-HTML-T35'].getFinalResults();
       report.metadata[report.assertions['QW-HTML-T35'].metadata.outcome]++;
       this.techniques['QW-HTML-T35'].reset();
     }
   }
-  
-  public async execute(page: QWPage): Promise<HTMLTechniquesReport> {
-  
+
+  public execute(page: QWPage, newTabWasOpen: boolean, validation): HTMLTechniquesReport {
+
     const report: HTMLTechniquesReport = {
       type: 'html-techniques',
       metadata: {
@@ -154,14 +148,12 @@ class HTMLTechniques {
       },
       assertions: {}
     };
-  
+
     //await executeMappedTechniques(url,report, sourceHTML, Object.keys(mapping.pre), mapping.pre);
 
-    await Promise.all([
-      this.executeMappedTechniques(report, page, Object.keys(mapping.post), mapping.post),
-      this.executeNotMappedTechniques(report, page)
-    ]);
-  
+    this.executeMappedTechniques(report, page, Object.keys(mapping.post), mapping.post)
+    this.executeNotMappedTechniques(report, newTabWasOpen, validation);
+
     return report;
   }
 }

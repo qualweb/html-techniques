@@ -2,7 +2,6 @@
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
 import techniques from './techniques.json';
-import { DomUtils } from '@qualweb/util';
 
 function HTMLTechnique<T extends { new(...args: any[]): {} }>(constructor: T) {
   const technique = techniques[constructor.name];

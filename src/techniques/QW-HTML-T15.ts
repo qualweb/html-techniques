@@ -2,7 +2,7 @@
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
 import Technique from '../lib/Technique.object';
-import {QWElement} from "@qualweb/qw-element";
+import { QWElement } from "@qualweb/qw-element";
 
 class QW_HTML_T15 extends Technique {
 
@@ -45,29 +45,14 @@ class QW_HTML_T15 extends Technique {
       description: '',
       resultCode: ''
     };
-    
+
     let checks = {};
     checks['hasCaption'] = false;
     checks['hasTh'] = false;
 
     if (element.elementHasChidren()) {
-      checks = await element.evaluate((elem, checks) => {
-        function checkChildren(children, checks) {
-          for (const child of children) {
-            if (child['name'] === 'th')
-              checks['hasTh'] = true;
-            if (child['name'] === 'caption')
-              checks['hasCaption'] = true;
-            if (child['children'] !== undefined) {
-              checkChildren(child['children'], checks);
-            }
-          }
-        }
-
-        checkChildren(elem.children, checks);
-
-        return checks;
-      }, checks);
+      checks['hasCaption'] = !!(element.getElement("caption"))
+      checks['hasTh'] = !!(element.getElement("th"))
     }
 
     const hasSummary = element.elementHasAttribute('summary');
