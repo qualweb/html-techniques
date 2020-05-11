@@ -52,7 +52,7 @@ class QW_HTML_T20 extends Technique {
       return location.href;
     });
     
-    let validationUrl = endpoint ? endpoint + encodeURIComponent(url) : this.endpoint + encodeURIComponent(url);
+    const validationUrl = endpoint ? endpoint + encodeURIComponent(url) : this.endpoint + encodeURIComponent(url);
     
     let response: any;
     

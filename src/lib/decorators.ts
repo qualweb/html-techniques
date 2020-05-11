@@ -3,6 +3,7 @@
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
 import techniques from './techniques.json';
 import { DomUtils } from '@qualweb/util';
+import clone from 'lodash.clone';
 
 function HTMLTechnique<T extends { new (...args: any[]): {} }>(constructor: T) {
   const technique = techniques[constructor.name];
@@ -16,7 +17,7 @@ function HTMLTechnique<T extends { new (...args: any[]): {} }>(constructor: T) {
   
   const newConstructor: any = function () {
     let func: any = function () {
-      return new constructor(technique);
+      return new constructor(clone(technique));
     }
     func.prototype = constructor.prototype;
     return new func();
