@@ -59,11 +59,11 @@ class QW_HTML_T22 extends Technique {
 
     if (element === undefined) {
       evaluation.verdict = 'passed';
-      evaluation.description = `The webpage doesn't use attributes to control the visual text presentation`;
+      evaluation.description = `The webpage does not use attributes to control the visual text presentation`;
       evaluation.resultCode = 'RC1';
     } else {
       evaluation.verdict = 'failed';
-      evaluation.description = `The webpage uses attributes in ${await DomUtils.getElementTagName(element)} element to control the visual text presentation`;
+      evaluation.description = `The webpage uses attributes in a "${await DomUtils.getElementTagName(element)}" element to control visual text presentation`;
       evaluation.resultCode = 'RC2';
 
       const hasAttributes = await DomUtils.elementHasAttributes(element);
