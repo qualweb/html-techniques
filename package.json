@@ -53,7 +53,7 @@
     "test:t43": "mocha test/techniques/QW-HTML-T43.spec.js",
     "clean": "node clean.js",
     "compile:techniques": "node compile-techniques.js",
-    "build": "npm run compile:techniques && npm run clean && tsc --build",
+    "build": "npm run compile:techniques && npm run clean && tsc --build && webpack --mode development",
     "pub": "npm run build && npm publish --access=public"
   },
   "repository": {

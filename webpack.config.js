@@ -7,7 +7,7 @@ module.exports = {
   },
   output: {
     filename: 'html.js',
-    path: path.resolve(__dirname, 'distWebPack'),
+    path: path.resolve(__dirname, 'test'),
     libraryTarget: 'var',
     library: 'HTMLTechniques'
   },
