@@ -13,10 +13,10 @@ class QW_HTML_T39 extends Technique {
       code: "QW-HTML-T39",
       mapping: "H37",
       description:
-        'When using the img element, specify a short text alternative with the correct attribute (alt,title) or element (title,desc).". ',
+        'When using the img element, specify a short text alternative with the correct attribute (alt, title) or element (title, desc).',
       metadata: {
         target: {
-          element: "svg,img",
+          element: "img",
         },
         "success-criteria": [
           {

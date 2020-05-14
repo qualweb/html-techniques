@@ -29,7 +29,7 @@ describe('Technique QW-HTML-T23', function() {
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g125/inapplicable.html',
-      outcome: 'inapplicable'
+      outcome: 'failed'
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g125/inapplicable2.html',
@@ -63,7 +63,7 @@ describe('Technique QW-HTML-T23', function() {
             const report = html.execute(new QWPage.QWPage(document), false, {});
             return report;
           });
-          expect(report.assertions['QW-HTML-T22'].metadata.outcome).to.be.equal(test.outcome);
+          expect(report.assertions['QW-HTML-T23'].metadata.outcome).to.be.equal(test.outcome);
         });
       });
     }

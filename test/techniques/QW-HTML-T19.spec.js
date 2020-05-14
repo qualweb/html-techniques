@@ -8,20 +8,40 @@ describe('Technique QW-HTML-T19', function() {
 
   const tests = [
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/testeHTML-T19/test1.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h59/linkBody.html',
       outcome: 'warning'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/testeHTML-T19/test2.html',
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h59/nolinks.html',
+      outcome: 'inapplicable'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h59/noattribs.html',
+      outcome: 'inapplicable'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h59/noRelOrHref.html',
+      outcome: 'inapplicable'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h59/wrongRel.html',
+      outcome: 'inapplicable'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h59/emptyRel.html',
+      outcome: 'inapplicable'
+    },
+    {
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h59/noHref.html',
       outcome: 'failed'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/testeHTML-T19/test3.html',
-      outcome: 'warning'
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h59/emptyHref.html',
+      outcome: 'failed'
     },
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/testeHTML-T19/test4.html',
-      outcome: 'warning'
+      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h59/relHref.html',
+      outcome: 'passed'
     }
   ];
 

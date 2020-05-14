@@ -20,7 +20,7 @@ describe('Technique QW-HTML-T37', function() {
     },*/
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/failed1.html',
-      outcome: 'inapplicable'
+      outcome: 'failed'
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/failedHidden1.html',

@@ -47,7 +47,7 @@ class QW_HTML_T24 extends Technique {
     };
     const text = element.getElementText();
 
-    if (text) {
+    if (text.trim()) {
       evaluation.verdict = 'warning';
       evaluation.description = 'Please verify that the title describes the page correctly.';
       evaluation.resultCode = 'RC1';

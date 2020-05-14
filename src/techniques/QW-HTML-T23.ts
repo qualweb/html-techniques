@@ -30,7 +30,7 @@ class QW_HTML_T23 extends Technique {
       }
     } else {
       evaluation.verdict = 'failed';
-      evaluation.description = `The webpage doesn't have any links`;
+      evaluation.description = `The webpage doesn't have any links with href attribute`;
       evaluation.resultCode = 'RC2';
     }
 

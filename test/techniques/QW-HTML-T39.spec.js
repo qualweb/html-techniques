@@ -13,7 +13,8 @@ describe('Technique QW-HTML-T39', function () {
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T39/test2.html',
       outcome: 'inapplicable'
-    }, {
+    }, 
+    {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T39/test3.html',
       outcome: 'warning'
     },
