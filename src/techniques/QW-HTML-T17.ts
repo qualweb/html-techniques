@@ -89,7 +89,7 @@ class QW_HTML_T17 extends Technique {
         }
       }
     }
-    
+    console.log(evaluation.resultCode);
     super.addEvaluationResult(evaluation, element);
   }
 }
@@ -117,19 +117,15 @@ function doesTableHaveDuplicateIds(table: QWElement): boolean {
 function doesHeadersMatchId(table: QWElement, headers: string | null): boolean {
   let outcome = false;
   let result = 0;
-  if (headers) {
-    if (headers.trim() === '') {
-      return true;
-    }
+  if (headers && headers.trim() !== '') {
     let splitHeaders = headers.split(" ");
-
     for (let header of splitHeaders) {
-      let matchingIdElem = table.getElement( '[id="' + header + '"]');
+      let matchingIdElem = table.getElement('[id="' + header + '"]');
       if (matchingIdElem !== null) {
-        let matchingIdElemHeaders = matchingIdElem['attribs']["headers"];
-        if (splitHeaders.length === 1 && matchingIdElemHeaders === undefined) {
+        let matchingIdElemHeaders = matchingIdElem.getElementAttribute("headers");
+        if (splitHeaders.length === 1 && !matchingIdElemHeaders) {
           outcome = true;
-        } else if (matchingIdElemHeaders !== undefined) {
+        } else if (matchingIdElemHeaders !== null) {
           for (let headerIdElem of matchingIdElemHeaders.split(" ")) {
             if (splitHeaders.indexOf(headerIdElem) >= 0 && headerIdElem !== header) {
               result++;
@@ -142,6 +138,9 @@ function doesHeadersMatchId(table: QWElement, headers: string | null): boolean {
         }
       }
     }
+  }
+  else {
+    outcome = true;
   }
   return outcome;
 }

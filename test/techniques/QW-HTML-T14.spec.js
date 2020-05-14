@@ -27,7 +27,7 @@ describe('Technique QW-HTML-T14', function() {
 
   it('Starting testbench', async function () {
     let i = 0;
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.connect({ browserURL: 'http://127.0.0.1:9222/', defaultViewport: null });
     let lastOutcome = 'warning';
     for (const test of tests || []) {
       if (test.outcome !== lastOutcome) {
@@ -57,7 +57,7 @@ describe('Technique QW-HTML-T14', function() {
     }
     describe(``,  function () {
       it(`pup shutdown`, async function () {
-        await browser.close();
+       // await browser.close();
       });
     });
   });

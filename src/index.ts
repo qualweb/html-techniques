@@ -136,7 +136,7 @@ class HTMLTechniques {
     }
   }
 
-  public execute(page: QWPage, newTabWasOpen: boolean, validation): HTMLTechniquesReport {
+  public execute(page: QWPage, newTabWasOpen: boolean, validation: any): HTMLTechniquesReport {
 
     const report: HTMLTechniquesReport = {
       type: 'html-techniques',
