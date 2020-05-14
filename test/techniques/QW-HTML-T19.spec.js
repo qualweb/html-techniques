@@ -4,8 +4,8 @@ const { HTMLTechniques } = require('../../dist/index');
 const puppeteer = require('puppeteer');
 
 
-describe('Technique QW-HTML-T19', function() {
-
+describe('Technique QW-HTML-T19', function () {
+//FIXME teste errados
   const tests = [
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h59/linkBody.html',
@@ -47,7 +47,7 @@ describe('Technique QW-HTML-T19', function() {
 
   it('Starting testbench', async function () {
     let i = 0;
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.connect({ browserURL: 'http://127.0.0.1:9222/', defaultViewport: null });
     let lastOutcome = 'warning';
     for (const test of tests || []) {
       if (test.outcome !== lastOutcome) {
@@ -58,7 +58,7 @@ describe('Technique QW-HTML-T19', function() {
       describe(`${test.outcome.charAt(0).toUpperCase() + test.outcome.slice(1)} example ${i}`, async function () {
         it(`should have outcome="${test.outcome}"`, async function () {
           this.timeout(25 * 1000);
-          const {sourceHtml, page, stylesheets} = await getDom(browser, test.url);
+          const { sourceHtml, page, stylesheets } = await getDom(browser, test.url);
           await page.addScriptTag({
             path: require.resolve('../html.js')
           });
@@ -75,9 +75,9 @@ describe('Technique QW-HTML-T19', function() {
         });
       });
     }
-    describe(``,  function () {
+    describe(``, function () {
       it(`pup shutdown`, async function () {
-        await browser.close();
+        //await browser.close();
       });
     });
   });

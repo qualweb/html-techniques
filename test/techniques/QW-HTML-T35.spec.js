@@ -2,6 +2,7 @@ const { expect } = require('chai');
 const { getDom } = require('../getDom');
 const { HTMLTechniques } = require('../../dist/index');
 const puppeteer = require('puppeteer');
+const { BrowserUtils } =require('@qualweb/util');
 
 describe('Technique QW-HTML-T35', function() {
 
@@ -30,6 +31,8 @@ describe('Technique QW-HTML-T35', function() {
         it(`should have outcome="${test.outcome}"`, async function () {
           this.timeout(25 * 1000);
           const {sourceHtml, page, stylesheets} = await getDom(browser, test.url);
+          const url = page.url(); 
+          const newTabWasOpen = await BrowserUtils.detectIfUnwantedTabWasOpened(browser, url);
           await page.addScriptTag({
             path: require.resolve('../html.js')
           });
@@ -37,11 +40,11 @@ describe('Technique QW-HTML-T35', function() {
             path: require.resolve('../qwPage.js')
           });
           sourceHtml.html.parsed = {};
-          const report = await page.evaluate(() => {
+          const report = await page.evaluate((newTabWasOpen) => {
             const html = new HTMLTechniques.HTMLTechniques();
-            const report = html.execute(new QWPage.QWPage(document), false, {});
+            const report = html.execute(new QWPage.QWPage(document), newTabWasOpen, {});
             return report;
-          });
+          },newTabWasOpen);
           expect(report.assertions['QW-HTML-T35'].metadata.outcome).to.be.equal(test.outcome);
         });
       });

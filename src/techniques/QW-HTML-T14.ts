@@ -59,8 +59,10 @@ class QW_HTML_T14 extends Technique {
       evaluation.resultCode = 'RC2';
     } else {
       const text = element.getElementText();
+      console.log(text!== undefined);
+      console.log(text);
 
-      if (text !== undefined) { // the element contains a non empty alt attribute and a text in his body
+      if (text && text.trim()!== "") { // the element contains a non empty alt attribute and a text in his body
         evaluation.verdict = 'warning';
         evaluation.description = `Please verify that the values of the alt attribute and the body text correctly describe the applet element`;
         evaluation.resultCode = 'RC3';
