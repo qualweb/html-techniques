@@ -58,7 +58,7 @@ class QW_HTML_T3 extends Technique {
     let validFormAtt = new Array<any>();
 
     if(formATT){
-      validFormAtt = page.getElements('form[id="' + validFormAtt + '"]');
+      validFormAtt = page.getElements('form[id="' + formATT + '"]');
     }
 
     const hasParent = element.elementHasParent('form');

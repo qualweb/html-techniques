@@ -85,7 +85,10 @@
     "htmlparser2": "^4.1.0",
     "mocha": "^7.1.2",
     "puppeteer": "^3.0.3",
-    "typescript": "^3.8.3"
+    "request": "^2.88.2",
+    "typescript": "^3.8.3",
+    "webpack": "4.41.5",
+    "webpack-cli": "^3.3.11"
   },
   "dependencies": {
     "@qualweb/qw-element": "file:../qw-element",

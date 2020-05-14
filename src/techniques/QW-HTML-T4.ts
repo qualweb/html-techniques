@@ -3,6 +3,8 @@
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
 import Technique from '../lib/Technique.object';
 import { QWElement } from "@qualweb/qw-element";
+import { AccessibilityUtils } from '@qualweb/util';
+import { QWPage } from '@qualweb/qw-page';
 
 class QW_HTML_T4 extends Technique {
 
@@ -34,7 +36,7 @@ class QW_HTML_T4 extends Technique {
     });
   }
 
-  execute(element: QWElement | undefined): void {
+  execute(element: QWElement | undefined, page: QWPage): void {
 
     if (!element) {
       return;
@@ -46,26 +48,32 @@ class QW_HTML_T4 extends Technique {
       resultCode: ''
     };
 
+    const isDataTable = AccessibilityUtils.isDataTable(element, page);
     const caption = element.getElementChildTextContent('caption');
-    const hasSummary = element.elementHasAttribute('summary');
     const summary = element.getElementAttribute('summary');
-
-    if (!hasSummary) {
-      evaluation.verdict = 'failed';
-      evaluation.description = 'The summary does not exist in the table element';
-      evaluation.resultCode = 'RC1';
-    } else if (summary && summary.trim() === '') {
-      evaluation.verdict = 'failed';
-      evaluation.description = 'The summary is empty';
-      evaluation.resultCode = 'RC2';
-    } else if (caption && summary && summary.trim() === caption.trim()) {
-      evaluation.verdict = 'failed';
-      evaluation.description = 'The caption is a duplicate of the summary';
-      evaluation.resultCode = 'RC3';
+    
+    if(isDataTable){
+      if (summary === null) {
+        evaluation.verdict = 'failed';
+        evaluation.description = 'The summary does not exist in the table element';
+        evaluation.resultCode = 'RC1';
+      } else if (!summary.trim().length) {
+        evaluation.verdict = 'failed';
+        evaluation.description = 'The summary is empty';
+        evaluation.resultCode = 'RC2';
+      } else if (caption && summary.trim() === caption.trim()) {
+        evaluation.verdict = 'failed';
+        evaluation.description = 'The caption is a duplicate of the summary';
+        evaluation.resultCode = 'RC3';
+      } else {
+        evaluation.verdict = 'warning';
+        evaluation.description = 'Please verify that the summary is a valid description of the table';
+        evaluation.resultCode = 'RC4';
+      }
     } else {
-      evaluation.verdict = 'warning';
-      evaluation.description = 'Please verify that the summary is a valid description of the table';
-      evaluation.resultCode = 'RC4';
+      evaluation.verdict = 'inapplicable';
+      evaluation.description = 'This table is not a data table';
+      evaluation.resultCode = 'RC5';
     }
 
     super.addEvaluationResult(evaluation, element);

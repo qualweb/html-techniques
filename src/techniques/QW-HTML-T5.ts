@@ -46,14 +46,13 @@ class QW_HTML_T5 extends Technique {
       resultCode: ''
     };
 
-    const hasAlt = element.elementHasAttribute('alt');
     const alt = element.getElementAttribute('alt');
 
-    if (!hasAlt) {
+    if (alt === null) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The input element does not have an alt attribute';
       evaluation.resultCode = 'RC1';
-    } else if (alt && alt.trim() === '') {
+    } else if (!alt.trim().length) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The input element has an empty alt attribute';
       evaluation.resultCode = 'RC2';
