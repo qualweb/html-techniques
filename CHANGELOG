@@ -1,5 +1,6 @@
 # Changelog
 
+<<<<<<< HEAD
 ## [0.3.7] - 13/05/2020
 
 ### Fixed
@@ -16,6 +17,10 @@
 
 ### Updated
  - QW-HTML-T1 technique
+=======
+## [0.4.1] - 14/05/2020
+- changed architecture 
+>>>>>>> feature/html-version
 
 ## [0.3.4] - 06/05/2020
 

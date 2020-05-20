@@ -1,9 +1,8 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle } from 'puppeteer';
-import { DomUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
+import { QWElement } from "@qualweb/qw-element";
 
 class QW_HTML_T7 extends Technique {
 
@@ -35,7 +34,7 @@ class QW_HTML_T7 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined): Promise < void > {
+  execute(element: QWElement | undefined): void {
 
     if (!element) {
       return;
@@ -47,8 +46,8 @@ class QW_HTML_T7 extends Technique {
       resultCode: ''
     };
 
-    const hasTitle = await DomUtils.elementHasAttribute(element, 'title');
-    const title = await DomUtils.getElementAttribute(element, 'title');
+    const hasTitle = element.elementHasAttribute('title');
+    const title = element.getElementAttribute('title');
 
     if (hasTitle && title && title.trim() !== '') {
       evaluation.verdict = 'passed';
@@ -60,7 +59,7 @@ class QW_HTML_T7 extends Technique {
       evaluation.resultCode = 'RC2';
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

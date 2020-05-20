@@ -1,9 +1,8 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle } from 'puppeteer';
-import { DomUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
+import {QWElement} from "@qualweb/qw-element";
 
 class QW_HTML_T43 extends Technique {
 
@@ -36,7 +35,7 @@ class QW_HTML_T43 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined): Promise<void> {
+  execute(element: QWElement | undefined): void {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -49,7 +48,7 @@ class QW_HTML_T43 extends Technique {
       evaluation.description = 'There is no element eligible to use the \'align\' attribute';
       evaluation.resultCode = 'RC1';
     } else {
-      const alignAttribute = await DomUtils.getElementAttribute(element, 'align');
+      const alignAttribute = element.getElementAttribute('align');
 
       if (alignAttribute) {
         if (alignAttribute.trim() === 'justify') {
@@ -66,7 +65,7 @@ class QW_HTML_T43 extends Technique {
       }
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

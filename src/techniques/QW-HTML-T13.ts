@@ -1,10 +1,8 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle } from 'puppeteer';
-import { DomUtils } from '@qualweb/util';
-
 import Technique from '../lib/Technique.object';
+import { QWElement } from "@qualweb/qw-element";
 
 class QW_HTML_T13 extends Technique {
 
@@ -36,7 +34,7 @@ class QW_HTML_T13 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined): Promise < void > {
+  execute(element: QWElement | undefined): void {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -45,7 +43,7 @@ class QW_HTML_T13 extends Technique {
     };
 
     if (element) {
-      const text = await DomUtils.getElementText(element);
+      const text = element.getElementText();
       if (text && text !== '') { // the title text exists and needs to be verified
         evaluation.verdict = 'warning';
         evaluation.description = `Please verify the title text correlates to the page's content`;
@@ -60,7 +58,7 @@ class QW_HTML_T13 extends Technique {
       evaluation.description = `Title tag doesn't exist`;
       evaluation.resultCode = 'RC4';
     }
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

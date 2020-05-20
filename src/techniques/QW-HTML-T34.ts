@@ -1,9 +1,10 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle, Page } from 'puppeteer';
-import { DomUtils, AccessibilityUtils } from '@qualweb/util';
+import { AccessibilityUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
+import { QWElement } from "@qualweb/qw-element";
+import { QWPage } from "@qualweb/qw-page";
 
 class QW_HTML_T34 extends Technique {
 
@@ -50,8 +51,8 @@ class QW_HTML_T34 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined,page:Page): Promise < void > {
-    if (element === undefined||!(await DomUtils.elementHasAttributes(element))) {
+  execute(element: QWElement | undefined, page: QWPage): void {
+    if (element === undefined||!(element.elementHasAttributes())) {
       return;
     }
     const evaluation: HTMLTechniqueResult = {
@@ -60,12 +61,12 @@ class QW_HTML_T34 extends Technique {
       resultCode: ''
     };
 
-    let img = await element.$("img");
-    let aText = await DomUtils.getElementText(element);
+    let img = element.getElement("img");
+    let aText = element.getElementText();
 
     if (aText !== undefined && aText.trim()!==""||!img) {
 
-    }else if ( await AccessibilityUtils.getAccessibleName(element,page)) {
+    }else if (AccessibilityUtils.getAccessibleName(element,page)) {
       evaluation['verdict'] = 'passed';
       evaluation['description'] = `The link has an accessible name`;
     } else {
@@ -73,7 +74,7 @@ class QW_HTML_T34 extends Technique {
       evaluation['description'] = `The image doesn't have an accessible name`;
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

@@ -1,11 +1,7 @@
-const {
-  configure,
-  executeHTMLT
-} = require('../../dist/index');
-const {expect} = require('chai');
-const {
-  getDom
-} = require('@qualweb/get-dom-puppeteer');
+const { expect } = require('chai');
+const { getDom } = require('../getDom');
+const { HTMLTechniques } = require('../../dist/index');
+const puppeteer = require('puppeteer');
 
 
 describe('Technique QW-HTML-T17', function () {
@@ -57,24 +53,40 @@ describe('Technique QW-HTML-T17', function () {
     },
   ];
 
-  let i = 0;
-  let lastOutcome = 'passed';
-  for (const test of tests || []) {
-    if (test.outcome !== lastOutcome) {
-      lastOutcome = test.outcome;
-      i = 0;
+  it('Starting testbench', async function () {
+    let i = 0;
+    const browser = await puppeteer.connect({ browserURL: 'http://127.0.0.1:9222/', defaultViewport: null });
+    let lastOutcome = 'warning';
+    for (const test of tests || []) {
+      if (test.outcome !== lastOutcome) {
+        lastOutcome = test.outcome;
+        i = 0;
+      }
+      i++;
+      describe(`${test.outcome.charAt(0).toUpperCase() + test.outcome.slice(1)} example ${i}`, async function () {
+        it(`should have outcome="${test.outcome}"`, async function () {
+          this.timeout(25 * 1000);
+          const { sourceHtml, page, stylesheets } = await getDom(browser, test.url);
+          await page.addScriptTag({
+            path: require.resolve('../html.js')
+          });
+          await page.addScriptTag({
+            path: require.resolve('../qwPage.js')
+          });
+          sourceHtml.html.parsed = {};
+          const report = await page.evaluate(() => {
+            const html = new HTMLTechniques.HTMLTechniques();
+            const report = html.execute(new QWPage.QWPage(document), false, {});
+            return report;
+          });
+          expect(report.assertions['QW-HTML-T17'].metadata.outcome).to.be.equal(test.outcome);
+        });
+      });
     }
-    i++;
-    describe(`${test.outcome.charAt(0).toUpperCase() + test.outcome.slice(1)} example ${i}`, function () {
-      it(`should have outcome="${test.outcome}"`, async function () {
-        this.timeout(20 * 1000);
-        const {source, processed} = await getDom(test.url);
-
-
-        const report = await executeHTMLT(test.url, source.html.parsed, processed.html.parsed);
-        expect(report.assertions['QW-HTML-T17'].metadata.outcome).to.be.equal(test.outcome);
+    describe(``, function () {
+      it(`pup shutdown`, async function () {
+       // await browser.close();
       });
     });
-  }
-
+  });
 });

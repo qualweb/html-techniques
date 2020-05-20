@@ -1,9 +1,8 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle } from 'puppeteer';
-import { DomUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
+import { QWElement } from "@qualweb/qw-element";
 
 class QW_HTML_T26 extends Technique {
 
@@ -36,7 +35,7 @@ class QW_HTML_T26 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined): Promise < void > {
+  execute(element: QWElement | undefined): void {
 
     if (!element) {
       return;
@@ -61,7 +60,7 @@ class QW_HTML_T26 extends Technique {
     ];
 
     const patt = new RegExp('.+\\.(html|htm)');
-    const textData = await DomUtils.getElementText(element);
+    const textData = element.getElementText();
 
     if (textData) {
       if (textData !== '' && !patt.test(textData) && !default_title.includes(textData.toLocaleUpperCase())) { // the title text exists and needs to be verified
@@ -79,7 +78,7 @@ class QW_HTML_T26 extends Technique {
       evaluation.resultCode = 'RC3';
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

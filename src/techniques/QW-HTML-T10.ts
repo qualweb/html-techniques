@@ -1,10 +1,8 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle } from 'puppeteer';
-import { DomUtils } from '@qualweb/util';
-
 import Technique from '../lib/Technique.object';
+import { QWElement } from "@qualweb/qw-element";
 
 class QW_HTML_T10 extends Technique {
 
@@ -43,7 +41,7 @@ class QW_HTML_T10 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined): Promise < void > {
+  execute(element: QWElement | undefined): void {
 
     if (!element) {
       return;
@@ -58,8 +56,8 @@ class QW_HTML_T10 extends Technique {
     //1. Check each frame and iframe element in the HTML or XHTML
     //source code for the presence of a title attribute.
     // 2. Check that the title attribute contains text that identifies the frame.
-    const hasTitle = await DomUtils.elementHasAttribute(element, 'title');
-    const title = await DomUtils.getElementAttribute(element, 'title');
+    const hasTitle = element.elementHasAttribute('title');
+    const title = element.getElementAttribute('title');
     if (hasTitle) {
       if (title && title.trim() !== '') {
         evaluation.verdict = 'warning';
@@ -76,7 +74,7 @@ class QW_HTML_T10 extends Technique {
       evaluation.resultCode = 'RC3';
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

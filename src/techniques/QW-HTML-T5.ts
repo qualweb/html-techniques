@@ -1,9 +1,8 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle } from 'puppeteer';
-import { DomUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
+import { QWElement } from "@qualweb/qw-element";
 
 class QW_HTML_T5 extends Technique {
 
@@ -35,7 +34,7 @@ class QW_HTML_T5 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined): Promise < void > {
+  execute(element: QWElement | undefined): void {
 
     if (!element) {
       return;
@@ -47,14 +46,13 @@ class QW_HTML_T5 extends Technique {
       resultCode: ''
     };
 
-    const hasAlt = await DomUtils.elementHasAttribute(element, 'alt');
-    const alt = await DomUtils.getElementAttribute(element, 'alt');
+    const alt = element.getElementAttribute('alt');
 
-    if (!hasAlt) {
+    if (alt === null) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The input element does not have an alt attribute';
       evaluation.resultCode = 'RC1';
-    } else if (alt && alt.trim() === '') {
+    } else if (!alt.trim().length) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The input element has an empty alt attribute';
       evaluation.resultCode = 'RC2';
@@ -64,7 +62,7 @@ class QW_HTML_T5 extends Technique {
       evaluation.resultCode = 'RC3';
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

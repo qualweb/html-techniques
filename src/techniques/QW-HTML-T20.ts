@@ -1,13 +1,9 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { Page } from 'puppeteer';
-import fetch from 'node-fetch';
 import Technique from '../lib/Technique.object';
 
 class QW_HTML_T20 extends Technique {
-
-  private endpoint = 'http://194.117.20.242/validate/';
 
   constructor() {
     super({
@@ -42,28 +38,13 @@ class QW_HTML_T20 extends Technique {
     });
   }
 
-  async execute(): Promise<void> {
+  execute(): void {
     throw new Error('Method not implemented.');
   }
 
-  async validate(page: Page, endpoint?: string): Promise<void> {
+  validate(validation): void{
 
-    const url = await page.evaluate(() => {
-      return location.href;
-    });
-    
-    const validationUrl = endpoint ? endpoint + encodeURIComponent(url) : this.endpoint + encodeURIComponent(url);
-    
-    let response: any;
-    
-    try {
-      response = await fetch(validationUrl);
-    } catch (err) {
-      console.log(err);
-    }
 
-    if (response && response.status === 200) {
-      const validation = JSON.parse(await response.json());
       for (const result of validation.messages || []) {
         const evaluation: HTMLTechniqueResult = {
           verdict: '',
@@ -95,6 +76,6 @@ class QW_HTML_T20 extends Technique {
       }
     }
   }
-}
+
 
 export = QW_HTML_T20;

@@ -3,9 +3,9 @@
 import clone from 'lodash.clone';
 import cloneDeep from 'lodash.clonedeep';
 import { HTMLTechnique, HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { Page, ElementHandle } from 'puppeteer';
-
-import { DomUtils, Optimization } from '@qualweb/util';
+import {  Optimization } from '@qualweb/util';
+import { QWElement } from '@qualweb/qw-element';
+import { QWPage } from '@qualweb/qw-page';
 
 abstract class Technique {
 
@@ -41,12 +41,11 @@ abstract class Technique {
     return this.technique.metadata.failed;
   }
 
-  protected async addEvaluationResult(result: HTMLTechniqueResult, element?: ElementHandle): Promise<void> {
+  protected addEvaluationResult(result: HTMLTechniqueResult, element?: QWElement): void {
     if (element) {
-      const [htmlCode, pointer] = await Promise.all([
-        DomUtils.getElementHtmlCode(element, true, false),
-        DomUtils.getElementSelector(element)
-      ]);
+      const htmlCode= element.getElementHtmlCode( true, false);
+      const pointer =element.getElementSelector();
+     
       result.htmlCode = htmlCode;
       result.pointer = pointer;
     }
@@ -58,7 +57,7 @@ abstract class Technique {
     }
   }
 
-  abstract async execute(element: ElementHandle | undefined, page: Page, optimize: Optimization): Promise<void>;
+  abstract execute(element: QWElement | undefined, page: QWPage, optimize: Optimization): void;
 
   getFinalResults() {
     this.outcomeTechnique();

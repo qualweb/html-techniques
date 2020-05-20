@@ -1,9 +1,8 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle } from 'puppeteer';
-import { DomUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
+import { QWElement } from "@qualweb/qw-element";
 
 class QW_HTML_T11 extends Technique {
 
@@ -48,7 +47,7 @@ class QW_HTML_T11 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined): Promise<void> {
+  execute(element: QWElement | undefined): void {
 
     if (!element) {
       return;
@@ -60,7 +59,7 @@ class QW_HTML_T11 extends Technique {
       resultCode: ''
     };
 
-    const images = await element.$$('img');
+    const images = element.getElements('img');
 
     const hasImage = images.length > 0;
     let hasNonEmptyAlt = false;
@@ -68,12 +67,12 @@ class QW_HTML_T11 extends Technique {
     let equalAltText = false;
 
     for (const img of images || []) { // fails if the element doesn't contain an alt attribute
-      if ((await DomUtils.elementHasAttribute(img, 'alt')) && !hasNonEmptyAlt && !equalAltText) {
+      if ((img.elementHasAttribute('alt')) && !hasNonEmptyAlt && !equalAltText) {
         hasAlt = true;
-        const alt = await DomUtils.getElementAttribute(img, 'alt');
+        const alt = img.getElementAttribute('alt');
         if (alt !== null) { 
           hasNonEmptyAlt = alt.trim() !== '';
-          equalAltText = alt === await DomUtils.getElementText(element);
+          equalAltText = alt === element.getElementText();
         }
       }
     }
@@ -86,15 +85,15 @@ class QW_HTML_T11 extends Technique {
       evaluation.resultCode = 'RC1';
     } else if (equalAltText) {
       evaluation.verdict = 'failed';
-      evaluation.description = `The element text is equal to img alternative text`;
+      evaluation.description = `The link text is equal to the image's alternative text`;
       evaluation.resultCode = 'RC2';
     } else {
       evaluation.verdict = 'warning';
-      evaluation.description = 'The a element contains an image that has an alt attribute that should be manually verified';
+      evaluation.description = 'The link contains an image that has an alt attribute that should be manually verified';
       evaluation.resultCode = 'RC3';
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

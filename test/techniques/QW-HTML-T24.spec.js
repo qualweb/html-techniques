@@ -1,10 +1,7 @@
-const {
-  HTMLTechniques
-} = require('../../dist/index');
 const { expect } = require('chai');
 const { getDom } = require('../getDom');
+const { HTMLTechniques } = require('../../dist/index');
 const puppeteer = require('puppeteer');
-
 
 describe('Technique QW-HTML-T24', function() {
 
@@ -26,33 +23,39 @@ describe('Technique QW-HTML-T24', function() {
       outcome: 'warning'
     }
   ];
-  it('Starting testbench', async function () {
-    const browser = await puppeteer.launch();
 
+  it('Starting testbench', async function () {
     let i = 0;
-    let lastOutcome = 'failed';
+    const browser = await puppeteer.launch();
+    let lastOutcome = 'warning';
     for (const test of tests || []) {
       if (test.outcome !== lastOutcome) {
         lastOutcome = test.outcome;
         i = 0;
       }
       i++;
-      describe(`${test.outcome.charAt(0).toUpperCase() + test.outcome.slice(1)} example ${i}`, function () {
+      describe(`${test.outcome.charAt(0).toUpperCase() + test.outcome.slice(1)} example ${i}`, async function () {
         it(`should have outcome="${test.outcome}"`, async function () {
-          this.timeout(200 * 1000);
-          const { page } = await getDom(browser, test.url);
-          const htmlTecniques = new HTMLTechniques({
-            techniques: ['QW-HTML-T24']
+          this.timeout(25 * 1000);
+          const {sourceHtml, page, stylesheets} = await getDom(browser, test.url);
+          await page.addScriptTag({
+            path: require.resolve('../html.js')
           });
-
-          const report = await htmlTecniques.execute(page);
-          console.log(report);
-          //expect(report.assertions['QW-HTML-T8'].metadata.outcome).to.be.equal(test.outcome);
+          await page.addScriptTag({
+            path: require.resolve('../qwPage.js')
+          });
+          sourceHtml.html.parsed = {};
+          const report = await page.evaluate(() => {
+            const html = new HTMLTechniques.HTMLTechniques();
+            const report = html.execute(new QWPage.QWPage(document), false, {});
+            return report;
+          });
+          expect(report.assertions['QW-HTML-T24'].metadata.outcome).to.be.equal(test.outcome);
         });
       });
     }
-    describe(`Closing testbench`, async function () {
-      it(`Closed`, async function () {
+    describe(``,  function () {
+      it(`pup shutdown`, async function () {
         await browser.close();
       });
     });
