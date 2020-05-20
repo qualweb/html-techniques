@@ -1,9 +1,7 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { Page } from 'puppeteer';
 import Technique from '../lib/Technique.object';
-import { BrowserUtils } from '@qualweb/util';
 
 class QW_HTML_T35 extends Technique {
 
@@ -31,38 +29,35 @@ class QW_HTML_T35 extends Technique {
         outcome: '',
         description: ''
       },
-      results: new Array < HTMLTechniqueResult > ()
+      results: new Array<HTMLTechniqueResult>()
     });
   }
 
-  async execute(): Promise < void > {
+
+
+  execute(): void {
     throw new Error('Method not implemented.');
   }
 
-  async validate(page: Page): Promise<void> {
-    
-    const url = page.url();
+  validate(newTabWasOpen: boolean): void {
 
-    const browser = page.browser();
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
       description: '',
       resultCode: ''
     };
-
-    const newTabWasOpen = await BrowserUtils.detectIfUnwantedTabWasOpened(browser, url);
-    if (!newTabWasOpen) { 
+    if (!newTabWasOpen) {
       evaluation.verdict = 'passed';
       evaluation.description = `Browser didn't open new tab`;
       evaluation.resultCode = 'RC1';
-    } else { 
+    } else {
       evaluation.verdict = 'failed';
       evaluation.description = `Browser opened a new tab`;
       evaluation.resultCode = 'RC2';
     }
 
-    await super.addEvaluationResult(evaluation);
+    super.addEvaluationResult(evaluation);
   }
 }
 

@@ -1,9 +1,10 @@
 "use strict";
 
 import { HTMLTechniqueResult } from "@qualweb/html-techniques";
-import { ElementHandle, Page } from "puppeteer";
-import { DomUtils, AccessibilityUtils } from "@qualweb/util";
+import { AccessibilityUtils } from "@qualweb/util";
 import Technique from "../lib/Technique.object";
+import { QWElement } from "@qualweb/qw-element";
+import { QWPage } from "@qualweb/qw-page";
 
 class QW_HTML_T39 extends Technique {
   constructor() {
@@ -12,10 +13,10 @@ class QW_HTML_T39 extends Technique {
       code: "QW-HTML-T39",
       mapping: "H37",
       description:
-        'When using the img element, specify a short text alternative with the correct attribute (alt,title) or element (title,desc).". ',
+        'When using the img element, specify a short text alternative with the correct attribute (alt, title) or element (title, desc).',
       metadata: {
         target: {
-          element: "svg,img",
+          element: "img",
         },
         "success-criteria": [
           {
@@ -37,7 +38,7 @@ class QW_HTML_T39 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined, page: Page): Promise<void> {
+  execute(element: QWElement | undefined, page: QWPage): void {
     if (element === undefined) {
       return;
     }
@@ -50,9 +51,9 @@ class QW_HTML_T39 extends Technique {
 
     let AName, alt, inAT;
 
-    alt = await DomUtils.getElementAttribute(element, "alt");
-    inAT = await AccessibilityUtils.isElementInAT(element, page);
-    AName = await AccessibilityUtils.getAccessibleName(element, page);
+    alt = element.getElementAttribute("alt");
+    inAT = AccessibilityUtils.isElementInAT(element, page);
+    AName = AccessibilityUtils.getAccessibleName(element, page);
 
     if (!inAT || alt === "") {
       //inapplicable (presentation)
@@ -67,7 +68,7 @@ class QW_HTML_T39 extends Technique {
         evaluation.resultCode = "RC2";
       }
 
-      await super.addEvaluationResult(evaluation, element);
+      super.addEvaluationResult(evaluation, element);
     }
   }
 }

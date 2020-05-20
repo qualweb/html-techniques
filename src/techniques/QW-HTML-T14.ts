@@ -1,10 +1,8 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle } from 'puppeteer';
-import { DomUtils } from '@qualweb/util';
-
 import Technique from '../lib/Technique.object';
+import { QWElement } from "@qualweb/qw-element";
 
 class QW_HTML_T14 extends Technique {
 
@@ -36,7 +34,7 @@ class QW_HTML_T14 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined): Promise < void > {
+  execute(element: QWElement | undefined): void {
 
     if (!element) {
       return;
@@ -48,8 +46,8 @@ class QW_HTML_T14 extends Technique {
       resultCode: ''
     };
 
-    const hasAlt = await DomUtils.elementHasAttribute(element, 'alt');
-    const alt = await DomUtils.getElementAttribute(element, 'alt');
+    const hasAlt = element.elementHasAttribute('alt');
+    const alt = element.getElementAttribute('alt');
 
     if (!hasAlt) { // fails if the element doesn't contain an alt attribute
       evaluation.verdict = 'failed';
@@ -60,9 +58,11 @@ class QW_HTML_T14 extends Technique {
       evaluation.description = `The applet element has an empty alt attribute`;
       evaluation.resultCode = 'RC2';
     } else {
-      const text = await DomUtils.getElementText(element);
+      const text = element.getElementText();
+      console.log(text!== undefined);
+      console.log(text);
 
-      if (text !== undefined) { // the element contains a non empty alt attribute and a text in his body
+      if (text && text.trim()!== "") { // the element contains a non empty alt attribute and a text in his body
         evaluation.verdict = 'warning';
         evaluation.description = `Please verify that the values of the alt attribute and the body text correctly describe the applet element`;
         evaluation.resultCode = 'RC3';
@@ -73,7 +73,7 @@ class QW_HTML_T14 extends Technique {
       }
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

@@ -1,8 +1,8 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle } from 'puppeteer';
 import Technique from '../lib/Technique.object';
+import { QWElement } from "@qualweb/qw-element";
 
 class QW_HTML_T16 extends Technique {
 
@@ -34,7 +34,7 @@ class QW_HTML_T16 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined): Promise < void > {
+  execute(element: QWElement | undefined): void {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -52,7 +52,7 @@ class QW_HTML_T16 extends Technique {
       evaluation.resultCode = 'RC2';
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

@@ -1,9 +1,10 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle } from 'puppeteer';
-import { DomUtils, AccessibilityUtils } from '@qualweb/util';
+import { AccessibilityUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
+import { QWElement } from "@qualweb/qw-element";
+import { QWPage } from '@qualweb/qw-page';
 
 class QW_HTML_T42 extends Technique {
 
@@ -36,9 +37,9 @@ class QW_HTML_T42 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined): Promise < void > {
+  execute(element: QWElement | undefined, page: QWPage | undefined): void {
 
-    if (element === undefined||!(await DomUtils.elementHasAttributes(element))) {
+    if (element === undefined || !(element.elementHasAttributes()) || page === undefined) {
       return;
     }
 
@@ -48,7 +49,7 @@ class QW_HTML_T42 extends Technique {
       resultCode: ''
     };
 
-    if (await AccessibilityUtils.isElementControl(element)) {
+    if (AccessibilityUtils.isElementControl(element, page)) {
       evaluation.verdict = 'passed';
       evaluation.description = `The element is a user interface control with an event handler`;
       evaluation.resultCode = 'RC1';
@@ -58,7 +59,7 @@ class QW_HTML_T42 extends Technique {
       evaluation.resultCode = 'RC2';
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

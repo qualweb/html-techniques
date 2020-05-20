@@ -1,9 +1,9 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { Page, ElementHandle } from 'puppeteer';
-import { DomUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
+import { QWElement } from "@qualweb/qw-element";
+import { QWPage } from "@qualweb/qw-page";
 
 class QW_HTML_T3 extends Technique {
 
@@ -42,7 +42,7 @@ class QW_HTML_T3 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined, page: Page): Promise<void> {
+  execute(element: QWElement | undefined, page: QWPage): void {
 
     if (!element) {
       return;
@@ -53,23 +53,23 @@ class QW_HTML_T3 extends Technique {
       description: '',
       resultCode: ''
     };
-    const formATT = await DomUtils.getElementAttribute(element, 'form');
+    const formATT = element.getElementAttribute('form');
     
     let validFormAtt = new Array<any>();
 
     if(formATT){
-      validFormAtt = await page.$$('form[id="' + validFormAtt + '"]');
+      validFormAtt = page.getElements('form[id="' + formATT + '"]');
     }
 
-    const hasParent = await DomUtils.elementHasParent(element, 'form');
-    const hasChid = await DomUtils.elementHasChild(element, 'legend');
-    const childText = await DomUtils.getElementChildTextContent(element, 'legend');
+    const hasParent = element.elementHasParent('form');
+    const hasChild = element.elementHasChild('legend');
+    const childText = element.getElementChildTextContent('legend');
 
     if (!hasParent && validFormAtt.length === 0) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The fieldset is not in a form and is not referencing a form';
       evaluation.resultCode = 'RC1';
-    } else if (!hasChid) {
+    } else if (!hasChild) {
       evaluation.verdict = 'failed';
       evaluation.description = 'The legend does not exist in the fieldset element';
       evaluation.resultCode = 'RC2';
@@ -83,7 +83,7 @@ class QW_HTML_T3 extends Technique {
       evaluation.resultCode = 'RC4';
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

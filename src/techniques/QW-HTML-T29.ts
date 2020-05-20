@@ -1,9 +1,8 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle } from 'puppeteer';
-import { DomUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
+import { QWElement } from "@qualweb/qw-element";
 
 class QW_HTML_T29 extends Technique {
 
@@ -37,9 +36,9 @@ class QW_HTML_T29 extends Technique {
     });
   }
 
-  async execute(element: ElementHandle | undefined): Promise < void > {
+  execute(element: QWElement | undefined): void {
 
-    if (!element || !(await DomUtils.elementHasAttributes(element))) {
+    if (!element || !(element.elementHasAttributes())) {
       return;
     }
 
@@ -49,11 +48,11 @@ class QW_HTML_T29 extends Technique {
       resultCode: ''
     };
 
-    const hasOnmousedown = await DomUtils.elementHasAttribute(element, 'onmousedown');
-    const hasOnmouseup = await DomUtils.elementHasAttribute(element, 'onmouseup');
-    const hasOnclick = await DomUtils.elementHasAttribute(element, 'onclick');
-    const hasOnmouseover = await DomUtils.elementHasAttribute(element, 'onmouseover');
-    const hasOnmouseout = await DomUtils.elementHasAttribute(element, 'onmouseout');
+    const hasOnmousedown = element.elementHasAttribute('onmousedown');
+    const hasOnmouseup = element.elementHasAttribute('onmouseup');
+    const hasOnclick = element.elementHasAttribute('onclick');
+    const hasOnmouseover = element.elementHasAttribute('onmouseover');
+    const hasOnmouseout = element.elementHasAttribute('onmouseout');
 
     if (hasOnmousedown) {
       evaluation.verdict = 'warning';
@@ -77,7 +76,7 @@ class QW_HTML_T29 extends Technique {
       evaluation.resultCode = 'RC5';
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 

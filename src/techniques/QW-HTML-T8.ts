@@ -1,11 +1,11 @@
 'use strict';
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
-import { ElementHandle, Page } from 'puppeteer';
 import { AccessibilityUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
-
 import { ElementExists, ElementHasAttributes } from '../lib/decorators';
+import { QWPage } from "@qualweb/qw-page";
+import { QWElement } from "@qualweb/qw-element";
 
 class QW_HTML_T8 extends Technique {
 
@@ -45,7 +45,7 @@ class QW_HTML_T8 extends Technique {
   }
 
   @ElementExists @ElementHasAttributes
-  async execute(element: ElementHandle, page: Page): Promise<void> {
+  execute(element: QWElement, page: QWPage): void {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -56,12 +56,12 @@ class QW_HTML_T8 extends Technique {
     const default_title = ['spacer', 'image', 'picture', 'separador', 'imagem', 'fotografia'];
 
     const pattern = new RegExp('.+\\.(jpg|jpeg|png|gif|tiff|bmp)');
-    const pattern1 = new RegExp('^picture/s[0-9]+$');
+    const pattern1 = new RegExp('^picture\\s[0-9]+$');
     const pattern2 = new RegExp('^[0-9]+$');
-    const pattern3 = new RegExp('^Intro#[0-9]+$');
-    const pattern4 = new RegExp('^imagem/s[0-9]+$');
+    const pattern3 = new RegExp('^intro#[0-9]+$');
+    const pattern4 = new RegExp('^imagem\\s[0-9]+$');
 
-    let altText = await AccessibilityUtils.getAccessibleName(element, page);
+    let altText = AccessibilityUtils.getAccessibleName(element, page);
     if (!altText || altText === ''){
         evaluation.verdict = 'failed';
         evaluation.description = 'Text alternative is not actually a text alternative for the non-text content';
@@ -79,7 +79,7 @@ class QW_HTML_T8 extends Technique {
       }
     }
 
-    await super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element);
   }
 }
 
