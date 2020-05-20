@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.3.7] - 13/05/2020
+
+### Fixed
+ - maxParallelEvaluations bug
+
+## [0.3.6] - 11/05/2020
+
+### Updated
+ - QW-HTML-T5
+ - QW-HTML-T14
+ - QW-HTML-T39
+
+## [0.3.5] - 11/05/2020
+
+### Updated
+ - QW-HTML-T1 technique
+
 ## [0.3.4] - 06/05/2020
 
 ### Updated
