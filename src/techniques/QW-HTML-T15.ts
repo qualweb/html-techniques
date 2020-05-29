@@ -50,7 +50,7 @@ class QW_HTML_T15 extends Technique {
     checks['hasCaption'] = false;
     checks['hasTh'] = false;
 
-    if (element.elementHasChidren()) {
+    if (element.elementHasChildren()) {
       checks['hasCaption'] = !!(element.getElement("caption"))
       checks['hasTh'] = !!(element.getElement("th"))
     }
