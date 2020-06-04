@@ -54,7 +54,7 @@ class QW_HTML_T4 extends Technique {
     
     if(isDataTable){
       if (summary === null) {
-        evaluation.verdict = 'failed';
+        evaluation.verdict = 'inapplicable';
         evaluation.description = 'The summary does not exist in the table element';
         evaluation.resultCode = 'RC1';
       } else if (!summary.trim().length) {
