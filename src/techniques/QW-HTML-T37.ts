@@ -52,10 +52,14 @@ class QW_HTML_T37 extends Technique {
     } else {
 
       const refElement = DomUtils.getElementReferencedByHREF(page, element);
-      const hidden = DomUtils.isElementHidden(element);
+      let isVisible = DomUtils.isElementVisible(element);
+      if(!isVisible){
+        element.focusElement();
+        isVisible = DomUtils.isElementVisible(element);
+      }
 
       if (refElement) {
-        if (!hidden) {
+        if (!isVisible) {
           evaluation.verdict = 'warning';
           evaluation.description = 'This link skips a content block';
           evaluation.resultCode = 'RC2';

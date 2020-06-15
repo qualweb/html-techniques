@@ -22,7 +22,6 @@ class QW_HTML_T23 extends Technique {
 
     if (element) {
       const href = element.getElementAttribute('href');
-      console.log(href);
 
       if (href) {
         evaluation.verdict = 'warning';

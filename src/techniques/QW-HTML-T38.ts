@@ -53,6 +53,11 @@ class QW_HTML_T38 extends Technique {
       let firstFocusableElem = findFirstFocusableElement(element);
       if (firstFocusableElem !== undefined) {
         let isVisible = DomUtils.isElementVisible(firstFocusableElem);
+        if(!isVisible){
+          firstFocusableElem.focusElement();
+          isVisible = DomUtils.isElementVisible(firstFocusableElem);
+        }
+         
         if (isVisible) {
           const firstFocusableElemName = firstFocusableElem.getElementTagName();
           //const firstFocusableElemAttribs = await DomUtils.getElementAttributes(firstFocusableElem);

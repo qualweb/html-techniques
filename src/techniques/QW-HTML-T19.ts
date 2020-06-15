@@ -89,7 +89,6 @@ class QW_HTML_T19 extends Technique {
           evaluation.resultCode = 'RC5';
         }
       }
-      console.log( evaluation.resultCode);
       super.addEvaluationResult(evaluation, element);
     }
   }
