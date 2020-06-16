@@ -36,7 +36,7 @@ class QW_HTML_T11 extends Technique {
         }
         ],
         related: ['G91', 'G94', 'H30', 'C9', 'F89'],
-        url: 'https://www.w3.org/TR/WCAG20-TECHS/H2.html',
+        url: 'https://www.w3.org/WAI/WCAG21/Techniques/html/H2',
         passed: 0,
         warning: 0,
         failed: 0,
@@ -60,6 +60,7 @@ class QW_HTML_T11 extends Technique {
     };
 
     const images = element.getElements('img');
+    let text = element.getElementText()
 
     const hasImage = images.length > 0;
     let hasNonEmptyAlt = false;
@@ -72,13 +73,13 @@ class QW_HTML_T11 extends Technique {
         const alt = img.getElementAttribute('alt');
         if (alt !== null) { 
           hasNonEmptyAlt = alt.trim() !== '';
-          equalAltText = alt === element.getElementText();
+          equalAltText = !!text && alt.trim() === text.trim();
         }
       }
     }
 
-    if (!hasImage || !hasAlt) {
-      //inapplicable
+    if (!hasImage || !hasAlt || !text|| text.trim()==="") {
+      //inapplicable 
     } else if (!hasNonEmptyAlt) {
       evaluation.verdict = 'passed';
       evaluation.description = `The a element contains an image that has an empty alt attribute`;

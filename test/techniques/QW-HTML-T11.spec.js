@@ -17,11 +17,11 @@ describe('Technique QW-HTML-T11', function() {
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h2/failed1.html',
-      outcome: 'warning'
+      outcome: 'inapplicable'
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h2/failed2.html',
-      outcome: 'passed'
+      outcome: 'inapplicable'
     },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/h2/failed3.html',
@@ -48,7 +48,7 @@ describe('Technique QW-HTML-T11', function() {
           this.timeout(25 * 1000);
           const {sourceHtml, page, stylesheets} = await getDom(browser, test.url);
           await page.addScriptTag({
-            path: require.resolve('../html.js')
+            path: require.resolve('../../dist/html.js')
           });
           await page.addScriptTag({
             path: require.resolve('../qwPage.js')

@@ -40,7 +40,7 @@ describe('Technique QW-HTML-T10', function() {
           this.timeout(25 * 1000);
           const {sourceHtml, page, stylesheets} = await getDom(browser, test.url);
           await page.addScriptTag({
-            path: require.resolve('../html.js')
+            path: require.resolve('../../dist/html.js')
           });
           await page.addScriptTag({
             path: require.resolve('../qwPage.js')
