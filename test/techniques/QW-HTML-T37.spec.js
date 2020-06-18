@@ -3,9 +3,13 @@ const { getDom } = require('../getDom');
 const { HTMLTechniques } = require('../../dist/index');
 const puppeteer = require('puppeteer');
 
-describe('Technique QW-HTML-T37', function() {
+describe('Technique QW-HTML-T37', function () {
 
   const tests = [
+    {
+      url: "https://www.ama.gov.pt/",//"https://www.w3.org/TR/UNDERSTANDING-WCAG20/understanding-techniques.html",
+      outcome: 'passed'
+    }
     /**{
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/failedSummary1.html',
       outcome: 'failed'
@@ -18,6 +22,7 @@ describe('Technique QW-HTML-T37', function() {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/failedInput1.html',
       outcome: 'failed'
     },*/
+    /**
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/failed1.html',
       outcome: 'failed'
@@ -53,7 +58,7 @@ describe('Technique QW-HTML-T37', function() {
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/failedCSS3.html',
       outcome: 'failed'
-    },
+    },*/
     /**{
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/passedSummary1.html',
       outcome: 'passed'
@@ -73,7 +78,7 @@ describe('Technique QW-HTML-T37', function() {
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/passedInput1.html',
       outcome: 'passed'
-    },*/
+    },
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/passed1.html',
       outcome: 'warning'
@@ -85,12 +90,13 @@ describe('Technique QW-HTML-T37', function() {
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g123/warningParent1.html',
       outcome: 'warning'
-    }
+    }*/
   ];
 
   it('Starting testbench', async function () {
     let i = 0;
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.connect({ browserURL: 'http://127.0.0.1:9222/', defaultViewport: null });
+
     let lastOutcome = 'warning';
     for (const test of tests || []) {
       if (test.outcome !== lastOutcome) {
@@ -101,9 +107,9 @@ describe('Technique QW-HTML-T37', function() {
       describe(`${test.outcome.charAt(0).toUpperCase() + test.outcome.slice(1)} example ${i}`, async function () {
         it(`should have outcome="${test.outcome}"`, async function () {
           this.timeout(25 * 1000);
-          const {sourceHtml, page, stylesheets} = await getDom(browser, test.url);
+          const { sourceHtml, page, stylesheets } = await getDom(browser, test.url);
           await page.addScriptTag({
-            path: require.resolve('../html.js')
+            path: require.resolve('../../dist/html.js')
           });
           await page.addScriptTag({
             path: require.resolve('../qwPage.js')
@@ -114,13 +120,14 @@ describe('Technique QW-HTML-T37', function() {
             const report = html.execute(new QWPage.QWPage(document), false, {});
             return report;
           });
+          console.log(report.assertions['QW-HTML-T37'])
           expect(report.assertions['QW-HTML-T37'].metadata.outcome).to.be.equal(test.outcome);
         });
       });
     }
-    describe(``,  function () {
+    describe(``, function () {
       it(`pup shutdown`, async function () {
-        await browser.close();
+       // await browser.close();
       });
     });
   });

@@ -62,8 +62,6 @@ class QW_HTML_T40 extends Technique {
 
     if (isFocusable) {
       const keepsFocus = DomUtils.isFocusableBrowser(page, element);
-      console.log(keepsFocus);
-      console.log(element.getElementSelector());
       if (keepsFocus) {
         evaluation.verdict = 'passed';
         evaluation.description = `Element kept focus`;

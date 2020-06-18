@@ -59,7 +59,7 @@ class QW_HTML_T37 extends Technique {
       }
 
       if (refElement) {
-        if (!isVisible) {
+        if (isVisible) {
           evaluation.verdict = 'warning';
           evaluation.description = 'This link skips a content block';
           evaluation.resultCode = 'RC2';
@@ -69,7 +69,7 @@ class QW_HTML_T37 extends Technique {
           evaluation.resultCode = 'RC3';
         }
       } else {
-        evaluation.verdict = 'failed';
+        evaluation.verdict = 'inapplicable';
         evaluation.description = `This link is not used to skip a content block`;
         evaluation.resultCode = 'RC4';
       }

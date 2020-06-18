@@ -50,15 +50,15 @@ describe('Technique QW-HTML-T38', async function () {
         url: 'http://accessible-serv.lasige.di.fc.ul.pt/~bandrade/g1/absolutePath.html',
         outcome: 'warning'
       },*/
-    {
-      url: 'http://www.di.fc.ul.pt/~cad/SONAAR/',
-      outcome: 'warning'
-    }
+      {
+        url: "https://a11y-101.com/development/skip-link",
+        outcome: 'passed'
+      }
   ];
 
   it('Starting testbench', async function () {
     let i = 0;
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.connect({ browserURL: 'http://127.0.0.1:9222/', defaultViewport: null });
     let lastOutcome = 'warning';
     for (const test of tests || []) {
       if (test.outcome !== lastOutcome) {
@@ -71,7 +71,7 @@ describe('Technique QW-HTML-T38', async function () {
           this.timeout(25 * 1000);
           const {sourceHtml, page, stylesheets} = await getDom(browser, test.url);
           await page.addScriptTag({
-            path: require.resolve('../html.js')
+            path: require.resolve('../../dist/html.js')
           });
           await page.addScriptTag({
             path: require.resolve('../qwPage.js')
@@ -88,7 +88,7 @@ describe('Technique QW-HTML-T38', async function () {
     }
     describe(``,  function () {
       it(`pup shutdown`, async function () {
-        await browser.close();
+        //await browser.close();
       });
     });
   });
