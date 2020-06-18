@@ -3,7 +3,7 @@
 import clone from 'lodash.clone';
 import cloneDeep from 'lodash.clonedeep';
 import { HTMLTechnique, HTMLTechniqueResult } from '@qualweb/html-techniques';
-import {  Optimization } from '@qualweb/util';
+import { Optimization } from '@qualweb/util';
 import { QWElement } from '@qualweb/qw-element';
 import { QWPage } from '@qualweb/qw-page';
 
@@ -41,11 +41,11 @@ abstract class Technique {
     return this.technique.metadata.failed;
   }
 
-  protected addEvaluationResult(result: HTMLTechniqueResult, element?: QWElement): void {
+  protected addEvaluationResult(result: HTMLTechniqueResult, element?: QWElement, withText: boolean = true, fullElement: boolean = false): void {
     if (element) {
-      const htmlCode= element.getElementHtmlCode( true, false);
-      const pointer =element.getElementSelector();
-     
+      const htmlCode = element.getElementHtmlCode(withText, fullElement);
+      const pointer = element.getElementSelector();
+
       result.htmlCode = htmlCode;
       result.pointer = pointer;
     }
@@ -90,7 +90,7 @@ abstract class Technique {
   private addDescription(): void {
     for (const result of this.technique.results || []) {
       if (result.verdict === this.technique.metadata.outcome) {
-        this.technique.metadata.description = <string> result.description;
+        this.technique.metadata.description = <string>result.description;
         break;
       }
     }

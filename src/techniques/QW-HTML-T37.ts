@@ -52,20 +52,13 @@ class QW_HTML_T37 extends Technique {
     } else {
 
       const refElement = DomUtils.getElementReferencedByHREF(page, element);
-      const hidden = DomUtils.isElementHidden(element);
 
       if (refElement) {
-        if (!hidden) {
           evaluation.verdict = 'warning';
           evaluation.description = 'This link skips a content block';
           evaluation.resultCode = 'RC2';
-        } else {
-          evaluation.verdict = 'failed';
-          evaluation.description = 'This link that skips a content block is not visible';
-          evaluation.resultCode = 'RC3';
-        }
       } else {
-        evaluation.verdict = 'failed';
+        evaluation.verdict = 'inapplicable';
         evaluation.description = `This link is not used to skip a content block`;
         evaluation.resultCode = 'RC4';
       }

@@ -23,12 +23,12 @@ class QW_HTML_T40 extends Technique {
           level: 'A',
           principle: 'Operable',
           url: 'https://www.w3.org/WAI/WCAG21/Understanding/keyboard'
-        },{
+        }, {
           name: '2.4.7',
           level: 'A',
           principle: 'Operable',
           url: 'https://www.w3.org/WAI/WCAG21/Understanding/focus-visible'
-        },{
+        }, {
           name: '3.2.1',
           level: 'A',
           principle: 'Understandable',
@@ -42,12 +42,12 @@ class QW_HTML_T40 extends Technique {
         outcome: '',
         description: ''
       },
-      results: new Array < HTMLTechniqueResult > ()
+      results: new Array<HTMLTechniqueResult>()
     });
   }
 
-  execute(element: QWElement | undefined, page: QWPage):  void  {
-    
+  execute(element: QWElement | undefined, page: QWPage): void {
+
     if (!element) {
       return;
     }
@@ -60,9 +60,9 @@ class QW_HTML_T40 extends Technique {
 
     const isFocusable = DomUtils.isElementFocusable(element);
 
-    if(isFocusable){
+    if (isFocusable) {
       const keepsFocus = DomUtils.isFocusableBrowser(page, element);
-      if (keepsFocus) { 
+      if (keepsFocus) {
         evaluation.verdict = 'passed';
         evaluation.description = `Element kept focus`;
         evaluation.resultCode = 'RC1';
@@ -73,7 +73,7 @@ class QW_HTML_T40 extends Technique {
       }
 
       super.addEvaluationResult(evaluation, element);
-    }  
+    }
   }
 }
 

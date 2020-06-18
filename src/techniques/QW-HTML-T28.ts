@@ -70,7 +70,7 @@ class QW_HTML_T28 extends Technique {
       evaluation.resultCode = 'RC4';
     }
 
-    super.addEvaluationResult(evaluation, element);
+    super.addEvaluationResult(evaluation, element,true,true);
   }
 }
 

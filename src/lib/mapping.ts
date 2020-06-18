@@ -28,7 +28,7 @@ export default {
     'p, div, h1, h2, h3, h4, h5, h6, col, colgroup, tbody, thead, tfoot, tr, th, td': ['QW-HTML-T43'],
     '*[onmousedown], *[onmouseup], *[onclick], *[onmouseover], *[onmouseout], *[keydown], *[keyup], *[keypress], *[focus], *[blur]': ['QW-HTML-T42'],
     'ol,ul,dl': ['QW-HTML-T28'],
-    '[alt]': ['QW-HTML-T8']
+    'img[alt],area[alt] ': ['QW-HTML-T8']
   }
 };
 

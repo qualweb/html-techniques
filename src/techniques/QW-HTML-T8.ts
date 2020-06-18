@@ -63,8 +63,8 @@ class QW_HTML_T8 extends Technique {
 
     let altText = AccessibilityUtils.getAccessibleName(element, page);
     if (!altText || altText === ''){
-        evaluation.verdict = 'warning';
-        evaluation.description = 'Text alternative is empty';
+        evaluation.verdict = 'inapplicable';
+        evaluation.description = 'Text alternative is not actually a text alternative for the non-text content';
         evaluation.resultCode = 'RC1';
     } else {
       altText = altText.toLocaleLowerCase();

@@ -7,18 +7,18 @@ describe('Technique QW-HTML-T40', function() {
 
   const tests = [
     {
-      url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T40/test1.html',
+      url: 'https://www.sapo.pt/',
       outcome: 'passed'
-    },
+    }/*,
     {
       url: 'http://accessible-serv.lasige.di.fc.ul.pt/~aestriga/TesteHTML-T40/test2.html',
       outcome: 'failed'
-    }
+    }*/
   ];
 
   it('Starting testbench', async function () {
     let i = 0;
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.connect({ browserURL: 'http://127.0.0.1:9222/', defaultViewport: null });
     let lastOutcome = 'warning';
     for (const test of tests || []) {
       if (test.outcome !== lastOutcome) {
@@ -31,7 +31,7 @@ describe('Technique QW-HTML-T40', function() {
           this.timeout(25 * 1000);
           const {sourceHtml, page, stylesheets} = await getDom(browser, test.url);
           await page.addScriptTag({
-            path: require.resolve('../html.js')
+            path: require.resolve('../../dist/html.js')
           });
           await page.addScriptTag({
             path: require.resolve('../qwPage.js')
@@ -48,7 +48,7 @@ describe('Technique QW-HTML-T40', function() {
     }
     describe(``,  function () {
       it(`pup shutdown`, async function () {
-        await browser.close();
+       // await browser.close();
       });
     });
   });
