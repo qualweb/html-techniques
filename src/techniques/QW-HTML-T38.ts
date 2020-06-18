@@ -52,75 +52,60 @@ class QW_HTML_T38 extends Technique {
     if (children !== null && children.length > 0) {
       let firstFocusableElem = findFirstFocusableElement(element);
       if (!!firstFocusableElem) {
-        console.log(firstFocusableElem.getElementSelector());
-        let isVisible = DomUtils.isElementVisible(firstFocusableElem);
-        console.log(isVisible);
-        if(!isVisible){
-          firstFocusableElem.focusElement();
-          isVisible = DomUtils.isElementVisible(firstFocusableElem);
-        }
-        console.log(isVisible);
-         
-        if (isVisible) {
-          const firstFocusableElemName = firstFocusableElem.getElementTagName();
-          //const firstFocusableElemAttribs = await DomUtils.getElementAttributes(firstFocusableElem);
-          const firstFocusableElemHREF = firstFocusableElem.getElementAttribute('href');
-          if (firstFocusableElemName === 'a' && firstFocusableElemHREF && firstFocusableElemHREF.trim()) {
-            let url = page.getURL();
-            let urlConcatWithId = url + '#';
-            let lastSlash = url.lastIndexOf('/');
-            let filename = url.substring(lastSlash + 1);
-            if (firstFocusableElemHREF.startsWith('#') || firstFocusableElemHREF.startsWith(urlConcatWithId) ||
-              firstFocusableElemHREF.startsWith(filename)) {
-              let idSymbol = firstFocusableElemHREF.indexOf('#');
-              let idReferenced = firstFocusableElemHREF.substring(idSymbol + 1);
-              if (idReferenced.length > 0) {
-                let idElementReferenced = element.getElement('[id="' + idReferenced + '"]')
-                if (idElementReferenced !== null) {
-                  if (hasMainElementAsParent(idElementReferenced)) {
-                    evaluation.verdict = 'warning';
-                    evaluation.description = 'The first focusable control is a visible link to a <main> element.';
-                    evaluation.resultCode = 'RC1';
-                  } else {
-                    evaluation.verdict = 'warning';
-                    evaluation.description = 'The first focusable control is a visible link to some content in the Web Page. Verify if it links to the main content.';
-                    evaluation.resultCode = 'RC2';
-                  }
+        const firstFocusableElemName = firstFocusableElem.getElementTagName();
+        //const firstFocusableElemAttribs = await DomUtils.getElementAttributes(firstFocusableElem);
+        const firstFocusableElemHREF = firstFocusableElem.getElementAttribute('href');
+        if (firstFocusableElemName === 'a' && firstFocusableElemHREF && firstFocusableElemHREF.trim()) {
+          let url = page.getURL();
+          let urlConcatWithId = url + '#';
+          let lastSlash = url.lastIndexOf('/');
+          let filename = url.substring(lastSlash + 1);
+          if (firstFocusableElemHREF.startsWith('#') || firstFocusableElemHREF.startsWith(urlConcatWithId) ||
+            firstFocusableElemHREF.startsWith(filename)) {
+            let idSymbol = firstFocusableElemHREF.indexOf('#');
+            let idReferenced = firstFocusableElemHREF.substring(idSymbol + 1);
+            if (idReferenced.length > 0) {
+              let idElementReferenced = element.getElement('[id="' + idReferenced + '"]')
+              if (idElementReferenced !== null) {
+                if (hasMainElementAsParent(idElementReferenced)) {
+                  evaluation.verdict = 'warning';
+                  evaluation.description = 'The first focusable control is a visible link to a <main> element.';
+                  evaluation.resultCode = 'RC1';
                 } else {
-                  evaluation.verdict = 'failed';
-                  evaluation.description = 'The first focusable control on the Web page links to an inexistent element';
-                  evaluation.resultCode = 'RC3';
+                  evaluation.verdict = 'warning';
+                  evaluation.description = 'The first focusable control is a visible link to some content in the Web Page. Verify if it links to the main content.';
+                  evaluation.resultCode = 'RC2';
                 }
               } else {
-                //todo failed ou inapplicable?
                 evaluation.verdict = 'failed';
-                evaluation.description = 'The first focusable control on the Web page links to the top of the page';
-                evaluation.resultCode = 'RC4';
+                evaluation.description = 'The first focusable control on the Web page links to an inexistent element';
+                evaluation.resultCode = 'RC3';
               }
             } else {
+              //todo failed ou inapplicable?
               evaluation.verdict = 'failed';
-              evaluation.description = 'The first focusable control on the Web page does not links to local content';
-              evaluation.resultCode = 'RC5';
+              evaluation.description = 'The first focusable control on the Web page links to the top of the page';
+              evaluation.resultCode = 'RC4';
             }
           } else {
             evaluation.verdict = 'failed';
-            evaluation.description = 'The first focusable control on the Web page is not a link';
-            evaluation.resultCode = 'RC6';
+            evaluation.description = 'The first focusable control on the Web page does not links to local content';
+            evaluation.resultCode = 'RC5';
           }
         } else {
           evaluation.verdict = 'failed';
-          evaluation.description = 'The first focusable control on the Web page is not visible when focused';
-          evaluation.resultCode = 'RC7';
+          evaluation.description = 'The first focusable control on the Web page is not a link';
+          evaluation.resultCode = 'RC6';
         }
       } else {
         evaluation.verdict = 'failed';
         evaluation.description = 'This Web page does not have focusable controls';
-        evaluation.resultCode = 'RC8';
+        evaluation.resultCode = 'RC7';
       }
     } else {
       evaluation.verdict = 'inapplicable';
       evaluation.description = 'This Web page is empty';
-      evaluation.resultCode = 'RC9';
+      evaluation.resultCode = 'RC8';
     }
 
     super.addEvaluationResult(evaluation, element);
