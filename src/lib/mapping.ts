@@ -26,7 +26,7 @@ export default {
     'body, body *': ['QW-HTML-T40'],
     'th, td[scope]': ['QW-HTML-T41'],
     'p, div, h1, h2, h3, h4, h5, h6, col, colgroup, tbody, thead, tfoot, tr, th, td': ['QW-HTML-T43'],
-    '*[onmousedown], *[onmouseup], *[onclick], *[onmouseover], *[onmouseout], *[keydown], *[keyup], *[keypress], *[focus], *[blur]': ['QW-HTML-T42'],
+    'div[onmousedown], div[onmouseup], div[onclick], div[onmouseover], div[onmouseout], div[onkeydown], div[onkeyup], div[onkeypress], div[onfocus], div[onblur], span[onmousedown], span[onmouseup], span[onclick], span[onmouseover], span[onmouseout], span[onkeydown], span[onkeyup], span[onkeypress], span[onfocus], span[onblur]': ['QW-HTML-T42'],
     'ol,ul,dl': ['QW-HTML-T28'],
     'img[alt],area[alt] ': ['QW-HTML-T8']
   }

@@ -4,6 +4,7 @@ import { HTMLTechniqueResult } from '@qualweb/html-techniques';
 import Technique from '../lib/Technique.object';
 import { ElementExists, ElementHasAttributes } from '../lib/decorators';
 import { QWElement } from "@qualweb/qw-element";
+import { DomUtils } from '@qualweb/util';
 
 class QW_HTML_T6 extends Technique {
 
@@ -36,14 +37,11 @@ class QW_HTML_T6 extends Technique {
     });
   }
 
-  @ElementExists @ElementHasAttributes
-  execute(element: QWElement | undefined): void {
+  @ElementExists 
+  @ElementHasAttributes
+  execute(element: QWElement): void {
 
-    if (!element || !(element.elementHasAttributes())) {
-      return;
-    }
-
-    let evaluation: HTMLTechniqueResult = {
+    const evaluation: HTMLTechniqueResult = {
       verdict: '',
       description: '',
       resultCode: ''
@@ -60,6 +58,7 @@ class QW_HTML_T6 extends Technique {
     const hasOnclick = element.elementHasAttribute('onclick');
     const onclick = element.getElementAttribute('onclick');
     const onkeypress = element.getElementAttribute('onkeypress');
+    const isFocusable = DomUtils.isElementFocusable(element);
 
     const hasOnmouseover = element.elementHasAttribute('onmouseover');
     const onmouseover = element.getElementAttribute('onmouseover');
@@ -77,7 +76,7 @@ class QW_HTML_T6 extends Technique {
       evaluation.verdict = 'failed';
       evaluation.description = `The mouseup attribute doesn't have a keyboard equivalent`;
       evaluation.resultCode = 'RC2';
-    } else if (hasOnclick && onclick !== onkeypress) {
+    } else if (hasOnclick && onclick !== onkeypress && !isFocusable) {
       evaluation.verdict = 'failed';
       evaluation.description = `The click attribute doesn't have a keyboard equivalent`;
       evaluation.resultCode = 'RC3';
