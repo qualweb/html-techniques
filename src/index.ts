@@ -2,11 +2,10 @@
 
 import { HTMLTOptions, HTMLTechniquesReport } from '@qualweb/html-techniques';
 import { Optimization } from '@qualweb/util';
+import { QWPage } from '@qualweb/qw-page';
 
 import * as techniques from './lib/techniques';
-
 import mapping from './lib/mapping';
-import { QWPage } from '@qualweb/qw-page';
 
 class HTMLTechniques {
 
@@ -86,7 +85,7 @@ class HTMLTechniques {
     }
   }
 
-  private executeTechnique(technique: string, selector: string, page: QWPage, report: HTMLTechniquesReport): void{
+  private executeTechnique(technique: string, selector: string, page: QWPage, report: HTMLTechniquesReport): void {
     const elements = page.getElements(selector);
     if (elements.length > 0) {
       for (const elem of elements || []) {
@@ -110,11 +109,10 @@ class HTMLTechniques {
   }
 
   private executeMappedTechniques(report: HTMLTechniquesReport, page: QWPage, selectors: string[], mappedTechniques: any): void {
-    const promises = new Array<any>();
     for (const selector of selectors || []) {
       for (const technique of mappedTechniques[selector] || []) {
         if (this.techniquesToExecute[technique]) {
-          promises.push(this.executeTechnique(technique, selector, page, report));
+          this.executeTechnique(technique, selector, page, report)
         }
       }
     }
@@ -149,9 +147,7 @@ class HTMLTechniques {
       assertions: {}
     };
 
-    //await executeMappedTechniques(url,report, sourceHTML, Object.keys(mapping.pre), mapping.pre);
-
-    this.executeMappedTechniques(report, page, Object.keys(mapping.post), mapping.post)
+    this.executeMappedTechniques(report, page, Object.keys(mapping), mapping)
     this.executeNotMappedTechniques(report, newTabWasOpen, validation);
 
     return report;
