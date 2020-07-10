@@ -50,7 +50,7 @@ class QW_HTML_T38 extends Technique {
     let children = element.getElementChildren();
 
     if (children !== null && children.length > 0) {
-      let firstFocusableElem = findFirstFocusableElement(element);
+      let firstFocusableElem = findFirstFocusableElement(element,page);
       if (!!firstFocusableElem) {
         const firstFocusableElemName = firstFocusableElem.getElementTagName();
         //const firstFocusableElemAttribs = await DomUtils.getElementAttributes(firstFocusableElem);
@@ -112,7 +112,7 @@ class QW_HTML_T38 extends Technique {
   }
 }
 
-function findFirstFocusableElement(element: QWElement): QWElement | undefined {
+function findFirstFocusableElement(element: QWElement,page:QWPage): QWElement | undefined {
   let foundFirstFocusableElem = false;
   let firstFocusableElem: QWElement | undefined;
   let children = element.getElementChildren();
@@ -121,11 +121,11 @@ function findFirstFocusableElement(element: QWElement): QWElement | undefined {
     let i = 0;
     while (!foundFirstFocusableElem && i < children.length) {
       if (children[i] !== undefined) {
-        if (DomUtils.isElementFocusable(children[i])) {
+        if (DomUtils.isElementFocusable(children[i],page)) {
           firstFocusableElem = children[i];
           foundFirstFocusableElem = true;
         } else {
-          firstFocusableElem = findFirstFocusableElement(children[i]);
+          firstFocusableElem = findFirstFocusableElement(children[i],page);
           foundFirstFocusableElem = true;
         }
         i++;

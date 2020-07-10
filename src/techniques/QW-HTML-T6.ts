@@ -5,6 +5,7 @@ import Technique from '../lib/Technique.object';
 import { ElementExists, ElementHasAttributes } from '../lib/decorators';
 import { QWElement } from "@qualweb/qw-element";
 import { DomUtils } from '@qualweb/util';
+import { QWPage } from '@qualweb/qw-page';
 
 class QW_HTML_T6 extends Technique {
 
@@ -39,7 +40,7 @@ class QW_HTML_T6 extends Technique {
 
   @ElementExists 
   @ElementHasAttributes
-  execute(element: QWElement): void {
+  execute(element: QWElement,page:QWPage): void {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -58,7 +59,7 @@ class QW_HTML_T6 extends Technique {
     const hasOnclick = element.elementHasAttribute('onclick');
     const onclick = element.getElementAttribute('onclick');
     const onkeypress = element.getElementAttribute('onkeypress');
-    const isFocusable = DomUtils.isElementFocusable(element);
+    const isFocusable = DomUtils.isElementFocusable(element,page);
 
     const hasOnmouseover = element.elementHasAttribute('onmouseover');
     const onmouseover = element.getElementAttribute('onmouseover');

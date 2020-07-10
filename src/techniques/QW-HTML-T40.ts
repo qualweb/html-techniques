@@ -58,7 +58,7 @@ class QW_HTML_T40 extends Technique {
       resultCode: ''
     };
 
-    const isFocusable = DomUtils.isElementFocusable(element);
+    const isFocusable = DomUtils.isElementFocusable(element,page);
 
     if (isFocusable) {
       const keepsFocus = DomUtils.isFocusableBrowser(page, element);
