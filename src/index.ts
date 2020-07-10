@@ -1,15 +1,10 @@
-'use strict';
-
 import { HTMLTOptions, HTMLTechniquesReport } from '@qualweb/html-techniques';
-import { Optimization } from '@qualweb/util';
 import { QWPage } from '@qualweb/qw-page';
-
 import * as techniques from './lib/techniques';
 import mapping from './lib/mapping';
 
 class HTMLTechniques {
 
-  private optimization = Optimization.Performance;
   private techniques: any;
   private techniquesToExecute: any;
 
@@ -90,14 +85,14 @@ class HTMLTechniques {
     if (elements.length > 0) {
       for (const elem of elements || []) {
         try {
-          this.techniques[technique].execute(elem, page, this.optimization);
+          this.techniques[technique].execute(elem, page);
         } catch (err) {
           console.error(err);
         }
       }
     } else {
       try {
-        this.techniques[technique].execute(undefined, page, this.optimization);
+        this.techniques[technique].execute(undefined, page);
       } catch (err) {
         console.error(err);
       }
