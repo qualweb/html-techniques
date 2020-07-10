@@ -14,9 +14,8 @@ class QW_HTML_T29 extends Technique {
       description: 'This technique counts the number of mouse specific events',
       metadata: {
         target: {
-          'parent-sibling': 'img',
-          parent: 'map',
-          element: 'area'
+          element: '*',
+          attributes: ['onmousedown', 'onmouseup', 'onclick', 'onmouseover', 'onmouseout']
         },
         'success-criteria': [{
           name: '2.2.1',

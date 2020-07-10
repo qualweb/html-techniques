@@ -5,6 +5,7 @@ import { AccessibilityUtils } from '@qualweb/util';
 import Technique from '../lib/Technique.object';
 import { QWElement } from "@qualweb/qw-element";
 import { QWPage } from '@qualweb/qw-page';
+import { ElementExists, ElementHasAttributes } from '../lib/decorators';
 
 class QW_HTML_T42 extends Technique {
 
@@ -16,7 +17,8 @@ class QW_HTML_T42 extends Technique {
       description: 'This failure demonstrates how using generic HTML elements to create user interface controls can make the controls inaccessible to assistive technology.',
       metadata: {
         target: {
-          element: ['*']
+          element: ['div', 'span'],
+          attributes: ['onmousedown', 'onmouseup', 'onclick', 'onmouseover', 'onmouseout', 'onkeydown', 'onkeyup', 'onkeypress', 'onfocus', 'onblur']
         },
         'success-criteria': [{
           name: '4.1.2',
@@ -37,11 +39,9 @@ class QW_HTML_T42 extends Technique {
     });
   }
 
-  execute(element: QWElement | undefined, page: QWPage | undefined): void {
-
-    if (element === undefined || !(element.elementHasAttributes()) || page === undefined) {
-      return;
-    }
+  @ElementExists
+  @ElementHasAttributes
+  execute(element: QWElement, page: QWPage): void {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
