@@ -64,14 +64,6 @@ class HTMLTechniques {
         }
       }
     }
-
-    if (options.optimize) {
-      if (options.optimize.toLowerCase() === 'performance') {
-        this.optimization = Optimization.Performance;
-      } else if (options.optimize.toLowerCase() === 'error-detection') {
-        this.optimization = Optimization.ErrorDetection;
-      }
-    }
   }
 
   public resetConfiguration(): void {
