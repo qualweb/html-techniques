@@ -8,7 +8,7 @@ describe('HTML module', function () {
     this.timeout(1000 * 1000);
     const browser = await playwright['webkit'].launch({headless:false});
     const context = await browser.newContext();
-    const { sourceHtml, page, stylesheets } = await getDom(browser, 'https://www.accessibility.nl/wai-tools/validation-test-sites/wikipedia-wikipedia/');
+    const { sourceHtml, page, stylesheets } = await getDom(browser, 'https://www.pcdiga.com/');//'https://www.accessibility.nl/wai-tools/validation-test-sites/wikipedia-wikipedia/');
 
     try {
       await page.addScriptTag({
@@ -31,7 +31,7 @@ describe('HTML module', function () {
     } catch (err) {
       console.error(err);
     } finally {
-      await browser.close();
+      //await browser.close();
     }
   })
 });

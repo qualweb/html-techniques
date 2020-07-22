@@ -4,8 +4,9 @@ import { HTMLTechniqueResult } from '@qualweb/html-techniques';
 import Technique from '../lib/Technique.object';
 import { ElementExists, ElementHasAttributes } from '../lib/decorators';
 import { QWElement } from "@qualweb/qw-element";
-import { DomUtils } from '@qualweb/util';
+import { DomUtils, AccessibilityUtils } from '@qualweb/util';
 import { QWPage } from '@qualweb/qw-page';
+import { Dom } from '@qualweb/dom';
 
 class QW_HTML_T6 extends Technique {
 
@@ -59,7 +60,6 @@ class QW_HTML_T6 extends Technique {
     const hasOnclick = element.elementHasAttribute('onclick');
     const onclick = element.getElementAttribute('onclick');
     const onkeypress = element.getElementAttribute('onkeypress');
-    const isFocusable = DomUtils.isElementFocusable(element,page);
 
     const hasOnmouseover = element.elementHasAttribute('onmouseover');
     const onmouseover = element.getElementAttribute('onmouseover');
@@ -69,6 +69,8 @@ class QW_HTML_T6 extends Technique {
     const onmouseout = element.getElementAttribute('onmouseout');
     const onblur = element.getElementAttribute('onblur');
 
+    let isWidget = AccessibilityUtils.isElementWidget(element,page);
+
     if (hasOnmousedown && onmousedown !== onkeydown) {
       evaluation.verdict = 'failed';
       evaluation.description = `The mousedown attribute doesn't have a keyboard equivalent`;
@@ -77,7 +79,7 @@ class QW_HTML_T6 extends Technique {
       evaluation.verdict = 'failed';
       evaluation.description = `The mouseup attribute doesn't have a keyboard equivalent`;
       evaluation.resultCode = 'RC2';
-    } else if (hasOnclick && onclick !== onkeypress && !isFocusable) {
+    } else if (hasOnclick && onclick !== onkeypress && !isWidget) {
       evaluation.verdict = 'failed';
       evaluation.description = `The click attribute doesn't have a keyboard equivalent`;
       evaluation.resultCode = 'RC3';
