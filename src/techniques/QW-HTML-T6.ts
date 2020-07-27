@@ -4,9 +4,8 @@ import { HTMLTechniqueResult } from '@qualweb/html-techniques';
 import Technique from '../lib/Technique.object';
 import { ElementExists, ElementHasAttributes } from '../lib/decorators';
 import { QWElement } from "@qualweb/qw-element";
-import { DomUtils, AccessibilityUtils } from '@qualweb/util';
+import { AccessibilityUtils } from '@qualweb/util';
 import { QWPage } from '@qualweb/qw-page';
-import { Dom } from '@qualweb/dom';
 
 class QW_HTML_T6 extends Technique {
 
