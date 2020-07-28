@@ -16,7 +16,6 @@ import QW_HTML_T25 from '../techniques/QW-HTML-T25';
 import QW_HTML_T26 from '../techniques/QW-HTML-T26';
 import QW_HTML_T27 from '../techniques/QW-HTML-T27';
 import QW_HTML_T28 from '../techniques/QW-HTML-T28';
-import QW_HTML_T29 from '../techniques/QW-HTML-T29';
 import QW_HTML_T3 from '../techniques/QW-HTML-T3';
 import QW_HTML_T30 from '../techniques/QW-HTML-T30';
 import QW_HTML_T31 from '../techniques/QW-HTML-T31';
@@ -57,7 +56,6 @@ export {
   QW_HTML_T26,
   QW_HTML_T27,
   QW_HTML_T28,
-  QW_HTML_T29,
   QW_HTML_T3,
   QW_HTML_T30,
   QW_HTML_T31,

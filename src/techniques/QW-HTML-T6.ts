@@ -40,7 +40,7 @@ class QW_HTML_T6 extends Technique {
 
   @ElementExists 
   @ElementHasAttributes
-  execute(element: QWElement,page:QWPage): void {
+  execute(element: QWElement, page: QWPage): void {
 
     const evaluation: HTMLTechniqueResult = {
       verdict: '',
@@ -48,55 +48,139 @@ class QW_HTML_T6 extends Technique {
       resultCode: ''
     };
 
-    const hasOnmousedown = element.elementHasAttribute('onmousedown');
-    const onmousedown = element.getElementAttribute('onmousedown');
-    const onkeydown = element.getElementAttribute('onkeydown');
+    const isWidget = AccessibilityUtils.isElementWidget(element, page);
 
-    const hasOnmouseup = element.elementHasAttribute('onmouseup');
-    const onmouseup = element.getElementAttribute('onmouseup');
-    const onkeyup = element.getElementAttribute('onkeyup');
-    
-    const hasOnclick = element.elementHasAttribute('onclick');
-    const onclick = element.getElementAttribute('onclick');
-    const onkeypress = element.getElementAttribute('onkeypress');
+    if (!isWidget) {
+      const hasOnkeypress = element.elementHasAttribute('onkeypress');
+      const hasOnkeydown = element.elementHasAttribute('onkeydown');
+      const hasOnkeyup = element.elementHasAttribute('onkeyup');
 
-    const hasOnmouseover = element.elementHasAttribute('onmouseover');
-    const onmouseover = element.getElementAttribute('onmouseover');
-    const onfocus = element.getElementAttribute('onfocus');
+      if (!hasOnkeypress && !hasOnkeydown && !hasOnkeyup) {
+        evaluation.verdict = 'failed';
+        evaluation.description = `The mouse event attribute doesn't have a keyboard equivalent.`;
+        evaluation.resultCode = 'RC3';
+      } else {
+        const keyPress = element.getElementAttribute('onkeypress');
+        const keyDown = element.getElementAttribute('onkeydown');
+        const keyUp = element.getElementAttribute('onkeyup');
 
-    const hasOnmouseout = element.elementHasAttribute('onmouseout');
-    const onmouseout = element.getElementAttribute('onmouseout');
-    const onblur = element.getElementAttribute('onblur');
+        if (element.elementHasAttribute('onmousedown')) {
+          const event = element.getElementAttribute('onmousedown');
 
-    let isWidget = AccessibilityUtils.isElementWidget(element,page);
+          if (event === keyPress || event === keyDown || event === keyUp) {
+            this.fillPassedResult(evaluation);
+          } else {
+            this.fillWarningResult(evaluation);
+          }
+        }
 
-    if (hasOnmousedown && onmousedown !== onkeydown) {
-      evaluation.verdict = 'failed';
-      evaluation.description = `The mousedown attribute doesn't have a keyboard equivalent`;
-      evaluation.resultCode = 'RC1';
-    } else if (hasOnmouseup && onmouseup !== onkeyup) {
-      evaluation.verdict = 'failed';
-      evaluation.description = `The mouseup attribute doesn't have a keyboard equivalent`;
-      evaluation.resultCode = 'RC2';
-    } else if (hasOnclick && onclick !== onkeypress && !isWidget) {
-      evaluation.verdict = 'failed';
-      evaluation.description = `The click attribute doesn't have a keyboard equivalent`;
-      evaluation.resultCode = 'RC3';
-    } else if (hasOnmouseover && onmouseover !== onfocus) {
-      evaluation.verdict = 'failed';
-      evaluation.description = `The mouseover attribute doesn't have a keyboard equivalent`;
-      evaluation.resultCode = 'RC4';
-    } else if (hasOnmouseout && onmouseout !== onblur) {
-      evaluation.verdict = 'failed';
-      evaluation.description = `The mouseout attribute doesn't have a keyboard equivalent`;
-      evaluation.resultCode = 'RC5';
-    } else {
-      evaluation.verdict = 'passed';
-      evaluation.description = `All the mouse event handlers have a keyboard equivalent`;
-      evaluation.resultCode = 'RC6';
+        if (element.elementHasAttribute('onmouseup')) {
+          const event = element.getElementAttribute('onmouseup');
+
+          if (event === keyPress || event === keyDown || event === keyUp) {
+            this.fillPassedResult(evaluation);
+          } else {
+            this.fillWarningResult(evaluation);
+          }
+        }
+
+        if (element.elementHasAttribute('onclick')) {
+          const event = element.getElementAttribute('onclick');
+
+          if (event === keyPress || event === keyDown || event === keyUp) {
+            this.fillPassedResult(evaluation);
+          } else {
+            this.fillWarningResult(evaluation);
+          }
+        }
+
+        if (element.elementHasAttribute('onmouseover')) {
+          const event = element.getElementAttribute('onmouseover');
+
+          if (event === keyPress || event === keyDown || event === keyUp) {
+            this.fillPassedResult(evaluation);
+          } else {
+            this.fillWarningResult(evaluation);
+          }
+        }
+
+        if (element.elementHasAttribute('onmouseout')) {
+          const event = element.getElementAttribute('onmouseout');
+
+          if (event === keyPress || event === keyDown || event === keyUp) {
+            this.fillPassedResult(evaluation);
+          } else {
+            this.fillWarningResult(evaluation);
+          }
+        }
+
+        if (element.elementHasAttribute('onmouseenter')) {
+          const event = element.getElementAttribute('onmouseenter');
+
+          if (event === keyPress || event === keyDown || event === keyUp) {
+            this.fillPassedResult(evaluation);
+          } else {
+            this.fillWarningResult(evaluation);
+          }
+        }
+
+        if (element.elementHasAttribute('onmouseleave')) {
+          const event = element.getElementAttribute('onmouseleave');
+
+          if (event === keyPress || event === keyDown || event === keyUp) {
+            this.fillPassedResult(evaluation);
+          } else {
+            this.fillWarningResult(evaluation);
+          }
+        }
+
+        if (element.elementHasAttribute('onmousemove')) {
+          const event = element.getElementAttribute('onmousemove');
+
+          if (event === keyPress || event === keyDown || event === keyUp) {
+            this.fillPassedResult(evaluation);
+          } else {
+            this.fillWarningResult(evaluation);
+          }
+        }
+
+        if (element.elementHasAttribute('ondblclick')) {
+          const event = element.getElementAttribute('ondblclick');
+
+          if (event === keyPress || event === keyDown || event === keyUp) {
+            this.fillPassedResult(evaluation);
+          } else {
+            this.fillWarningResult(evaluation);
+          }
+        }
+
+        if (element.elementHasAttribute('onwheel')) {
+          const event = element.getElementAttribute('onwheel');
+
+          if (event === keyPress || event === keyDown || event === keyUp) {
+            this.fillPassedResult(evaluation);
+          } else {
+            this.fillWarningResult(evaluation);
+          }
+        }
+      }
+
+      super.addEvaluationResult(evaluation, element);
     }
+  }
 
-    super.addEvaluationResult(evaluation, element);
+  private fillPassedResult(evaluation: HTMLTechniqueResult): void {
+    if (evaluation.verdict === '') {
+      evaluation.verdict = 'passed';
+      evaluation.description = `The mouse event attribute has a keyboard equivalent.`;
+      evaluation.resultCode = 'RC1';
+    }
+  }
+
+  private fillWarningResult(evaluation: HTMLTechniqueResult): void {
+    evaluation.verdict = 'warning';
+    evaluation.description = `The test target has a keyboard event, but we can't verify if it's equivalent to the mouse event.`;
+    evaluation.resultCode = 'RC2';
   }
 }
 

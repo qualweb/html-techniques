@@ -8,7 +8,7 @@ export default {
   'applet': ['QW-HTML-T14'],
   'table': ['QW-HTML-T2', 'QW-HTML-T4', 'QW-HTML-T15','QW-HTML-T17', 'QW-HTML-T30'],
   'a': ['QW-HTML-T11','QW-HTML-T34','QW-HTML-T33'],
-  '*[onmousedown], *[onmouseup], *[onclick], *[onmouseover], *[onmouseout]': ['QW-HTML-T6', 'QW-HTML-T29'],
+  '*[onmousedown], *[onmouseup], *[onclick], *[onmouseover], *[onmouseout], *[onmouseenter], *[onmouseleave], *[onmousemove], *[ondblclick], *[onwheel]': ['QW-HTML-T6'],
   'abbr': ['QW-HTML-T7'],
   'link': ['QW-HTML-T19'],
   '[text], [vlink], [alink], [link]': ['QW-HTML-T22'],
