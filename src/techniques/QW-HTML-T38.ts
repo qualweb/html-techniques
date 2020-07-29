@@ -102,13 +102,9 @@ class QW_HTML_T38 extends Technique {
         evaluation.description = 'This Web page does not have focusable controls';
         evaluation.resultCode = 'RC7';
       }
-    } else {
-      evaluation.verdict = 'inapplicable';
-      evaluation.description = 'This Web page is empty';
-      evaluation.resultCode = 'RC8';
-    }
 
-    super.addEvaluationResult(evaluation, element);
+      super.addEvaluationResult(evaluation, firstFocusableElem);
+    }
   }
 }
 
