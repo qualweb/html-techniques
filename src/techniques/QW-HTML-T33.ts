@@ -56,7 +56,7 @@ class QW_HTML_T33 extends Technique {
     const text = element.getElementText();
 
     if (!trimTitle || trimTitle === "") {
-      evaluation.verdict = 'failed';
+      evaluation.verdict = 'inapplicable';
       evaluation.description = `The element's title attribute is empty`;
       evaluation.resultCode = 'RC1';
     } else if (text &&  trimTitle === text.trim()) {
