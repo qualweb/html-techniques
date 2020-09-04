@@ -48,13 +48,14 @@ class QW_HTML_T38 extends Technique {
     };
 
     let children = element.getElementChildren();
-
     if (children !== null && children.length > 0) {
       let firstFocusableElem = findFirstFocusableElement(element,page);
+      console.log("1", firstFocusableElem);
       if (!!firstFocusableElem) {
         const firstFocusableElemName = firstFocusableElem.getElementTagName();
         //const firstFocusableElemAttribs = await DomUtils.getElementAttributes(firstFocusableElem);
         const firstFocusableElemHREF = firstFocusableElem.getElementAttribute('href');
+        console.log("2", firstFocusableElemHREF);
         if (firstFocusableElemName === 'a' && firstFocusableElemHREF && firstFocusableElemHREF.trim()) {
           let url = page.getURL();
           let urlConcatWithId = url + '#';
@@ -102,6 +103,7 @@ class QW_HTML_T38 extends Technique {
         evaluation.description = 'This Web page does not have focusable controls';
         evaluation.resultCode = 'RC7';
       }
+      console.log("3", evaluation);
 
       super.addEvaluationResult(evaluation, firstFocusableElem);
     }
@@ -112,17 +114,20 @@ function findFirstFocusableElement(element: QWElement,page:QWPage): QWElement | 
   let foundFirstFocusableElem = false;
   let firstFocusableElem: QWElement | undefined;
   let children = element.getElementChildren();
+  console.log("child", children);
 
   if (children && children.length > 0) {
     let i = 0;
     while (!foundFirstFocusableElem && i < children.length) {
-      if (children[i] !== undefined) {
+      if (!!children[i]) {
         if (DomUtils.isElementFocusable(children[i],page)) {
           firstFocusableElem = children[i];
           foundFirstFocusableElem = true;
         } else {
           firstFocusableElem = findFirstFocusableElement(children[i],page);
-          foundFirstFocusableElem = true;
+          if(!!firstFocusableElem){
+            foundFirstFocusableElem = true;
+          }
         }
         i++;
       } else {
