@@ -2,6 +2,7 @@
 
 import { HTMLTechniqueResult } from '@qualweb/html-techniques';
 import Technique from '../lib/Technique.object';
+import { HTMLValidationReport } from '@qualweb/html-validator';
 
 class QW_HTML_T20 extends Technique {
 
@@ -42,10 +43,10 @@ class QW_HTML_T20 extends Technique {
     throw new Error('Method not implemented.');
   }
 
-  validate(validation): void{
+  validate(validation: HTMLValidationReport | undefined): void{
 
 
-      for (const result of validation.messages || []) {
+      for (const result of validation?.messages || []) {
         const evaluation: HTMLTechniqueResult = {
           verdict: '',
           description: '',
