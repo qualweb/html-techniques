@@ -55,21 +55,23 @@ class QW_HTML_T33 extends Technique {
       trimTitle = title.trim();
     const text = element.getElementText();
 
-    if (!trimTitle || trimTitle === "") {
-      evaluation.verdict = 'failed';
-      evaluation.description = `The element's title attribute is empty`;
-      evaluation.resultCode = 'RC1';
-    } else if (text &&  trimTitle === text.trim()) {
-      evaluation.verdict = 'failed';
-      evaluation.description = `The element contains a title attribute equal to the text in the link`;
-      evaluation.resultCode = 'RC2';
-    } else {
-      evaluation.verdict = 'warning';
-      evaluation.description = `Please verify that the element's title attribute describes correctly the link`;
-      evaluation.resultCode = 'RC3';
-    }
+    if (trimTitle !== undefined) {
+      if (trimTitle === '') {
+        evaluation.verdict = 'failed';
+        evaluation.description = `The element's title attribute is empty`;
+        evaluation.resultCode = 'RC1';
+      } else if (text &&  trimTitle === text.trim()) {
+        evaluation.verdict = 'failed';
+        evaluation.description = `The element contains a title attribute equal to the text in the link`;
+        evaluation.resultCode = 'RC2';
+      } else {
+        evaluation.verdict = 'warning';
+        evaluation.description = `Please verify that the element's title attribute describes correctly the link`;
+        evaluation.resultCode = 'RC3';
+      }
 
-    super.addEvaluationResult(evaluation, element);
+      super.addEvaluationResult(evaluation, element);
+    }
   }
 }
 
